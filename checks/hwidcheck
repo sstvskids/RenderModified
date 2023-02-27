@@ -5,5 +5,7 @@ local HWID = game:GetService("RbxAnalyticsService"):GetClientId()
 for i,v in pairs(HWIDList) do
     if v == HWID then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/VoidwareBConfig/main/chattags/Owner", true))()
+        else
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/VoidwareBConfig/main/chattags/Standard", true))()
     end
     end
