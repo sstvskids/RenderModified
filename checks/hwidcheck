@@ -1,0 +1,9 @@
+local HWIDList = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/VoidwareBConfig/main/whitelist.lua", true))()
+local HWID = game:GetService("RbxAnalyticsService"):GetClientId()
+
+
+for i,v in pairs(HWIDList) do
+    if v == HWID then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/VoidwareBConfig/main/chattags/Owner", true))()
+    end
+    end
