@@ -1,1 +1,36 @@
-warningNotification("Voidware","lol",5)
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+function detectornotification(Type)
+    OrionLib:MakeNotification({
+	Name = "Voidware",
+	Content = Type "Detected!" ..plr.DisplayName.."",
+	Image = "rbxassetid://4483345998",
+	Time = 5,
+	})
+end
+
+local function findplayers(arg)
+		for i,v in pairs(game:GetService("Players"):GetChildren()) do if v.Name:lower():sub(1, arg:len()) == arg:lower() then return v end end
+		return nil
+		end
+
+
+		
+		
+		for i, plr in pairs(players:GetChildren()) do
+		if plr:IsInGroup(14270760) and plr:GetRankInGroup(14270760) >= 2 then
+			detectornotification("Voidware Owner")
+			end
+		end
+		
+		for i, plr in pairs(players:GetChildren()) do
+			if plr:IsInGroup(14270760) and plr:GetRankInGroup(14270760) >= 1 then
+				detectornotification("Voidware Inf Member")
+				end
+			end
+		
+		for i, plr in pairs(players:GetChildren()) do
+			if plr:IsInGroup(5492471) and plr:GetRankInGroup(5492471) >= 254 then
+				detectornotification("Snoopy Configs Owner")
+				end
+			end
