@@ -1,5 +1,15 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
 -- Voidware Blue Open Source! Enjoy.
+local isfile = isfile or function(file)
+	local suc, res = pcall(function() return readfile(file) end)
+	return suc and res ~= nil
+end
+if isfile("vape/autoupdatechecked.txt") then
+	loadstring(readfile("vape/autoupdatechecked.txt"))()
+else
+	writefile("vape/autoupdatechecked.txt","getgenv().VoidwareAutoUpdate = true")
+	loadstring(readfile("vape/autoupdatechecked.txt"))()
+end
 local GuiLibrary = shared.GuiLibrary
 local playersService = game:GetService("Players")
 local textService = game:GetService("TextService")
@@ -10074,12 +10084,12 @@ task.spawn(function()
 						if d == CurrentVer then
 							shared.VoidwareLatest = true
 						 else
-							if not shared.VoidwareAutoUpdate then
+							if getgenv().VoidwareAutoUpdate and not shared.VapeFullyLoaded then
 						 GuiLibrary["SelfDestruct"]()
 						 delfile("vape/CustomModules/6872274481.lua")
 						 writefile("vape/CustomModules/6872274481.lua", VoidwareDownloadable)
 						 loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
-						 game.StarterGui:SetCore( "ChatMakeSystemMessage",  { Text = "[Voidware] Voidware Blue Custom Modules have been updated! to disable auto updating, change some settings on the Settings feature in World Tab.", Color = Color3.fromRGB(255,0,0), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
+						 game.StarterGui:SetCore( "ChatMakeSystemMessage",  { Text = "[Voidware] Voidware Blue Custom Modules have been updated! to disable auto updating, to disable autoupdating, change the settings in the file workspace/vape/autoupdatechecked.txt", Color = Color3.fromRGB(255,0,0), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
 							end
 					   end
 						end
@@ -10099,7 +10109,7 @@ GuiLibrary["RemoveObject"]("XrayOptionsButton")
 local lighting = {["Enabled"] = false}
 			lighting = GuiLibrary["ObjectsThatCanBeSaved"]["WorldWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "Lighting",
-				["HoverText"] = "lighting from comet v2",
+				["HoverText"] = "ambients and skies",
 				["Function"] = function(callback)
 					if callback then
 						task.spawn(function()
@@ -10847,12 +10857,12 @@ local lighting = {["Enabled"] = false}
 
 			local playertp = {Enabled = false}
 			playertp = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-				Name = "CloseTargetTP",
+				Name = "7BitchesExploit",
 				Function = function(callback)
 					if callback then
 					task.spawn(function()
 						if KillAll.Enabled then
-							warningNotification("CloseTargetTP","Can't toggle while FunnyTPAura is enabled.",5)
+							warningNotification("7BitchesExploit","Can't toggle while FunnyTPAura is enabled.",5)
 							playertp.ToggleButton(false)
 							return
 						end
@@ -10874,13 +10884,26 @@ local lighting = {["Enabled"] = false}
                     return target
                 end
                  repeat task.wait()
+					if closetpmethod.Value == "Cframe" then
                 lp.Character:FindFirstChildOfClass("Humanoid").RootPart.CFrame = GetClosestPlayer().Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
-                until not playertp.Enabled or targetmethod.Value == "Tween"
+					elseif closetpmethod.Value == "Tween" then
+						local Char = game.Players.LocalPlayer.Character;
+						tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(0.10, Enum.EasingStyle.Linear)
+							bitchtp = tweenService:Create(Char.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(GetClosestPlayer().Character:FindFirstChildOfClass('Humanoid').RootPart.Position)})
+							bitchtp:Play()
+					end
+                until not playertp.Enabled
                 end)
 					end
 				end,
 				HoverText = "repeativly teleports you to the closet player. (MUST BE VERY CLOSE TO U OR YOU MAY LAGBACK)"
 			})
+			closetpmethod = playertp.CreateDropdown({
+				Name = "Method",
+				List = {"Cframe", "Tween"},
+				Function = function() end
+			})
+	
 
 
 			local notifications = {Enabled = false}
@@ -11201,7 +11224,7 @@ local lighting = {["Enabled"] = false}
                             local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
 							local Middle = game:GetService("Workspace"):WaitForChild("RespawnView")
 							if not bedless and MiddleTP.Enabled then
-							tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(0.49, Enum.EasingStyle.Linear)
+							tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(0.30, Enum.EasingStyle.Linear)
 							middletp = tweenService:Create(Char.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(Middle.Position)})
 							middletp:Play()
 							middletp.Completed:Wait()
@@ -11214,23 +11237,6 @@ local lighting = {["Enabled"] = false}
 				HoverText = "Teleport to the middle of the map using TweenService"
 			})
 
-			local Settings = {Enabled = false}
-			Settings = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
-				Name = "ModuleSettings",
-				Function = function(voidware)
-					if voidware then
-						InfoNotification("Settings","This feature isn't toggleable. to change settings right click this module.",5)
-						Settings.ToggleButton(false)
-					end
-				end,
-				Hovertext = "Custom Module settings"
-			})
-			AutoUpdateOption = Settings.CreateToggle({
-				Name = "Auto Update",
-				Function = function() end, 
-				Default = true,
-				HoverText = "Automatically rewrites the custom modules on Voidware updates."
-			})
 			
 			task.spawn(function()
 						local user = game:GetService('Players').LocalPlayer
@@ -11239,7 +11245,7 @@ local lighting = {["Enabled"] = false}
 								repeat task.wait() until shared.VapeFullyLoaded
 							end
 						warningNotification("Voidware Blue","Thanks for using Voidware Blue " ..(user.DisplayName or user.Name).. "!",8) shared.VoidwareWasLoaded = true
-						game.StarterGui:SetCore( "ChatMakeSystemMessage",  { Text = "[Voidware] Currently running version Voidware Blue.", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
+						game.StarterGui:SetCore( "ChatMakeSystemMessage",  { Text = "[Voidware] Currently running version "..(CurrentVer)..".", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
 						task.wait(3.5)
 						game.StarterGui:SetCore( "ChatMakeSystemMessage",  { Text = "[Voidware] Get all the latest updates at dsc.gg/voidware!", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
 						end
