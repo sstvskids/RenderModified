@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 			ChatTag[yes] =
 				{
 					TagText = "VOIDWARE OWNER",
-					TagColor = Color3.new(0, 0, 0),
+					TagColor = Color3.new(0, 0, 255),
 				}
 			
 			
