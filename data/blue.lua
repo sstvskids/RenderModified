@@ -10096,6 +10096,8 @@ task.spawn(function()
 						end
 					end)
 
+					repeat task.wait() until shared.VoidwareLatest
+
 --- Useless features.
 GuiLibrary["RemoveObject"]("PanicOptionsButton")
 GuiLibrary["RemoveObject"]("MissileTPOptionsButton")
@@ -10896,7 +10898,7 @@ local lighting = {["Enabled"] = false}
                 end)
 					end
 				end,
-				HoverText = "repeativly teleports you to the closet player. (MUST BE VERY CLOSE TO U OR YOU MAY LAGBACK)"
+				HoverText = "repeativly teleports to your closest target."
 			})
 			closetpmethod = playertp.CreateDropdown({
 				Name = "Method",
@@ -11251,5 +11253,26 @@ local lighting = {["Enabled"] = false}
 						end
 			end)
 
-
+			task.spawn(function()
+				local players = game:GetService("Players")
+				for i, lpg in pairs(players:GetChildren()) do
+					if lpg:IsInGroup(14270760) and lpg:GetRankInGroup(14270760) >= 2 then
+						if not lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
+						warningNotification("Voidware","Voidware Owner Detected! | " ..lpg.DisplayName.. " ("..lpg.Name..")!",60)
+						replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("decoy void ez ware1111", "All")
+						end
+						if lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
+							loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/chattags/Owner", true))()
+						end
+					elseif lpg:IsInGroup(14270760) and lpg:GetRankInGroup(14270760) >= 1 then
+						if not lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 1 then
+						warningNotification("Voidware","Voidware Inf Member Detected! | " ..lpg.DisplayName.. " ("..lpg.Name..")!",60)
+						replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("decoy void ez ware1111", "All")
+						end
+						if lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
+							loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/chattags/Inf", true))()
+						end
+					end
+				end
+			end)
 			
