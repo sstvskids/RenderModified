@@ -14,6 +14,7 @@ local gameCamera = workspace.CurrentCamera
 local lplr = playersService.LocalPlayer
 local CurrentVer = "Blue 1.0"
 local VoidwareFeatureVer = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/version/blue", true))()
+local VoidwareDownloadable = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/blue.lua", true))()
 local vapeConnections = {}
 local vapeCachedAssets = {}
 local vapeEvents = setmetatable({}, {
@@ -10076,9 +10077,9 @@ task.spawn(function()
 							if shared.VoidwareAutoUpdate then
 						 GuiLibrary["SelfDestruct"]()
 						 delfile("vape/CustomModules/6872274481.lua")
-						 writefile("vape/CustomModules/6872274481.lua", game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/bluemods", true))
+						 writefile("vape/CustomModules/6872274481.lua", VoidwareDownloadable", true))
 						 loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
-						 game.StarterGui:SetCore( "ChatMakeSystemMessage",  { Text = "[Voidware] Voidware Blue Custom Modules have been updated to " ..(VoidwareFeatureVer).. ".", Color = Color3.fromRGB(255,0,0), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
+						 game.StarterGui:SetCore( "ChatMakeSystemMessage",  { Text = "[Voidware] Voidware Blue Custom Modules have been updated! to disable auto updating, change some settings on the Settings feature in World Tab.", Color = Color3.fromRGB(255,0,0), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
 							end
 					   end
 						end
