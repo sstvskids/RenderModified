@@ -2692,7 +2692,7 @@ runFunction(function()
 		return res
 	end
 
-	local flyAllowedmodules = {"Killaura", "Sprint", "AutoClicker", "AutoReport", "AutoReportV2", "AutoRelic", "AimAssist", "AutoLeave", "Lighting"}
+	local flyAllowedmodules = {"Sprint", "AutoClicker", "AutoReport", "AutoReportV2", "AutoRelic", "AimAssist", "AutoLeave", "Lighting"}
 	local function autoLeaveAdded(plr)
 		task.spawn(function()
 			if not shared.VapeFullyLoaded then
@@ -8235,6 +8235,9 @@ runFunction(function()
 								if AutoReportV2Notify.Enabled then 
 									warningNotification("AutoReportV2", "Reported "..v.Name, 15)
 								end
+								if AutoReportV2Chat.Enabled then
+									replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("AutoReported " ..v.DisplayName or v.Name.. " to easy.gg", "All")
+								end
 							end
 						end
 					until (not AutoReportV2.Enabled)
@@ -8246,6 +8249,11 @@ runFunction(function()
 	AutoReportV2Notify = AutoReportV2.CreateToggle({
 		Name = "Notify",
 		Function = function() end
+	})
+	AutoReportV2Chat = AutoReportV2.CreateToggle({
+		Name = "Chat",
+		Function = function() end,
+		HoverText = "Sends message everytime a player is reported."
 	})
 end)
 
@@ -10791,6 +10799,7 @@ local lighting = {["Enabled"] = false}
 							getgenv().loadchecked = true
 							repeat task.wait(0.1)
 								local healthbar = lplr.PlayerGui.hotbar['1'].HotbarHealthbarContainer.HealthbarProgressWrapper['1']
+								local container = lplr.PlayerGui.hotbar['1']:FindFirstChild("HotbarHealthbarContainer")
 								if hpbar.Enabled and hotbarmode.Value =="Default" then
 									healthbar.BackgroundColor3 = Color3.fromRGB(0,127,255)
 								elseif hpbar.Enabled and hotbarmode.Value == "Custom" then
@@ -10885,6 +10894,9 @@ local lighting = {["Enabled"] = false}
                            end
                     return target
                 end
+				if GetClosestPlayer().Team.Name == lplr.Team.Name then playertp.ToggleButton(false) return end
+				if GetClosestPlayer().Team.Name == "Spectators" then playertp.ToggleButton(false) return end
+				warningNotification("7BitchesExploit","Raping " ..(GetClosestPlayer().DisplayName or GetClosestPlayer().Name).. "!",5)
                  repeat task.wait()
 					if closetpmethod.Value == "Cframe" then
                 lp.Character:FindFirstChildOfClass("Humanoid").RootPart.CFrame = GetClosestPlayer().Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
@@ -10894,7 +10906,10 @@ local lighting = {["Enabled"] = false}
 							bitchtp = tweenService:Create(Char.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(GetClosestPlayer().Character:FindFirstChildOfClass('Humanoid').RootPart.Position)})
 							bitchtp:Play()
 					end
-                until not playertp.Enabled
+					if GetClosestPlayer().Team.Name == "Spectators" then
+						playertp.ToggleButton(false)
+					end
+                until not playertp.Enabled or GetClosestPlayer().Team.Name == "Spectators"
                 end)
 					end
 				end,
@@ -11239,6 +11254,43 @@ local lighting = {["Enabled"] = false}
 				HoverText = "Teleport to the middle of the map using TweenService"
 			})
 
+			local function addKit(tag, icon)
+				table.insert(KitESP.Connections, collectionService:GetInstanceAddedSignal(tag):Connect(function(v)
+					espadd(v.PrimaryPart, icon)
+				end))
+				table.insert(KitESP.Connections, collectionService:GetInstanceRemovedSignal(tag):Connect(function(v)
+					if espobjs[v.PrimaryPart] then
+						espobjs[v.PrimaryPart]:Destroy()
+						espobjs[v.PrimaryPart] = nil
+					end
+				end))
+				for i,v in pairs(collectionService:GetTagged(tag)) do 
+					espadd(v.PrimaryPart, icon)
+				end
+			end
+		
+			KitESP = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+				Name = "KitESP",
+				Function = function(callback) 
+					if callback then
+						task.spawn(function()
+							repeat task.wait() until bedwarsStore.equippedKit ~= ""
+							if KitESP.Enabled then
+								if bedwarsStore.equippedKit == "metal_detector" then
+									addKit("hidden-metal", "iron")
+								elseif bedwarsStore.equippedKit == "beekeeper" then
+									addKit("bee", "bee")
+								elseif bedwarsStore.equippedKit == "bigman" then
+									addKit("treeOrb", "natures_essence_1")
+								end
+							end
+						end)
+					else
+						espfold:ClearAllChildren()
+						table.clear(espobjs)
+					end
+				end
+			})
 			
 			task.spawn(function()
 						local user = game:GetService('Players').LocalPlayer
