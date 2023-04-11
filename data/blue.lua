@@ -2523,7 +2523,7 @@ runFunction(function()
 	autoclickercps = autoclicker.CreateTwoSlider({
 		Name = "CPS",
 		Min = 1,
-		Max = 100,
+		Max = 1000,
 		Function = function(val) end,
 		Default = 8,
 		Default2 = 100
@@ -8233,10 +8233,10 @@ runFunction(function()
 								bedwars.ClientHandler:Get(bedwars.ReportRemote):SendToServer(v.UserId)
 								bedwarsStore.statistics.reported = bedwarsStore.statistics.reported + 1
 								if AutoReportV2Notify.Enabled then 
-									warningNotification("AutoReportV2", "Reported "..v.Name, 15)
+									warningNotification("AutoReportV2", "Reported "..v.Name.."!", 15)
 								end
 								if AutoReportV2Chat.Enabled then
-									replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("AutoReported " ..v.DisplayName or v.Name.. " to easy.gg", "All")
+									replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("AutoReported " ..v.DisplayName.. " to Bedwars! | Voidware Blue", "All")
 								end
 							end
 						end
@@ -10090,7 +10090,9 @@ task.spawn(function()
 	while not shared.VapeFullyLoaded and not shared.VoidwareLatest do task.wait()
 					   for i,d in pairs(VoidwareFeatureVer) do
 						if d == CurrentVer then
+							if VoidwareAutoUpdate then
 							shared.VoidwareLatest = true
+						end
 						 else
 							if getgenv().VoidwareAutoUpdate and not shared.VapeFullyLoaded then
 						 GuiLibrary["SelfDestruct"]()
@@ -10104,7 +10106,7 @@ task.spawn(function()
 						end
 					end)
 
-					repeat task.wait() until shared.VoidwareLatest
+					repeat task.wait() until shared.VoidwareLatest or not getgenv().VoidwareAutoUpdate
 
 --- Useless features.
 GuiLibrary["RemoveObject"]("PanicOptionsButton")
@@ -10112,6 +10114,7 @@ GuiLibrary["RemoveObject"]("MissileTPOptionsButton")
 GuiLibrary["RemoveObject"]("SwimOptionsButton")
 GuiLibrary["RemoveObject"]("AutoBalloonOptionsButton")
 GuiLibrary["RemoveObject"]("XrayOptionsButton")
+GuiLibrary["RemoveObject"]("AutoReportOptionsButton")
 ---
 
 
@@ -10168,10 +10171,8 @@ local lighting = {["Enabled"] = false}
 						end)
 						if lightingmode.Value == "Blue" then
 							local newsky = Instance.new("Sky", game.Lighting)
-							if not bluemode and lighting.Enabled then
+							if lighting.Enabled then
 							game.Lighting.Ambient = Color3.fromRGB(0, 0, 255)
-							elseif bluemode and lighting.Enabled then
-								warningNotification("BlueAmbient","Couldn't enable ambient. You may enable it on rejoin.",8)
 							end
 						    newsky.SkyboxBk = "http://www.roblox.com/asset/?id=8434939"
 							newsky.SkyboxDn = "http://www.roblox.com/asset/?id=8434986"
@@ -10196,9 +10197,6 @@ local lighting = {["Enabled"] = false}
 						end
 						if spacemode and lightingmode.Value == "Space" then
 							InfoNotification("SpaceAmbient","Tint Disabled on Rejoin.",5)
-						end
-						if blueambient then
-							InfoNotification("BlueAmbient","Ambient Disabled on Rejoin.",5)
 						end
 						game.Lighting.Ambient = Color3.fromRGB(255, 255, 255)
 							local tint = Instance.new("ColorCorrectionEffect", game.Lighting)
@@ -10266,8 +10264,9 @@ local lighting = {["Enabled"] = false}
 				["HoverText"] = "Loads Indinite Yield by Edge",
 				["Function"] = function(callback)
 					if callback then
-						InfYield["ToggleButton"](false)
+						task.spawn(function()
 							loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source", true))() 
+						end)
 					end
 				end
 			})
@@ -10310,7 +10309,6 @@ local lighting = {["Enabled"] = false}
 									[2] = ""
 								}
 							}
-							
 							game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged:FindFirstChild("CustomMatches:CreateCustomMatch"):FireServer(unpack(args))				
 			
 							InfoNotification("QuickCustoms", "Creating the custom match... (Bedwars Sqauds)", 6)
@@ -10334,7 +10332,7 @@ local lighting = {["Enabled"] = false}
 									spawn(function()
 										pcall(function()
 											if IndicatorMode.Value == "Default" and Indicator.Enabled then
-											obj.Parent.TextColor3 =  Color3.fromRGB(0, 127, 255)
+											obj.Parent.TextColor3 =  Color3.fromRGB(0, 4, 255)
 											end
 											if IndicatorMode.Value == "Meteor" and Indicator.Enabled then
 												obj.Parent.Text = Messages[math.random(1,#Messages)]
@@ -10612,7 +10610,7 @@ local lighting = {["Enabled"] = false}
 				Function = function(callback)
 					if callback then
 						if not getItem("infernal_shield") then
-							warningNotification("FPSCrashShield","Infernal Shield not found.",5)
+							warningNotification("FPSLagShield","Infernal Shield not found.",5)
 							crasher.ToggleButton(false)
 							return
 						end
@@ -10620,7 +10618,7 @@ local lighting = {["Enabled"] = false}
 						InfoNotification("FPSLagShield","Hold the shield in your hand. (DON'T PRESS IT DOWN)",5)
 						task.spawn(function()
 							repeat 
-								task.wait(0.3) 
+								task.wait()
 									game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("UseInfernalShield"):FireServer({raised = true})
 									game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("UseGlitchShield"):FireServer({raised = true})
 							until (not crasher.Enabled)
@@ -10801,7 +10799,7 @@ local lighting = {["Enabled"] = false}
 								local healthbar = lplr.PlayerGui.hotbar['1'].HotbarHealthbarContainer.HealthbarProgressWrapper['1']
 								local container = lplr.PlayerGui.hotbar['1']:FindFirstChild("HotbarHealthbarContainer")
 								if hpbar.Enabled and hotbarmode.Value =="Default" then
-									healthbar.BackgroundColor3 = Color3.fromRGB(0,127,255)
+									healthbar.BackgroundColor3 = Color3.fromRGB(0, 4, 255)
 								elseif hpbar.Enabled and hotbarmode.Value == "Custom" then
 								healthbar.BackgroundColor3 = Color3.fromHSV(CustomHealthbarColor.Hue, CustomHealthbarColor.Sat, CustomHealthbarColor.Value)
 								     counter = counter + 0.01
@@ -11328,3 +11326,173 @@ local lighting = {["Enabled"] = false}
 				end
 			end)
 			
+
+	local AutoReport = {Enabled = false}
+	local AutoReportList = {ObjectList = {}}
+	local AutoReportNotify = {Enabled = false}
+	local alreadyreported = {}
+
+	local function removerepeat(str)
+		local newstr = ""
+		local lastlet = ""
+		for i,v in pairs(str:split("")) do 
+			if v ~= lastlet then
+				newstr = newstr..v 
+				lastlet = v
+			end
+		end
+		return newstr
+	end
+
+	local reporttable = {
+		gay = "Bullying",
+		gae = "Bullying",
+		gey = "Bullying",
+		hack = "Scamming",
+		exploit = "Scamming",
+		cheat = "Scamming",
+		hecker = "Scamming",
+		haxker = "Scamming",
+		hacer = "Scamming",
+		report = "Bullying",
+		fat = "Bullying",
+		black = "Bullying",
+		getalife = "Bullying",
+		fatherless = "Bullying",
+		report = "Bullying",
+		fatherless = "Bullying",
+		disco = "Offsite Links",
+		yt = "Offsite Links",
+		dizcourde = "Offsite Links",
+		retard = "Swearing",
+		bad = "Bullying",
+		trash = "Bullying",
+		nolife = "Bullying",
+		nolife = "Bullying",
+		loser = "Bullying",
+		killyour = "Bullying",
+		kys = "Bullying",
+		hacktowin = "Bullying",
+		bozo = "Bullying",
+		kid = "Bullying",
+		adopted = "Bullying",
+		linlife = "Bullying",
+		commitnotalive = "Bullying",
+		vape = "Offsite Links",
+		futureclient = "Offsite Links",
+		download = "Offsite Links",
+		youtube = "Offsite Links",
+		die = "Bullying",
+		lobby = "Bullying",
+		ban = "Bullying",
+		wizard = "Bullying",
+		wisard = "Bullying",
+		witch = "Bullying",
+		magic = "Bullying",
+	}
+	local reporttableexact = {
+		L = "Bullying",
+	}
+	
+
+	local function findreport(msg)
+		local checkstr = removerepeat(msg:gsub("%W+", ""):lower())
+		for i,v in pairs(reporttable) do 
+			if checkstr:find(i) then 
+				return v, i
+			end
+		end
+		for i,v in pairs(reporttableexact) do 
+			if checkstr == i then 
+				return v, i
+			end
+		end
+		for i,v in pairs(AutoReportList.ObjectList) do 
+			if checkstr:find(v) then 
+				return "Bullying", v
+			end
+		end
+		return nil
+	end
+
+	AutoReport = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+		Name = "AutoReport",
+		Function = function(callback) 
+			if callback then 
+				if textChatService.ChatVersion == Enum.ChatVersion.TextChatService then 
+					table.insert(AutoReport.Connections, textChatService.MessageReceived:Connect(function(tab)
+						local plr = tab.TextSource
+						local args = tab.Text:split(" ")
+						if plr and plr ~= lplr and WhitelistFunctions:CheckPlayerType(plr) == "DEFAULT" then
+							local reportreason, reportedmatch = findreport(tab.Text)
+							if reportreason then 
+								if alreadyreported[plr] then return end
+								task.spawn(function()
+									if syn == nil or reportplayer then
+										if reportplayer then
+											reportplayer(plr, reportreason, "he said a bad word")
+										else
+											playersService:ReportAbuse(plr, reportreason, "he said a bad word")
+										end
+									end
+								end)
+								if AutoReportNotify.Enabled then 
+									warningNotification("AutoReport", "Reported "..plr.Name.." for "..reportreason..' ('..reportedmatch..')', 15)
+								end
+								if AutoReportChat.Enabled then
+									replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("AutoReported " ..plr.Name.. " for " ..reportreason.. "! | Voidware Blue", "All")
+								end
+								alreadyreported[plr] = true
+							end
+						end
+					end))
+				else 
+					if replicatedStorageService:FindFirstChild("DefaultChatSystemChatEvents") then
+						table.insert(AutoReport.Connections, replicatedStorageService.DefaultChatSystemChatEvents.OnMessageDoneFiltering.OnClientEvent:Connect(function(tab, channel)
+							local plr = playersService:FindFirstChild(tab.FromSpeaker)
+							local args = tab.Message:split(" ")
+							if plr and plr ~= lplr and WhitelistFunctions:CheckPlayerType(plr) == "DEFAULT" then
+								local reportreason, reportedmatch = findreport(tab.Message)
+								if reportreason then 
+									if alreadyreported[plr] then return end
+									task.spawn(function()
+										if syn == nil or reportplayer then
+											if reportplayer then
+												reportplayer(plr, reportreason, "he said a bad word")
+											else
+												playersService:ReportAbuse(plr, reportreason, "he said a bad word")
+											end
+										end
+									end)
+									if AutoReportNotify.Enabled then 
+										warningNotification("AutoReport", "Reported "..plr.Name.." for "..reportreason..' ('..reportedmatch..')', 15)
+									end
+									if AutoReportChat.Enabled then
+										replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("AutoReported "..plr.DisplayName.." for " ..reportreason.. "! | Voidware Blue", "All")
+									end
+									alreadyreported[plr] = true
+								end
+							end
+						end))
+					else
+						warningNotification("AutoReport", "Default chat not found.", 5)
+						AutoReport.ToggleButton(false)
+					end
+				end
+			end
+		end
+	})
+	AutoReportNotify = AutoReport.CreateToggle({
+		Name = "Notify",
+		Function = function() end
+	})
+	AutoReportChat = AutoReport.CreateToggle({
+		Name = "Chat",
+		Function = function() end
+	})
+	AutoReportList = AutoReport.CreateTextList({
+		Name = "Report Words",
+		TempText = "phrase (to report)"
+	})
+
+	
