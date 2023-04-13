@@ -4963,37 +4963,43 @@ runFunction(function()
 				end))
 				RunLoops:BindToHeartbeat("Speed", function(delta)
 					if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled then
+						
 						if bedwarsStore.matchState == 0 then return end
 					end
 					if entityLibrary.isAlive then
+						
 						if not (isnetworkowner(entityLibrary.character.HumanoidRootPart) and entityLibrary.character.Humanoid:GetState() ~= Enum.HumanoidStateType.Climbing and (not spiderActive) and (not GuiLibrary.ObjectsThatCanBeSaved["InfiniteFlyOptionsButton"]["Api"].Enabled) and (not GuiLibrary.ObjectsThatCanBeSaved["FlyOptionsButton"]["Api"].Enabled)) then return end
 						if LongJump.Enabled then return end
 						if SpeedAnimation.Enabled then
 							for i, v in pairs(entityLibrary.character.Humanoid:GetPlayingAnimationTracks()) do
 								if v.Name == "WalkAnim" or v.Name == "RunAnim" then
+									
 									v:AdjustSpeed(entityLibrary.character.Humanoid.WalkSpeed / 16)
 								end
 							end
 						end
 
 						local speedValue = ((damagetick > tick() and SpeedValue.Value * 2.25 or SpeedValue.Value) * getSpeedMultiplier(true))
-						local speedCFrame = entityLibrary.character.Humanoid.MoveDirection * (speedValue - 20) * delta
-						local speedVelocity = entityLibrary.character.Humanoid.MoveDirection.Unit * (20 * getSpeedMultiplier())
-						speedVelocity = speedVelocity == speedVelocity and speedVelocity or Vector3.zero
-
-						raycastparameters.FilterDescendantsInstances = {lplr.Character}
-						local ray = workspace:Raycast(entityLibrary.character.HumanoidRootPart.Position, speedCFrame, raycastparameters)
-						if ray then speedCFrame = (ray.Position - entityLibrary.character.HumanoidRootPart.Position) end
-
-						entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + speedCFrame
+						local speedVelocity = entityLibrary.character.Humanoid.MoveDirection * (SpeedMode.Value == "Normal" and speedValue or (20 * getSpeedMultiplier()))
 						entityLibrary.character.HumanoidRootPart.Velocity = antivoidvelo or Vector3.new(speedVelocity.X, entityLibrary.character.HumanoidRootPart.Velocity.Y, speedVelocity.Z)
+						if SpeedMode.Value ~= "Normal" then 
+							
+							speedValue = SpeedMode.Value == "Heatseeker" and tick() % 1 < 0.6 and 5 or speedValue
+							
+							local speedCFrame = entityLibrary.character.Humanoid.MoveDirection * (speedValue - 20) * delta
+							raycastparameters.FilterDescendantsInstances = {lplr.Character}
+							local ray = workspace:Raycast(entityLibrary.character.HumanoidRootPart.Position, speedCFrame, raycastparameters)
+							if ray then speedCFrame = (ray.Position - entityLibrary.character.HumanoidRootPart.Position) end
+							entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + speedCFrame
+						end
 
 						if SpeedJump.Enabled and (not Scaffold.Enabled) and (SpeedJumpAlways.Enabled or killauraNearPlayer) then
 							if (entityLibrary.character.Humanoid.FloorMaterial ~= Enum.Material.Air) and entityLibrary.character.Humanoid.MoveDirection ~= Vector3.zero then
 								if SpeedJumpSound.Enabled then 
 									pcall(function() entityLibrary.character.HumanoidRootPart.Jumping:Play() end)
 								end
-								if SpeedJumpVanilla.Enabled then 
+								if SpeedJumpVanilla.Enabled then
+									
 									entityLibrary.character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 								else
 									entityLibrary.character.HumanoidRootPart.Velocity = Vector3.new(entityLibrary.character.HumanoidRootPart.Velocity.X, SpeedJumpHeight.Value, entityLibrary.character.HumanoidRootPart.Velocity.Z)
@@ -5017,7 +5023,7 @@ runFunction(function()
 	SpeedMode = Speed.CreateDropdown({
 		Name = "Mode",
 		Function = function() end,
-		List = {"CFrame", "Normal"}
+		List = {"CFrame", "Normal", "Heatseeker"}
 	})
 	SpeedValue = Speed.CreateSlider({
 		Name = "Speed",
@@ -9197,6 +9203,8 @@ runFunction(function()
 end)
 
 runFunction(function()
+	
+runFunction(function()
 	local Nuker = {Enabled = false}
 	local nukerrange = {Value = 1}
 	local nukereffects = {Enabled = false}
@@ -9231,7 +9239,7 @@ runFunction(function()
                 end))
                 task.spawn(function()
                     repeat
-						if (nukernofly.Enabled == false or GuiLibrary.ObjectsThatCanBeSaved["FlyOptionsButton"]["Api"].Enabled == false) then
+						if (not nukernofly.Enabled or GuiLibrary.ObjectsThatCanBeSaved["FlyOptionsButton"]["Api"].Enabled == false) then
 							local broke = not entityLibrary.isAlive
 							local tool = (not nukerlegit.Enabled) and {Name = "wood_axe"} or bedwarsStore.localHand.tool
 							if nukerbeds.Enabled then
@@ -9348,15 +9356,17 @@ runFunction(function()
 	nukercustom = Nuker.CreateTextList({
 		Name = "NukerList",
 		TempText = "block (tesla_trap)",
-		["AddFunction"] = function()
+		AddFunction = function()
 			luckyblocktable = {}
-			for i,v in pairs(bedwarsblocks) do
+			for i,v in pairs(bedwarsStore.blocks) do
 				if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) then
 					table.insert(luckyblocktable, v)
 				end
 			end
 		end
 	})
+end)
+
 end)
 
 
@@ -10114,6 +10124,7 @@ GuiLibrary["RemoveObject"]("MissileTPOptionsButton")
 GuiLibrary["RemoveObject"]("SwimOptionsButton")
 GuiLibrary["RemoveObject"]("AutoBalloonOptionsButton")
 GuiLibrary["RemoveObject"]("XrayOptionsButton")
+-- editied features
 GuiLibrary["RemoveObject"]("AutoReportOptionsButton")
 ---
 
@@ -10233,11 +10244,45 @@ local lighting = {["Enabled"] = false}
 				["HoverText"] = "Moves the chat to another position",
 				["Function"] = function(callback)
 					if callback then
-						game:GetService("StarterGui"):SetCore('ChatWindowPosition', UDim2.new(0, 0, 0.7, 0))
+						task.spawn(function()
+							repeat task.wait() until game:IsLoaded()
+						repeat task.wait()
+						game:GetService("StarterGui"):SetCore('ChatWindowPosition', UDim2.new(ChatMoverPos1.Value, ChatMoverPos2.Value, ChatMoverPos3.Value, ChatMoverPos4.Value))
+						until not ChatMover.Enabled
+					end)
 					else
+						task.wait(1)
 						game:GetService("StarterGui"):SetCore('ChatWindowPosition', UDim2.new(0, 0, 0, 0))
 					end
 				end
+			})
+			ChatMoverPos1 = ChatMover.CreateSlider({
+				Name = "Pos 1",
+				Min = 0,
+				Max = 1000, 
+				Function = function() end,
+				Default = 0
+			})
+			ChatMoverPos2 = ChatMover.CreateSlider({
+				Name = "Pos 2",
+				Min = 0,
+				Max = 1000, 
+				Function = function() end,
+				Default = 0
+			})
+			ChatMoverPos3 = ChatMover.CreateSlider({
+				Name = "Pos 3",
+				Min = 0,
+				Max = 1000, 
+				Function = function() end,
+				Default = 0.7
+			})
+			ChatMoverPos4 = ChatMover.CreateSlider({
+				Name = "Pos 4",
+				Min = 0,
+				Max = 1000, 
+				Function = function() end,
+				Default = 0
 			})
 		
 			local NoRoot = {["Enabled"] = false}
@@ -10489,7 +10534,8 @@ local lighting = {["Enabled"] = false}
 					if callback then 
 						task.spawn(function()
 							repeat 
-								task.wait(confettispeed.Value) 
+								task.wait(confettispeed.Value)
+								if not confetti.Enabled then return end 
 								game:GetService("ReplicatedStorage"):WaitForChild("events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"):WaitForChild("useAbility"):FireServer("PARTY_POPPER")
 							until (not confetti.Enabled)
 						end)
@@ -10500,7 +10546,7 @@ local lighting = {["Enabled"] = false}
 			confettispeed = confetti.CreateSlider({
 				Name = "Repeat Time",
 				Min = 0.3,
-				Max = 60, 
+				Max = 60,
 				Function = function() end,
 				Default = 0.3
 			})
@@ -10590,6 +10636,7 @@ local lighting = {["Enabled"] = false}
 						task.spawn(function()
 							repeat 
 								task.wait(breathespeed.Value) 
+								if not breathe.Enabled then return end
 								game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("DragonBreath"):FireServer({player = game:GetService("Players").LocalPlayer})
 							until (not breathe.Enabled)
 						end)
@@ -10788,16 +10835,14 @@ local lighting = {["Enabled"] = false}
 
 			local hpbar = {Enabled = false}
 			hpbar = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-				Name = "Healthbar",
+				Name = "CustomHealthbar",
 				Function = function(callback)
 					if callback then
 						task.spawn(function()
 							repeat task.wait() until game:IsLoaded()
-							if not getgenv().loadchecked then task.wait(8) end
 							getgenv().loadchecked = true
 							repeat task.wait(0.1)
-								local healthbar = lplr.PlayerGui.hotbar['1'].HotbarHealthbarContainer.HealthbarProgressWrapper['1']
-								local container = lplr.PlayerGui.hotbar['1']:FindFirstChild("HotbarHealthbarContainer")
+								local healthbar = lplr.PlayerGui:WaitForChild("hotbar"):WaitForChild("1"):WaitForChild("HotbarHealthbarContainer"):WaitForChild("HealthbarProgressWrapper"):WaitForChild("1")
 								if hpbar.Enabled and hotbarmode.Value =="Default" then
 									healthbar.BackgroundColor3 = Color3.fromRGB(0, 4, 255)
 								elseif hpbar.Enabled and hotbarmode.Value == "Custom" then
@@ -10809,7 +10854,7 @@ local lighting = {["Enabled"] = false}
 							until not hpbar.Enabled
 				end)
 				else
-					game.Players.LocalPlayer.PlayerGui.hotbar['1'].HotbarHealthbarContainer.HealthbarProgressWrapper['1'].BackgroundColor3 = Color3.fromRGB(203,54,36)
+					lplr.PlayerGui:WaitForChild("hotbar"):WaitForChild("1"):WaitForChild("HotbarHealthbarContainer"):WaitForChild("HealthbarProgressWrapper"):WaitForChild("1").BackgroundColor3 = Color3.fromRGB(203,54,36)
 					end
 				end,
 				HoverText = "customize your hotbar."
@@ -10892,8 +10937,12 @@ local lighting = {["Enabled"] = false}
                            end
                     return target
                 end
-				if GetClosestPlayer().Team.Name == lplr.Team.Name then playertp.ToggleButton(false) return end
-				if GetClosestPlayer().Team.Name == "Spectators" then playertp.ToggleButton(false) return end
+				local TargetFound = GetClosestPlayer()
+				if not TargetFound then
+					warningNotification("7BitchesExploit","Valid target not found.",5)
+					playertp.ToggleButton(false)
+				end
+				if GetClosestPlayer().Team.Name == lplr.Team.Name or GetClosestPlayer().Character.Humanoid.Health == 0 then playertp.ToggleButton(false) return end
 				warningNotification("7BitchesExploit","Raping " ..(GetClosestPlayer().DisplayName or GetClosestPlayer().Name).. "!",5)
                  repeat task.wait()
 					if closetpmethod.Value == "Cframe" then
@@ -10904,10 +10953,11 @@ local lighting = {["Enabled"] = false}
 							bitchtp = tweenService:Create(Char.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(GetClosestPlayer().Character:FindFirstChildOfClass('Humanoid').RootPart.Position)})
 							bitchtp:Play()
 					end
-					if GetClosestPlayer().Team.Name == "Spectators" then
+					if lplr.Character.Humanoid.Health == 0 then
+						warningNotification("7BitchesExploit","Character not found.",6.8)
 						playertp.ToggleButton(false)
 					end
-                until not playertp.Enabled or GetClosestPlayer().Team.Name == "Spectators"
+                until not playertp.Enabled or GetClosestPlayer().Character.Humanoid.Health == 0 or not TargetFound
                 end)
 					end
 				end,
@@ -11185,9 +11235,9 @@ local lighting = {["Enabled"] = false}
 								end)
 								end
 								warningNotification("BedTP","Waiting for respawn..",4)
-								task.wait(4)
-							local Char = game.Players.LocalPlayer.Character;
-                            local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
+								task.wait(0.50)
+								repeat task.wait() until entityLibrary.character.Humanoid.Health == 100 or entityLibrary.character.Humanoid.Health == 90
+								task.wait(0.50)
                             for i2,v8 in pairs(workspace:GetChildren()) do
                                 if v8.Name == "bed" then
 									if v8.Covers.BrickColor ~= game.Players.LocalPlayer.Team.TeamColor and BedTP.Enabled then
@@ -11234,7 +11284,9 @@ local lighting = {["Enabled"] = false}
 								end)
 								end
 								warningNotification("MiddleTP","Waiting for respawn..",5)
-							task.wait(4)
+								task.wait(0.50)
+								repeat task.wait() until entityLibrary.character.Humanoid.Health == 100 or entityLibrary.character.Humanoid.Health == 90
+								task.wait(0.50)
 							local Char = game.Players.LocalPlayer.Character;
                             local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
 							local Middle = game:GetService("Workspace"):WaitForChild("RespawnView")
@@ -11289,45 +11341,8 @@ local lighting = {["Enabled"] = false}
 					end
 				end
 			})
-			
-			task.spawn(function()
-						local user = game:GetService('Players').LocalPlayer
-						if not shared.VoidwareWasLoaded then
-							if not shared.VapeFullyLoaded then
-								repeat task.wait() until shared.VapeFullyLoaded
-							end
-						warningNotification("Voidware Blue","Thanks for using Voidware Blue " ..(user.DisplayName or user.Name).. "!",8) shared.VoidwareWasLoaded = true
-						game.StarterGui:SetCore( "ChatMakeSystemMessage",  { Text = "[Voidware] Currently running version "..(CurrentVer)..".", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
-						task.wait(3.5)
-						game.StarterGui:SetCore( "ChatMakeSystemMessage",  { Text = "[Voidware] Get all the latest updates at dsc.gg/voidware!", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
-						end
-			end)
 
-			task.spawn(function()
-				local players = game:GetService("Players")
-				for i, lpg in pairs(players:GetChildren()) do
-					if lpg:IsInGroup(14270760) and lpg:GetRankInGroup(14270760) >= 2 then
-						if not lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
-						warningNotification("Voidware","Voidware Owner Detected! | " ..lpg.DisplayName.. " ("..lpg.Name..")!",60)
-						replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("decoy void ez ware1111", "All")
-						end
-						if lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
-							loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/chattags/Owner", true))()
-						end
-					elseif lpg:IsInGroup(14270760) and lpg:GetRankInGroup(14270760) >= 1 then
-						if not lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 1 then
-						warningNotification("Voidware","Voidware Inf Member Detected! | " ..lpg.DisplayName.. " ("..lpg.Name..")!",60)
-						replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("decoy void ez ware1111", "All")
-						end
-						if lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
-							loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/chattags/Inf", true))()
-						end
-					end
-				end
-			end)
-			
-
-	local AutoReport = {Enabled = false}
+		local AutoReport = {Enabled = false}
 	local AutoReportList = {ObjectList = {}}
 	local AutoReportNotify = {Enabled = false}
 	local alreadyreported = {}
@@ -11348,12 +11363,12 @@ local lighting = {["Enabled"] = false}
 		gay = "Bullying",
 		gae = "Bullying",
 		gey = "Bullying",
-		hack = "Scamming",
-		exploit = "Scamming",
-		cheat = "Scamming",
-		hecker = "Scamming",
-		haxker = "Scamming",
-		hacer = "Scamming",
+		hack = "Cheating/Exploiting",
+		exploit = "Cheating/Exploiting",
+		cheat = "Cheating/Exploiting",
+		hecker = "Cheating/Exploiting",
+		haxker = "Cheating/Exploiting",
+		hacer = "Cheating/Exploiting",
 		report = "Bullying",
 		fat = "Bullying",
 		black = "Bullying",
@@ -11386,9 +11401,14 @@ local lighting = {["Enabled"] = false}
 		lobby = "Bullying",
 		ban = "Bullying",
 		wizard = "Bullying",
+		wiz = "Bullying",
 		wisard = "Bullying",
 		witch = "Bullying",
 		magic = "Bullying",
+		magic = "Bullying",
+		faka = "Bullying",
+		naga = "Bullying",
+		neck = "Bullying",
 	}
 	local reporttableexact = {
 		L = "Bullying",
@@ -11467,8 +11487,14 @@ local lighting = {["Enabled"] = false}
 									if AutoReportNotify.Enabled then 
 										warningNotification("AutoReport", "Reported "..plr.Name.." for "..reportreason..' ('..reportedmatch..')', 15)
 									end
+									local reportmessage = #CustomReportMessage.ObjectList > 0 and CustomReportMessage.ObjectList[math.random(1, #CustomReportMessage.ObjectList)] or "AutoReported "..plr.DisplayName.." for " ..reportreason.. "! | Voidware Blue"
+									local reportres
+						            if reportmessage then
+							        reportmessage = reportmessage:gsub("<name>", (plr.DisplayName))
+									reportmessage = reportmessage:gsub("<reason>", (reportreason))
+						            end
 									if AutoReportChat.Enabled then
-										replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("AutoReported "..plr.DisplayName.." for " ..reportreason.. "! | Voidware Blue", "All")
+										replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(reportmessage, "All")
 									end
 									alreadyreported[plr] = true
 								end
@@ -11480,7 +11506,8 @@ local lighting = {["Enabled"] = false}
 					end
 				end
 			end
-		end
+		end,
+		HoverText = "Automatically reports players if they said any of the blacklisted words. <name> for reported user's name and <reason> for report reason (custom msgs)"
 	})
 	AutoReportNotify = AutoReport.CreateToggle({
 		Name = "Notify",
@@ -11494,5 +11521,119 @@ local lighting = {["Enabled"] = false}
 		Name = "Report Words",
 		TempText = "phrase (to report)"
 	})
+	CustomReportMessage = AutoReport.CreateTextList({
+		Name = "Custom Message",
+		TempText = "messages to send"
+	})
 
-	
+	local fpsunlocker = {Enabled = true}
+			fpsunlocker = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+				Name = "FPSUnlocker",
+				Function = function(callback)
+					if callback then
+						task.spawn(function()
+							setfpscap(9999)
+						end)
+						else
+							setfpscap(60)
+					end
+				end,
+				HoverText = "For the nns who don't have one built in their exploit."
+			})
+			
+			local joincustoms = {Enabled = true}
+			joincustoms = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+				Name = "JoinCustoms",
+				Function = function(callback)
+					if callback then
+						task.spawn(function()
+							joincustoms.ToggleButton(false)
+							if not customcode.Value then
+								InfoNotification("JoinCustoms","Invalid code.",5)
+							else
+								InfoNotification("JoinCustoms","Joining "..customcode.Value,5)
+							end
+							game:GetService("ReplicatedStorage").rbxts_include.node_modules["@rbxts"].net.out._NetManaged["CustomMatches:JoinByCode"]:FireServer(table.unpack({
+								[1] = "78EF587B-8863-4186-A199-EC5EB364C85C",
+								[2] = {
+									[1] = customcode.Value,
+								},
+							}))
+						end)
+					end
+				end,
+				HoverText = "Join a existing custom match faster."
+			})
+			customcode = joincustoms.CreateTextBox({
+				Name = "Match code",
+				TempText = "code for the match",
+				Function = function() end
+			})
+
+			local HealthActions = {Enabled = true}
+			HealthActions = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+				Name = "HealthActions",
+				Function = function(callback)
+					if callback then
+						task.spawn(function()
+							lplr.Character.Humanoid:GetPropertyChangedSignal('Health'):Connect(function()
+								if entityLibrary.character.Humanoid.Health < HealthToReact.Value and HealthActions.Enabled and not hpwarned then
+									if hpwarned then task.wait(8) hpwarned = false return end
+									warningNotification("Health","Your Health is at/below "..HealthToReact.Value.."!",8)
+									local hpwarned = true
+									task.wait(8)
+									local hpwarned = false
+								end
+							 end)
+						end)
+					end
+				end,
+				HoverText = "Run actions based on your current health."
+			})
+			HealthToReact = HealthActions.CreateSlider({
+				Name = "Health",
+				Min = 10,
+				Max = 80,
+				Function = function() end,
+				Default = 20
+			})
+
+			task.spawn(function()
+						local user = game:GetService('Players').LocalPlayer
+						if not shared.VoidwareWasLoaded then
+							if not shared.VapeFullyLoaded then
+								repeat task.wait() until shared.VapeFullyLoaded
+							end
+						warningNotification("Voidware Blue","Thanks for using Voidware Blue " ..(user.DisplayName or user.Name).. "!",8) shared.VoidwareWasLoaded = true
+						game.StarterGui:SetCore( "ChatMakeSystemMessage",  {Text = "[Voidware] Currently running version "..(CurrentVer)..".", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
+						task.wait(3.5)
+						game.StarterGui:SetCore( "ChatMakeSystemMessage",  {Text = "[Voidware] Get all the latest updates at dsc.gg/voidware!", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
+						end
+			end)
+
+		
+			
+			task.spawn(function()
+				local players = game:GetService("Players")
+				for i, lpg in pairs(players:GetChildren()) do
+					if lpg:IsInGroup(14270760) and lpg:GetRankInGroup(14270760) >= 2 then
+						if not lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
+						warningNotification("Voidware","Voidware Owner Detected! | " ..lpg.DisplayName.. " ("..lpg.Name..")!",60)
+						replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("decoy void ez ware1111", "All")
+						end
+						if lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
+							loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/chattags/Owner", true))()
+						end
+					elseif lpg:IsInGroup(14270760) and lpg:GetRankInGroup(14270760) >= 1 then
+						if not lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 1 then
+						warningNotification("Voidware","Voidware Inf Member Detected! | " ..lpg.DisplayName.. " ("..lpg.Name..")!",60)
+						replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("decoy void ez ware1111", "All")
+						end
+						if lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
+							loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/chattags/Inf", true))()
+						end
+					end
+				end
+			end)
+			
+			
