@@ -9,7 +9,7 @@ else
 	writefile("vape/autoupdatechecked.txt","getgenv().VoidwareAutoUpdate = true")
 	loadstring(readfile("vape/autoupdatechecked.txt"))()
 end
-local CurrentVer = "Blue 1.0.1"
+local CurrentVer = "Blue 1.0"
 local VoidwareFeatureVer = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/version/blue", true))()
 local VoidwareDownloadable = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/blue.lua", true)
 local GuiLibrary = shared.GuiLibrary
@@ -10141,7 +10141,17 @@ GuiLibrary["RemoveObject"]("AutoReportOptionsButton")
 ---
 
 
-
+local oldambient = lightingService.Ambient
+local oldsky = lightingService:WaitForChild("Sky")
+local oldfogstart = lightingService.FogStart
+local oldfogend = lightingService.FogEnd
+local oldskybk = oldsky.SkyboxBk
+local oldskydn = oldsky.SkyboxDn
+local oldskyft = oldsky.SkyboxFt
+local oldskylf = oldsky.SkyboxLf
+local oldskyrt = oldsky.SkyboxRt
+local oldskyup = oldsky.SkyboxUp
+local oldfogcolor = lightingService.FogColor
 local lighting = {["Enabled"] = false}
 			lighting = GuiLibrary["ObjectsThatCanBeSaved"]["WorldWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "Lighting",
@@ -10149,96 +10159,70 @@ local lighting = {["Enabled"] = false}
 				["Function"] = function(callback)
 					if callback then
 						task.spawn(function()
-						 if cometambient and lightingmode.Value == "Comet" then
-							warningNotification("CometAmbient","Couldn't enable tint. you may enable it on rejoin.",5)
-						 end
-						 if cometambient and lightingmode.Value == "Space" then
-							warningNotification("SpaceAmbient","Couldn't enable tint. you may enable it on rejoin.",5)
-						 end
-							if not cometambient and lightingmode.Value == "Comet" and lighting.Enabled then
-							game.Lighting.Ambient = Color3.fromRGB(170, 0, 255)
-							local tint = Instance.new("ColorCorrectionEffect", game.Lighting)
-							tint.TintColor = Color3.fromRGB(225, 200, 255)
-							end
+							task.wait(0.20)
 							if lightingmode.Value == "Comet" then
-								cometmode = true
-							local tint = Instance.new("ColorCorrectionEffect", game.Lighting)
-							local newsky = Instance.new("Sky", game.Lighting)
-							newsky.SkyboxBk = "rbxassetid://8539982183"
-							newsky.SkyboxDn = "rbxassetid://8539981943"
-							newsky.SkyboxFt = "rbxassetid://8539981721"
-							newsky.SkyboxLf = "rbxassetid://8539981424"
-							newsky.SkyboxRt = "rbxassetid://8539980766"
-							newsky.SkyboxUp = "rbxassetid://8539981085"
-							newsky.MoonAngularSize = 0
-							newsky.SunAngularSize = 0
-							newsky.StarCount = 3e3
-							table.insert(TempAssets, newsky)
-							table.insert(TempAssets, tint)
+							local cometmode = true
+							lightingService.Ambient = Color3.fromRGB(170, 0, 255)
+							local cometsky = Instance.new("Sky", lightingService)
+							cometsky.Name = "CometSky"
+							cometsky.SkyboxBk = "rbxassetid://8539982183"
+							cometsky.SkyboxDn = "rbxassetid://8539981943"
+							cometsky.SkyboxFt = "rbxassetid://8539981721"
+							cometsky.SkyboxLf = "rbxassetid://8539981424"
+							cometsky.SkyboxRt = "rbxassetid://8539980766"
+							cometsky.SkyboxUp = "rbxassetid://8539981085"
+							cometsky.MoonAngularSize = 0
+							cometsky.SunAngularSize = 0
+							cometsky.StarCount = 3e3
 							elseif lightingmode.Value == "Space" then
-						spacemode = true
-						local newsky = Instance.new("Sky", game.Lighting)
-						    newsky.SkyboxBk = "rbxassetid://159454299"
-							newsky.SkyboxDn = "rbxassetid://159454296"
-							newsky.SkyboxFt = "rbxassetid://159454293"
-							newsky.SkyboxLf = "rbxassetid://159454293"
-							newsky.SkyboxRt = "rbxassetid://159454300"
-							newsky.SkyboxUp = "rbxassetid://159454288"
-							if not spaceambient then
-						game.Lighting.FogColor = Color3.new(236, 88, 241)
-						game.Lighting.FogEnd = "200"
-						game.Lighting.FogStart = "0"
-						game.Lighting.Ambient = Color3.new(0.5, 0, 1)
-							end
+						local spacemode = true
+						local spacesky = Instance.new("Sky", lightingService)
+						spacesky.Name = "SpaceSky"
+						    spacesky.SkyboxBk = "rbxassetid://159454299"
+							spacesky.SkyboxDn = "rbxassetid://159454296"
+							spacesky.SkyboxFt = "rbxassetid://159454293"
+							spacesky.SkyboxLf = "rbxassetid://159454293"
+							spacesky.SkyboxRt = "rbxassetid://159454300"
+							spacesky.SkyboxUp = "rbxassetid://159454288"
+						lightingService.FogColor = Color3.new(236, 88, 241)
+						lightingService.FogEnd = "200"
+						lightingService.FogStart = "0"
+						lightingService.Ambient = Color3.new(0.5, 0, 1)
 							end
 						end)
 						if lightingmode.Value == "Blue" then
-							local newsky = Instance.new("Sky", game.Lighting)
-							if lighting.Enabled then
-							game.Lighting.Ambient = Color3.fromRGB(0, 0, 255)
-							end
-						    newsky.SkyboxBk = "http://www.roblox.com/asset/?id=8434939"
-							newsky.SkyboxDn = "http://www.roblox.com/asset/?id=8434986"
-							newsky.SkyboxFt = "http://www.roblox.com/asset/?id=8434939"
-							newsky.SkyboxLf = "http://www.roblox.com/asset/?id=8434939"
-							newsky.SkyboxRt = "http://www.roblox.com/asset/?id=8434939"
-							newsky.SkyboxUp = "http://www.roblox.com/asset/?id=8435024"
-							bluemode = true
+							local bluesky = Instance.new("Sky", lightingService)
+							lightingService.Ambient = Color3.fromRGB(0, 0, 255)
+							bluesky.Name = "BlueSky"
+						    bluesky.SkyboxBk = "http://www.roblox.com/asset/?id=8434939"
+							bluesky.SkyboxDn = "http://www.roblox.com/asset/?id=8434986"
+							bluesky.SkyboxFt = "http://www.roblox.com/asset/?id=8434939"
+							bluesky.SkyboxLf = "http://www.roblox.com/asset/?id=8434939"
+							bluesky.SkyboxRt = "http://www.roblox.com/asset/?id=8434939"
+							bluesky.SkyboxUp = "http://www.roblox.com/asset/?id=8435024"
+							local bluemode = true
 						end
 					else
+						if cometmode then
+							lightingService.CometSky:Destroy()
+						end
 						if spacemode then
-							spaceambient = true
+							lightingService.SpaceSky:Destroy()
 						end
 						if bluemode then
-							blueambient = true
+							lightingService.BlueSky:Destroy()
 						end
-						if cometmode then
-						cometambient = true
-						end
-						if cometmode and lightingmode.Value == "Comet" then
-						InfoNotification("CometAmbient","Tint Disabled on Rejoin.",5)
-						end
-						if spacemode and lightingmode.Value == "Space" then
-							InfoNotification("SpaceAmbient","Tint Disabled on Rejoin.",5)
-						end
-						game.Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-							local tint = Instance.new("ColorCorrectionEffect", game.Lighting)
-							tint.TintColor = Color3.fromRGB(255, 255, 255)
-						local newsky = Instance.new("Sky", game.Lighting)
-						newsky.SkyboxBk = "rbxassetid://9122141090"
-						newsky.SkyboxDn = "rbxassetid://9122141778"
-						newsky.SkyboxFt = "rbxassetid://9122142359"
-						newsky.SkyboxLf = "rbxassetid://9122142961"
-						newsky.SkyboxRt = "rbxassetid://9122143459"
-						newsky.SkyboxUp = "rbxassetid://9122144063"
-						newsky.MoonAngularSize = 0
-						newsky.SunAngularSize = 0
-						newsky.StarCount = 3e3
-						game.Lighting.FogEnd = "10000"
-                        game.Lighting.FogStart = "0"
-                        game.Lighting.Ambient = Color3.new(0, 0, 0)
-						table.insert(TempAssets, newsky)
-						table.insert(TempAssets, tint)
+						 local norm = Instance.new("Sky", lightingService)
+						    norm.SkyboxBk = oldskybk
+							norm.SkyboxDn = oldskydn
+							norm.SkyboxFt = oldskyft
+							norm.SkyboxLf = oldskylf
+							norm.SkyboxRt = oldskyrt
+							norm.SkyboxUp = oldskyup
+						lightingService.FogColor = oldfogcolor
+						lightingService.FogEnd = oldfogend
+						lightingService.FogStart = oldfogstart
+						lightingService.Ambient = oldambient
 					end
 				end
 			})
@@ -11276,6 +11260,11 @@ local lighting = {["Enabled"] = false}
 								MiddleTP.ToggleButton(false)
 								return
 							end
+							if shared.Nobed then
+								warningNotification("MiddleTP","Can't teleport to the middle. you have no bed.",7)
+								MiddleTP.ToggleButton(false)
+								return 
+							end
 							local Char = game.Players.LocalPlayer.Character;
 						    local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
 							if entityLibrary.isAlive then
@@ -11577,13 +11566,14 @@ local lighting = {["Enabled"] = false}
 
 			local HealthActions = {Enabled = true}
 			HealthActions = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-				Name = "HealthActions",
+				Name = "HealthNotifications",
 				Function = function(callback)
 					if callback then
 						task.spawn(function()
 							lplr.Character.Humanoid:GetPropertyChangedSignal('Health'):Connect(function()
 								if entityLibrary.character.Humanoid.Health < HealthToReact.Value and HealthActions.Enabled and not hpwarned then
 									if hpwarned then task.wait(8) hpwarned = false return end
+									if MiddleTP.Enabled or BedTP.Enabled then return end
 									warningNotification("Health","Your Health is at/below "..HealthToReact.Value.."!",8)
 									local hpwarned = true
 									task.wait(8)
@@ -11593,7 +11583,7 @@ local lighting = {["Enabled"] = false}
 						end)
 					end
 				end,
-				HoverText = "Run actions based on your current health."
+				HoverText = "Sends notifications when your health reaches a certain value.."
 			})
 			HealthToReact = HealthActions.CreateSlider({
 				Name = "Health",
@@ -11694,7 +11684,7 @@ local lighting = {["Enabled"] = false}
 								repeat task.wait() until shared.VapeFullyLoaded
 							end
 						warningNotification("Voidware Blue","Thanks for using Voidware Blue " ..(user.DisplayName or user.Name).. "!",8) shared.VoidwareWasLoaded = true
-						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Currently running version "..(CurrentVer)..".", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
+						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Currently running version "..(CurrentVer), Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
 						task.wait(3.5)
 						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Get all the latest updates at dsc.gg/voidware!", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
 						end
