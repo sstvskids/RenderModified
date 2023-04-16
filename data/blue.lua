@@ -9,7 +9,7 @@ else
 	writefile("vape/autoupdatechecked.txt","getgenv().VoidwareAutoUpdate = true")
 	loadstring(readfile("vape/autoupdatechecked.txt"))()
 end
-local CurrentVer = "Blue 1.0.1"
+local CurrentVer = "Blue 1.0"
 local VoidwareFeatureVer = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/version/blue", true))()
 local VoidwareDownloadable = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/blue.lua", true)
 local GuiLibrary = shared.GuiLibrary
@@ -2652,7 +2652,6 @@ runFunction(function()
 			if getRole(plr) >= 100 then
 				if AutoLeaveStaff.Enabled then
 					if AutoLeaveStaff2.Enabled then 
-						bedwarsStore.statistics.staff = bedwarsStore.statistics.staff + 1
 						task.wait(0.20)
 						warningNotification("Vape", "Staff Detected : "..(plr.DisplayName and plr.DisplayName.." ("..plr.Name..")" or plr.Name).." : Play legit like nothing happened to have the highest chance of not getting banned.", 60)
 						bedwarsStore.statistics.staff = bedwarsStore.statistics.staff + 1
@@ -10752,6 +10751,8 @@ local lighting = {["Enabled"] = false}
 								end
 							end
 					end)
+					repeat task.wait() until bedwarsStore.matchState == 0
+					KillAll.ToggleButton(false)
 				end)
 					else
 						workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
@@ -11345,7 +11346,7 @@ local lighting = {["Enabled"] = false}
 					if callback then
 						task.spawn(function()
 							if bedwarsStore.queueType == "skywars_to2" then
-								warningNotification("MiddleTP","Can't toggle in skywars.",7)
+								warningNotification("EmeraldTP","Can't toggle in skywars.",7)
 								EmeraldTP.ToggleButton(false)
 								return
 							end
@@ -11356,7 +11357,7 @@ local lighting = {["Enabled"] = false}
 							end
 							for i2,v7 in pairs(workspace.ItemDrops:GetChildren()) do
                                 if not v7.Name == "emerald" then
-									warningNotification("Emerald","Couldn't find any diamond drops. perhaps they haven't spawned yet.",7)
+									warningNotification("EmeraldTP","Couldn't find any emerald drops. perhaps they haven't spawned yet.",7)
 									DiamondTP.ToggleButton(false)
 									return
 								end
@@ -11468,28 +11469,7 @@ local lighting = {["Enabled"] = false}
 				end
 			end
 		
-			KitESP = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-				Name = "KitESP",
-				Function = function(callback) 
-					if callback then
-						task.spawn(function()
-							repeat task.wait() until bedwarsStore.equippedKit ~= ""
-							if KitESP.Enabled then
-								if bedwarsStore.equippedKit == "metal_detector" then
-									addKit("hidden-metal", "iron")
-								elseif bedwarsStore.equippedKit == "beekeeper" then
-									addKit("bee", "bee")
-								elseif bedwarsStore.equippedKit == "bigman" then
-									addKit("treeOrb", "natures_essence_1")
-								end
-							end
-						end)
-					else
-						espfold:ClearAllChildren()
-						table.clear(espobjs)
-					end
-				end
-			})
+		
 
 		local AutoReport = {Enabled = false}
 	local AutoReportList = {ObjectList = {}}
@@ -11835,6 +11815,35 @@ local lighting = {["Enabled"] = false}
 				HoverText = "Displays your current frames."
 			})
 
+			local automid = {Enabled = true}
+			automid = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+				Name = "AutoMiddle",
+				Function = function(callback)
+					if callback then
+						task.spawn(function()
+							repeat task.wait() until bedwarsStore.queueType ~= "bedwars_test"
+							local MiddleRoot = game:GetService("Workspace"):WaitForChild("RespawnView")
+							if bedwarsStore.matchState == 0 then
+								repeat task.wait() until entityLibrary.isAlive
+								local Hum = lplr.Character:WaitForChild("HumanoidRootPart")
+								repeat task.wait() until bedwarsStore.matchState ~= 0
+                                repeat task.wait() until isnetworkowner(lplr.Character.HumanoidRootPart)
+								Hum.Anchored = false
+								for i = 1,25 do
+									task.wait()
+									if automid.Enabled and bedwarsStore.queueType == "skywars_to2" then
+									tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(0.30, Enum.EasingStyle.Linear)
+									midtp2 = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(MiddleRoot.Position.X, MiddleRoot.Position.Y - 20, MiddleRoot.Position.Z)})
+								    midtp2:Play()
+									end
+								end
+								end
+						end)
+					end
+				end,
+				HoverText = "Middle TP built for skywars!"
+			})
+	
 
 			
 			task.spawn(function()
@@ -11884,8 +11893,7 @@ local lighting = {["Enabled"] = false}
 			end)
 
 			
-			
-
+		
 			--- checks to make features better.
 			task.spawn(function()
 			table.insert(vapeEvents.BedwarsBedBreak.Event:Connect(function(bedTable)
