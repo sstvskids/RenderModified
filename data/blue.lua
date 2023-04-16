@@ -9,7 +9,7 @@ else
 	writefile("vape/autoupdatechecked.txt","getgenv().VoidwareAutoUpdate = true")
 	loadstring(readfile("vape/autoupdatechecked.txt"))()
 end
-local CurrentVer = "Blue 1.0"
+local CurrentVer = "Blue 1.0.1"
 local VoidwareFeatureVer = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/version/blue", true))()
 local VoidwareDownloadable = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/blue.lua", true)
 local GuiLibrary = shared.GuiLibrary
@@ -59,7 +59,8 @@ local bedwarsStore = {
 		lagbacks = 0,
 		lagbackEvent = Instance.new("BindableEvent"),
 		reported = 0,
-		universalLagbacks = 0
+		universalLagbacks = 0,
+		staff = 0,
 	},
 	whitelist = {
 		chatStrings1 = {KVOP25KYFPPP4 = "vape"},
@@ -2642,7 +2643,7 @@ runFunction(function()
 		return res
 	end
 
-	local flyAllowedmodules = {"Killaura", "Sprint", "AutoClicker", "AutoReport", "AutoReportV2", "AutoRelic", "AimAssist", "AutoLeave"}
+	local flyAllowedmodules = {"Sprint", "AutoClicker", "AutoReport", "AutoReportV2", "AutoRelic", "AimAssist", "AutoLeave", "Lighting", "FPSUnlocker", "FPSDisplay", "PingDisplay"}
 	local function autoLeaveAdded(plr)
 		task.spawn(function()
 			if not shared.VapeFullyLoaded then
@@ -2651,7 +2652,10 @@ runFunction(function()
 			if getRole(plr) >= 100 then
 				if AutoLeaveStaff.Enabled then
 					if AutoLeaveStaff2.Enabled then 
+						bedwarsStore.statistics.staff = bedwarsStore.statistics.staff + 1
+						task.wait(0.20)
 						warningNotification("Vape", "Staff Detected : "..(plr.DisplayName and plr.DisplayName.." ("..plr.Name..")" or plr.Name).." : Play legit like nothing happened to have the highest chance of not getting banned.", 60)
+						bedwarsStore.statistics.staff = bedwarsStore.statistics.staff + 1
 						if AutoLobby.Enabled then
 							bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
 						end
@@ -2697,6 +2701,8 @@ runFunction(function()
 								end)
 								end
 						end
+						bedwarsStore.statistics.staff = bedwarsStore.statistics.staff + 1
+						task.wait(0.20)
 						GuiLibrary.SelfDestruct()
 						game:GetService("StarterGui"):SetCore("SendNotification", {
 							Title = "Vape",
@@ -2722,6 +2728,8 @@ runFunction(function()
 							end)
 							end
 					end
+					bedwarsStore.statistics.staff = bedwarsStore.statistics.staff + 1
+						task.wait(0.20)
 					warningNotification("Vape", "Staff Detected : "..(plr.DisplayName and plr.DisplayName.." ("..plr.Name..")" or plr.Name), 60)
 				end
 			end
@@ -9956,7 +9964,7 @@ runFunction(function()
 							end)
 						end
 						local splitted = origtpstring:split("/")
-						label.Text = "Session Info\nTime Played : "..os.date("!%X",math.floor(tick() - splitted[1])).."\nKills : "..(splitted[2] + bedwarsStore.statistics.kills).."\nBeds : "..(splitted[3] + bedwarsStore.statistics.beds).."\nWins : "..(splitted[4] + (victorysaid and 1 or 0)).."\nGames : "..splitted[5].."\nLagbacks : "..(splitted[6] + bedwarsStore.statistics.lagbacks).."\nUniversal Lagbacks : "..(splitted[7] + bedwarsStore.statistics.universalLagbacks).."\nReported : "..(splitted[8] + bedwarsStore.statistics.reported).."\nMap : "..mapname
+						label.Text = "Session Info\nTime Played : "..os.date("!%X",math.floor(tick() - splitted[1])).."\nKills : "..(splitted[2] + bedwarsStore.statistics.kills).."\nBeds : "..(splitted[3] + bedwarsStore.statistics.beds).."\nWins : "..(splitted[4] + (victorysaid and 1 or 0)).."\nGames : "..splitted[5].."\nLagbacks : "..(splitted[6] + bedwarsStore.statistics.lagbacks).."\nUniversal Lagbacks : "..(splitted[7] + bedwarsStore.statistics.universalLagbacks).."\nReported : "..(splitted[8] + bedwarsStore.statistics.reported).."\nMap : "..mapname.."\nStaff : "..(splitted[8] + bedwarsStore.statistics.staff)
 						local textsize = textService:GetTextSize(label.Text, label.TextSize, label.Font, Vector2.new(9e9, 9e9))
 						overlayframe.Size = UDim2.new(0, math.max(textsize.X + 19, 200), 0, (textsize.Y * 1.2) + 10)
 						bedwarsStore.TPString = splitted[1].."/"..(splitted[2] + bedwarsStore.statistics.kills).."/"..(splitted[3] + bedwarsStore.statistics.beds).."/"..(splitted[4] + (victorysaid and 1 or 0)).."/"..(splitted[5] + 1).."/"..(splitted[6] + bedwarsStore.statistics.lagbacks).."/"..(splitted[7] + bedwarsStore.statistics.universalLagbacks).."/"..(splitted[8] + bedwarsStore.statistics.reported)
@@ -10684,19 +10692,19 @@ local lighting = {["Enabled"] = false}
 			
 			local KillAll = {Enabled = false}
 			KillAll = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-				Name = "FunnyTPAura",
+				Name = "TPAura",
 				Function = function(callback)
 					if callback then
 					task.spawn(function()
 						local bow = getBow()
 			            local Humanoid = game.Players.LocalPlayer.Character.Humanoid
 			            local OldHealth = Humanoid.Health
-			            local Player = game.Players.LocalPlayer
+			            local Player = lplr
                         local Char = Player.Character
 						Char:WaitForChild("Humanoid").Died:Connect(function()
-							if KillAll.Enabled and tp then
+							if KillAll.Enabled then
 							if dead then return end
-							warningNotification("FunnyTPAura","Died while teleporting.",7) dead = true task.wait(8) dead = false
+							warningNotification("TPAura","Died while teleporting.",7) dead = true task.wait(8) dead = false
 							KillAll.ToggleButton(false)
 							return
 							end
@@ -10704,51 +10712,47 @@ local lighting = {["Enabled"] = false}
 							
 						if not bow and not getItem("snowball") and not dead then
 							if dead then return end
-							warningNotification("FunnyTPAura","Failed to toggle. No Compatiable Projectile found. (Bow, Crossbow, Snowball)",7)
+							warningNotification("TPAura","Failed to toggle. No Compatiable Projectile found. (Bow, Crossbow, Snowball)",7)
 							KillAll.ToggleButton(false)
 							return
 						end
 						if bow and not getItem("arrow") and not getItem("snowball") and not dead then
 							if dead then return end
 							KillAll.ToggleButton(false)
-							warningNotification("FunnyTPAura","Failed to toggle. Please restock on arrows, snowballs.",7)
+							warningNotification("TPAura","Failed to toggle. Please restock on arrows, snowballs.",7)
 							return
 						end
-						if not tp and not tpchecked and KillAll.Enabled then warningNotification("FunnyTPAura","Toggle again for the teleporting to start.",5) tpchecked = true end
 						task.spawn(function()
-							if camfreeze.Enabled and tpchecked then
+							if camfreeze.Enabled then
 								workspace.CurrentCamera.CameraType = Enum.CameraType.Fixed
 							end
 							
 							Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-							if Humanoid.Health < OldHealth and tp and KillAll.Enabled and not dead then
+							if Humanoid.Health < OldHealth and KillAll.Enabled and not dead then
 								if dead then return end
 								if damage then return end
-								warningNotification("FunnyTPAura","Your taking damage! I would recommend turning this feature off for now or you may die.",7) damage = true task.wait(5) damage = false
+								warningNotification("TPAura","Your taking damage! Its adviced you toggle off this module and check whos/what is damaging you.",7) damage = true task.wait(5) damage = false
 							end
 							
 							
 							OldHealth = Humanoid.Health
 							end)
-							repeat 
-								task.wait()
-							until not KillAll.Enabled
+							
 							for i3,v10 in pairs(game.Players:GetPlayers()) do
 								if v10.Character and v10.Character:FindFirstChild("HumanoidRootPart") then
-									if v10.Team ~= game.Players.LocalPlayer.Team then
+									if v10.Team ~= lplr.Team then
 										while v10 and v10.Character.Humanoid.Health > 0 and v10.Character.PrimaryPart do
 											task.wait(.2)
 											if KillAll.Enabled then
 												if not getItem("arrow") and not getItem("snowball") and bow and not dead then if dead then return end KillAll.ToggleButton(false) warningNotification("FunnyTPAura","Teleporting stopped. Please restock on arrows or snowballs to continue.",5) return end
-											if game.Players.LocalPlayer.Character ~= nil and game.Players.LocalPlayer.Character:FindFirstChild'HumanoidRootPart' then  game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v10.Character.HumanoidRootPart.CFrame tp = true end
+											if lplr.Character ~= nil and lplr.Character:FindFirstChild'HumanoidRootPart' then lplr.Character.HumanoidRootPart.CFrame = v10.Character.HumanoidRootPart.CFrame end
 											end
-
 										end
 									end
 								end
 							end
-								end)
-							end)
+					end)
+				end)
 					else
 						workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
 						workspace.Gravity = 192
@@ -10756,6 +10760,7 @@ local lighting = {["Enabled"] = false}
 				end,
 				HoverText = "Teleports you to players and killing them (requires toggling twice & a projectile)"
 			})
+			
 			camfreeze = KillAll.CreateToggle({
 				Name = "Camera",
 				Function = function() end,
@@ -11199,15 +11204,40 @@ local lighting = {["Enabled"] = false}
 				Function = function() end
 			})
 
-			
+			function FindEnemyBed()
+				check = game:GetService("Workspace"):FindFirstChild("bed")
+				for i2,v8 in pairs(workspace:GetChildren()) do
+					if v8.Name == "bed" then
+						if v8.Covers.BrickColor ~= lplr.Team.TeamColor then
+							return true
+					end
+				end
+				if not check then
+					return false
+				end
+			end
+		end
+		
+		
 			local BedTP = {Enabled = false}
 			BedTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "BedTP",
 				Function = function(callback)
 					if callback then
 						task.spawn(function()
+							if bedwarsStore.queueType == "skywars_to2" then
+								warningNotification("BedTP","Can't toggle in skywars.",7)
+								BedTP.ToggleButton(false)
+								return
+							end
 							if shared.Nobed then
 								warningNotification("BedTP","Can't teleport. You don't have a bed.",7)
+								BedTP.ToggleButton(false)
+								return
+							end
+							local EnemyBedAlive = FindEnemyBed()
+							if not EnemyBedAlive then
+								warningNotification("BedTP","Couldn't find any beds.",7)
 								BedTP.ToggleButton(false)
 								return
 							end
@@ -11245,7 +11275,127 @@ local lighting = {["Enabled"] = false}
 						end)
 					end
 				end,
-				HoverText = "Teleport to a random bed using TweenService"
+				HoverText = "Teleport to a random bed"
+			})
+
+			local DiamondTP = {Enabled = false}
+			DiamondTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+				Name = "DiamondTP",
+				Function = function(callback)
+					if callback then
+						task.spawn(function()
+							if bedwarsStore.queueType == "skywars_to2" then
+								warningNotification("DiamondTP","Can't toggle in skywars.",7)
+								DiamondTP.ToggleButton(false)
+								return
+							end
+							if shared.Nobed then
+								warningNotification("DiamondTP","Can't teleport. You don't have a bed.",7)
+								BedTP.ToggleButton(false)
+								return
+							end
+							for i2,v7 in pairs(workspace.ItemDrops:GetChildren()) do
+                                if not v7.Name == "diamond" then
+									warningNotification("DiamondTP","Couldn't find any diamond drops. perhaps they haven't spawned yet.",7)
+									DiamondTP.ToggleButton(false)
+									return
+								end
+							end
+							local Char = game.Players.LocalPlayer.Character;
+						    local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
+							if entityLibrary.isAlive then
+								local hum = entityLibrary.character.Humanoid
+								task.delay(0.1, function()
+									if hum and hum.Health > 0 then 
+										hum:ChangeState(Enum.HumanoidStateType.Dead)
+										hum.Health = 0
+										bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
+									end
+								end)
+								end
+								warningNotification("DiamondTP","Waiting for respawn..",4)
+								task.wait(0.50)
+								repeat task.wait() until entityLibrary.character.Humanoid.Health == 100 or entityLibrary.character.Humanoid.Health == 90
+								task.wait(0.50)
+                            for i2,v8 in pairs(workspace.ItemDrops:GetChildren()) do
+                                if v8.Name == "diamond" then
+									if DiamondTP.Enabled then
+                                    tweenService, tweenInfo = tweenService, TweenInfo.new(0.49, Enum.EasingStyle.Linear)
+                                    diamondtp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(v8.Position)})
+                                    diamondtp:Play()
+									diamondtp.Completed:Wait()
+									InfoNotification("DiamondTP","Teleported!",5)
+									DiamondTP.ToggleButton(false)
+									game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = v8.CFrame + Vector3.new(0, 7, 0)
+									repeat task.wait() until v8 == nil or v8.Parent == nil
+									bed = nil
+                                end
+								end
+                            end
+						end)
+					end
+				end,
+				HoverText = "Teleport to a random diamond drop."
+			})
+
+			local EmeraldTP = {Enabled = false}
+			EmeraldTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+				Name = "EmeraldTP",
+				Function = function(callback)
+					if callback then
+						task.spawn(function()
+							if bedwarsStore.queueType == "skywars_to2" then
+								warningNotification("MiddleTP","Can't toggle in skywars.",7)
+								EmeraldTP.ToggleButton(false)
+								return
+							end
+							if shared.Nobed then
+								warningNotification("EmeraldTP","Can't teleport. You don't have a bed.",7)
+								EmeraldTP.ToggleButton(false)
+								return
+							end
+							for i2,v7 in pairs(workspace.ItemDrops:GetChildren()) do
+                                if not v7.Name == "emerald" then
+									warningNotification("Emerald","Couldn't find any diamond drops. perhaps they haven't spawned yet.",7)
+									DiamondTP.ToggleButton(false)
+									return
+								end
+							end
+							local Char = game.Players.LocalPlayer.Character;
+						    local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
+							if entityLibrary.isAlive then
+								local hum = entityLibrary.character.Humanoid
+								task.delay(0.1, function()
+									if hum and hum.Health > 0 then 
+										hum:ChangeState(Enum.HumanoidStateType.Dead)
+										hum.Health = 0
+										bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
+									end
+								end)
+								end
+								warningNotification("EmeraldTP","Waiting for respawn..",4)
+								task.wait(0.50)
+								repeat task.wait() until entityLibrary.character.Humanoid.Health == 100 or entityLibrary.character.Humanoid.Health == 90
+								task.wait(0.50)
+                            for i2,v8 in pairs(workspace.ItemDrops:GetChildren()) do
+                                if v8.Name == "emerald" then
+									if EmeraldTP.Enabled then
+                                    tweenService, tweenInfo = tweenService, TweenInfo.new(0.49, Enum.EasingStyle.Linear)
+                                    emeraldtp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(v8.Position)})
+                                    emeraldtp:Play()
+									emeraldtp.Completed:Wait()
+									InfoNotification("EmeraldTP","Teleported!",5)
+									EmeraldTP.ToggleButton(false)
+									game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = v8.CFrame + Vector3.new(0, 7, 0)
+									repeat task.wait() until v8 == nil or v8.Parent == nil
+									bed = nil
+                                end
+								end
+                            end
+						end)
+					end
+				end,
+				HoverText = "Teleport to a random emerald drop."
 			})
 
 			local MiddleTP = {Enabled = false}
@@ -11254,6 +11404,11 @@ local lighting = {["Enabled"] = false}
 				Function = function(callback)
 					if callback then
 						task.spawn(function()
+							if bedwarsStore.queueType == "skywars_to2" then
+								warningNotification("MiddleTP","Can't toggle in skywars.",7)
+								MiddleTP.ToggleButton(false)
+								return
+							end
 							local MiddleRoot = game:GetService("Workspace"):FindFirstChild("RespawnView");
 							if not MiddleRoot then
 								warningNotification("MiddleTP","Couldn't find the middle.",7)
@@ -11402,6 +11557,8 @@ local lighting = {["Enabled"] = false}
 		magic = "Bullying",
 		faka = "Bullying",
 		naga = "Bullying",
+		nega = "Bullying",
+		nege = "Bullying",
 		neck = "Bullying",
 	}
 	local reporttableexact = {
@@ -11534,20 +11691,23 @@ local lighting = {["Enabled"] = false}
 				end,
 				HoverText = "For the nns who don't have one built in their exploit."
 			})
+
 			
+
 			local joincustoms = {Enabled = true}
 			joincustoms = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "JoinCustoms",
 				Function = function(callback)
 					if callback then
 						task.spawn(function()
+							local invalid = customcode.Value == "" or customcode.Value == "EZGG" or customcode.Value == "ezgg"
 							joincustoms.ToggleButton(false)
-							if not customcode.Value then
-								InfoNotification("JoinCustoms","Invalid code.",5)
+							if invalid then
+								InfoNotification("JoinCustoms","Invalid Match code.",5)
 							else
 								InfoNotification("JoinCustoms","Joining "..customcode.Value,5)
 							end
-							game:GetService("ReplicatedStorage").rbxts_include.node_modules["@rbxts"].net.out._NetManaged["CustomMatches:JoinByCode"]:FireServer(table.unpack({
+							replicatedStorage.rbxts_include.node_modules["@rbxts"].net.out._NetManaged["CustomMatches:JoinByCode"]:FireServer(table.unpack({
 								[1] = "78EF587B-8863-4186-A199-EC5EB364C85C",
 								[2] = {
 									[1] = customcode.Value,
@@ -11684,25 +11844,33 @@ local lighting = {["Enabled"] = false}
 								repeat task.wait() until shared.VapeFullyLoaded
 							end
 						warningNotification("Voidware Blue","Thanks for using Voidware Blue " ..(user.DisplayName or user.Name).. "!",8) shared.VoidwareWasLoaded = true
-						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Currently running version "..(CurrentVer), Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
+						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Currently running version "..(CurrentVer)..".", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
 						task.wait(3.5)
 						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Get all the latest updates at dsc.gg/voidware!", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
 						end
 			end)
 
-		
+			
 			
 			task.spawn(function()
 				local players = game:GetService("Players")
 				for i, lpg in pairs(players:GetChildren()) do
 					if lpg:IsInGroup(14270760) and lpg:GetRankInGroup(14270760) >= 2 then
-						if not lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
+						if not lpg.Name == lplr.Name then
 						warningNotification("Voidware","Voidware Owner Detected! | " ..lpg.DisplayName.. " ("..lpg.Name..")!",60)
+						if not lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
 						replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("decoy void ez ware1111", "All")
 						end
+					end
 						if lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 2 then
 							loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/chattags/Owner", true))()
 						end
+						local Tag = lpg.Head:WaitForChild("Nametag"):WaitForChild("DisplayNameContainer"):WaitForChild("Tag")
+                        local oldtagtext = lpg.Head:WaitForChild("Nametag"):WaitForChild("DisplayNameContainer"):WaitForChild("Tag").Text
+						repeat
+                        task.wait(.5)
+                        Tag.Text = "[VOIDWARE OWNER] "..oldtagtext
+						until shared.Voidwareno
 					elseif lpg:IsInGroup(14270760) and lpg:GetRankInGroup(14270760) >= 1 then
 						if not lplr:IsInGroup(14270760) and lplr:GetRankInGroup(14270760) >= 1 then
 						warningNotification("Voidware","Voidware Inf Member Detected! | " ..lpg.DisplayName.. " ("..lpg.Name..")!",60)
@@ -11715,6 +11883,9 @@ local lighting = {["Enabled"] = false}
 				end
 			end)
 
+			
+			
+
 			--- checks to make features better.
 			task.spawn(function()
 			table.insert(vapeEvents.BedwarsBedBreak.Event:Connect(function(bedTable)
@@ -11725,5 +11896,3 @@ local lighting = {["Enabled"] = false}
 				end
 			end))
 		end)
-
-		
