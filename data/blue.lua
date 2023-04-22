@@ -59,8 +59,7 @@ local bedwarsStore = {
 		lagbacks = 0,
 		lagbackEvent = Instance.new("BindableEvent"),
 		reported = 0,
-		universalLagbacks = 0,
-		staff = 0,
+		universalLagbacks = 0
 	},
 	whitelist = {
 		chatStrings1 = {KVOP25KYFPPP4 = "vape"},
@@ -2455,7 +2454,7 @@ runFunction(function()
 													firstClick = tick()
 												end
 											end)
-											task.wait(math.max((1 / autoclickercps.GetRandomValue()), noclickdelay.Enabled and 0 or (bedwarsStore.zephyrOrb ~= 0 and 0.5 or (autoclickertimed.Enabled and 0.38 or 0.185))))
+											task.wait(math.max((1 / autoclickercps.GetRandomValue()), noclickdelay.Enabled and 0 or (autoclickertimed.Enabled and 0.38 or 0)))
 										end
 									elseif bedwarsStore.localHand.Type == "block" then 
 										if autoclickerblocks.Enabled and bedwars.BlockPlacementController.blockPlacer and firstClick <= tick() then
@@ -2489,10 +2488,10 @@ runFunction(function()
 	autoclickercps = autoclicker.CreateTwoSlider({
 		Name = "CPS",
 		Min = 1,
-		Max = 1000,
+		Max = 20,
 		Function = function(val) end,
-		Default = 1000,
-		Default2 = 1000
+		Default = 8,
+		Default2 = 12
 	})
 	autoclickertimed = autoclicker.CreateToggle({
 		Name = "Timed",
@@ -2643,7 +2642,7 @@ runFunction(function()
 		return res
 	end
 
-	local flyAllowedmodules = {"Sprint", "AutoClicker", "AutoReport", "AutoReportV2", "AutoRelic", "AimAssist", "AutoLeave", "Lighting", "FPSUnlocker", "FPSDisplay", "PingDisplay"}
+	local flyAllowedmodules = {"Killaura", "Sprint", "AutoClicker", "AutoReport", "AutoReportV2", "AutoRelic", "AimAssist", "AutoLeave"}
 	local function autoLeaveAdded(plr)
 		task.spawn(function()
 			if not shared.VapeFullyLoaded then
@@ -2652,25 +2651,7 @@ runFunction(function()
 			if getRole(plr) >= 100 then
 				if AutoLeaveStaff.Enabled then
 					if AutoLeaveStaff2.Enabled then 
-						task.wait(0.20)
 						warningNotification("Vape", "Staff Detected : "..(plr.DisplayName and plr.DisplayName.." ("..plr.Name..")" or plr.Name).." : Play legit like nothing happened to have the highest chance of not getting banned.", 60)
-						bedwarsStore.statistics.staff = bedwarsStore.statistics.staff + 1
-						if AutoLobby.Enabled then
-							bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
-						end
-						if AutoDestroy.Enabled then
-							if AutoLobby.Enabled then return end
-							if entityLibrary.isAlive then
-								local hum = entityLibrary.character.Humanoid
-								task.delay(0.1, function()
-									if hum and hum.Health > 0 then 
-										hum:ChangeState(Enum.HumanoidStateType.Dead)
-										hum.Health = 0
-										bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
-									end
-								end)
-								end
-						end
 						GuiLibrary.SaveSettings = function() end
 						for i,v in pairs(GuiLibrary.ObjectsThatCanBeSaved) do 
 							if v.Type == "OptionsButton" then
@@ -2684,24 +2665,6 @@ runFunction(function()
 							end
 						end
 					else
-						if AutoLobby.Enabled then
-							bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
-						end
-						if AutoDestroy.Enabled then
-							if AutoLobby.Enabled then return end
-							if entityLibrary.isAlive then
-								local hum = entityLibrary.character.Humanoid
-								task.delay(0.1, function()
-									if hum and hum.Health > 0 then 
-										hum:ChangeState(Enum.HumanoidStateType.Dead)
-										hum.Health = 0
-										bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
-									end
-								end)
-								end
-						end
-						bedwarsStore.statistics.staff = bedwarsStore.statistics.staff + 1
-						task.wait(0.20)
 						GuiLibrary.SelfDestruct()
 						game:GetService("StarterGui"):SetCore("SendNotification", {
 							Title = "Vape",
@@ -2711,24 +2674,6 @@ runFunction(function()
 					end
 					return
 				else
-					if AutoLobby.Enabled then
-						bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
-					end
-					if AutoDestroy.Enabled then
-						if AutoLobby.Enabled then return end
-						if entityLibrary.isAlive then
-							local hum = entityLibrary.character.Humanoid
-							task.delay(0.1, function()
-								if hum and hum.Health > 0 then 
-									hum:ChangeState(Enum.HumanoidStateType.Dead)
-									hum.Health = 0
-									bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
-								end
-							end)
-							end
-					end
-					bedwarsStore.statistics.staff = bedwarsStore.statistics.staff + 1
-						task.wait(0.20)
 					warningNotification("Vape", "Staff Detected : "..(plr.DisplayName and plr.DisplayName.." ("..plr.Name..")" or plr.Name), 60)
 				end
 			end
@@ -2835,18 +2780,6 @@ runFunction(function()
 		Name = "Staff AutoConfig",
 		Function = function() end,
 		HoverText = "Instead of uninjecting, It will now reconfig vape temporarily to a more legit config.",
-		Default = true
-	})
-	AutoDestroy = AutoLeave.CreateToggle({
-		Name = "Staff Reset",
-		Function = function(callback) end,
-		HoverText = "Resets your character on staff join. useful for disabling modules that require it (NoNameTag, Disguise etc.)",
-		Default = true
-	})
-	AutoLobby = AutoLeave.CreateToggle({
-		Name = "Staff Lobby",
-		Function = function(callback) end,
-		HoverText = "Sends you to the lobby staff join. (might get you banned.)",
 		Default = true
 	})
 	AutoLeaveRandom = AutoLeave.CreateToggle({
@@ -3093,7 +3026,10 @@ runFunction(function()
 						local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (FlyMode.Value == "Normal" and FlySpeed.Value or (20 * getSpeedMultiplier()))
 						entityLibrary.character.HumanoidRootPart.Velocity = flyVelocity + (Vector3.new(0, playerMass + (FlyUp and FlyVerticalSpeed.Value or 0) + (FlyDown and -FlyVerticalSpeed.Value or 0), 0))
 						if FlyMode.Value ~= "Normal" then
-							local speedValue = FlyMode.Value == "Heatseeker" and tick() % 1 < 0.6 and 5 or FlySpeed.Value
+							local speedValue = FlySpeed.Value
+							if FlyMode.Value == "Heatseeker" then 
+								speedValue = tick() % 1 < 0.6 and 5 or (20 * getSpeedMultiplier(true)) / 0.4
+							end
 							entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * (speedValue - 20)) * delta
 						end
 					end
@@ -3520,7 +3456,6 @@ runFunction(function()
 	local killauraaimcircle = {Enabled = false}
 	local killauraaimcirclepart
 	local killauraparticle = {Enabled = false}
-	local killauraprediction = {Enabled = false}
 	local killauraparticlepart
     local Killauranear = false
     local killauraplaying = false
@@ -3749,7 +3684,7 @@ runFunction(function()
 						task.wait()
 						if not Killaura.Enabled then break end
 						vapeTargetInfo.Targets.Killaura = nil
-						local plrs = AllNearPosition(killaurarange.Value, 1, killaurasortmethods[killaurasortmethod.Value], killauraprediction.Enabled)
+						local plrs = AllNearPosition(killaurarange.Value, 100, killaurasortmethods[killaurasortmethod.Value], true)
 						local attackedplayers = {}
 						local firstPlayerNear
 						if #plrs > 0 then
@@ -3767,7 +3702,6 @@ runFunction(function()
 										continue
 									end
 									local selfrootpos = entityLibrary.character.HumanoidRootPart.Position
-									local selfcheck = entityLibrary.LocalPosition or selfrootpos
 									if killauratargetframe.Walls.Enabled then
 										if not bedwars.SwordController:canSee({player = plr.Player, getInstance = function() return plr.Character end}) then continue end
 									end
@@ -3801,14 +3735,10 @@ runFunction(function()
 									if killauratarget.Enabled then
 										table.insert(attackedplayers, plr)
 									end
-									if (selfcheck - root.Position).Magnitude >= 18 then 
-										continue
-									end
-									if (workspace:GetServerTimeNow() - bedwars.SwordController.lastAttack) < swordmeta.sword.attackSpeed then 
+									if (workspace:GetServerTimeNow() - bedwars.SwordController.lastAttack) < 0.03 then 
 										continue
 									end
 									local selfpos = selfrootpos + (killaurarange.Value > 14 and (selfrootpos - root.Position).magnitude > 14 and (CFrame.lookAt(selfrootpos, root.Position).lookVector * 4) or Vector3.zero)
-									bedwars.SwordController.lastAttack = workspace:GetServerTimeNow() + (bedwarsStore.zephyrOrb ~= 0 and 0.2 or (killaurasync.Enabled and 0.13 or -0.11))
 									if killaurasync.Enabled then 
 										if animationdelay <= tick() then
 											animationdelay = tick() + 0.19
@@ -3817,14 +3747,15 @@ runFunction(function()
 											end
 										end
 									end
+									bedwars.SwordController.lastAttack = workspace:GetServerTimeNow()
 									killaurarealremote:FireServer({
 										weapon = sword.tool,
 										chargedAttack = {chargeRatio = swordmeta.sword and swordmeta.sword.chargedAttack and swordmeta.sword.chargedAttack.maxChargeTimeSec or 0},
 										entityInstance = plr.Character,
 										validate = {
 											raycast = {
-												cameraPosition = attackValue(gameCamera.CFrame.p), 
-												cursorDirection = attackValue(Ray.new(gameCamera.CFrame.p, root.Position).Direction)
+												cameraPosition = attackValue(root.Position), 
+												cursorDirection = attackValue(Ray.new(root.Position, root.Position).Direction)
 											},
 											targetPosition = attackValue(root.Position),
 											selfPosition = attackValue(selfpos)
@@ -4108,11 +4039,6 @@ runFunction(function()
         Function = function() end,
 		HoverText = "Times animation with hit attempt"
     })
-	killauraprediction = Killaura.CreateToggle({
-        Name = "Prediction",
-        Function = function() end,
-		HoverText = "Experimental Prediction for Player Movement"
-    })
 	if WhitelistFunctions:CheckPlayerType(lplr) ~= "DEFAULT" then
 		killauranovape = Killaura.CreateToggle({
 			Name = "No Vape",
@@ -4244,22 +4170,29 @@ runFunction(function()
 			end)
 		end,
 		wood_dao = function(tnt, pos2)
-			switchItem(tnt.tool)
-			task.delay(0.7, function()
-				local vec = entityLibrary.character.HumanoidRootPart.CFrame.lookVector
-				replicatedStorageService["events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"].useAbility:FireServer("dash", {
-					direction = vec,
-					origin = entityLibrary.character.HumanoidRootPart.CFrame.p,
-					weapon = tnt.itemType
-				})
-				damagetimer = LongJumpSpeed.Value
-				damagetimertick = tick() + 2.5
-				directionvec = Vector3.new(vec.X, 0, vec.Z).Unit
+			task.spawn(function()
+				switchItem(tnt.tool)
+				if not (not lplr.Character:GetAttribute("CanDashNext") or lplr.Character:GetAttribute("CanDashNext") < workspace:GetServerTimeNow()) then
+					repeat task.wait() until (not lplr.Character:GetAttribute("CanDashNext") or lplr.Character:GetAttribute("CanDashNext") < workspace:GetServerTimeNow()) or not LongJump.Enabled
+				end
+				if LongJump.Enabled then
+					local vec = entityLibrary.character.HumanoidRootPart.CFrame.lookVector
+					replicatedStorageService["events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"].useAbility:FireServer("dash", {
+						direction = vec,
+						origin = entityLibrary.character.HumanoidRootPart.CFrame.p,
+						weapon = tnt.itemType
+					})
+					damagetimer = LongJumpSpeed.Value * 0.9
+					damagetimertick = tick() + 2.5
+					directionvec = Vector3.new(vec.X, 0, vec.Z).Unit
+				end
 			end)
 		end,
 		jade_hammer = function(tnt, pos2)
 			task.spawn(function()
-				repeat task.wait() until bedwars.AbilityController:canUseAbility("jade_hammer_jump") or not LongJump.Enabled
+				if not bedwars.AbilityController:canUseAbility("jade_hammer_jump") then
+					repeat task.wait() until bedwars.AbilityController:canUseAbility("jade_hammer_jump") or not LongJump.Enabled
+				end
 				task.delay(0.7, function()
 					if bedwars.AbilityController:canUseAbility("jade_hammer_jump") and LongJump.Enabled then
 						bedwars.AbilityController:useAbility("jade_hammer_jump")
@@ -4273,7 +4206,9 @@ runFunction(function()
 		end,
 		void_axe = function(tnt, pos2)
 			task.spawn(function()
-				repeat task.wait() until bedwars.AbilityController:canUseAbility("void_axe_jump") or not LongJump.Enabled
+				if not bedwars.AbilityController:canUseAbility("void_axe_jump") then
+					repeat task.wait() until bedwars.AbilityController:canUseAbility("void_axe_jump") or not LongJump.Enabled
+				end
 				task.delay(0.7, function()
 					if bedwars.AbilityController:canUseAbility("void_axe_jump") and LongJump.Enabled then
 						bedwars.AbilityController:useAbility("void_axe_jump")
@@ -4642,7 +4577,7 @@ runFunction(function()
 			if plr.Character.PrimaryPart:FindFirstChild("rbxassetid://8200754399") then 
 				playergrav = (workspace.Gravity * 0.3)
 			end
-			local shootpos, shootvelo = predictGravity(pos, plr.Character.HumanoidRootPart.Velocity, (pos - offsetStartPos).Magnitude / launchvelo, plr, playergrav)
+			local shootpos, shootvelo = predictGravity(pos, plr.RootPart.Velocity, (pos - offsetStartPos).Magnitude / launchvelo, plr, playergrav)
 			if projmeta.projectile == "telepearl" then
 				shootpos = pos
 				shootvelo = Vector3.zero
@@ -4976,7 +4911,9 @@ runFunction(function()
 						local speedVelocity = entityLibrary.character.Humanoid.MoveDirection * (SpeedMode.Value == "Normal" and speedValue or (20 * getSpeedMultiplier()))
 						entityLibrary.character.HumanoidRootPart.Velocity = antivoidvelo or Vector3.new(speedVelocity.X, entityLibrary.character.HumanoidRootPart.Velocity.Y, speedVelocity.Z)
 						if SpeedMode.Value ~= "Normal" then 
-							speedValue = SpeedMode.Value == "Heatseeker" and tick() % 1 < 0.6 and 5 or speedValue
+							if SpeedMode.Value == "Heatseeker" then 
+								speedValue = tick() % 1 < 0.6 and 5 or (20 * getSpeedMultiplier(true)) / 0.4
+							end
 							local speedCFrame = entityLibrary.character.Humanoid.MoveDirection * (speedValue - 20) * delta
 							raycastparameters.FilterDescendantsInstances = {lplr.Character}
 							local ray = workspace:Raycast(entityLibrary.character.HumanoidRootPart.Position, speedCFrame, raycastparameters)
@@ -8873,31 +8810,31 @@ runFunction(function()
 						task.spawn(function()
 							local root = entityLibrary.isAlive and entityLibrary.character.Humanoid.Health > 0 and entityLibrary.character.HumanoidRootPart
 							if root and tppos2 then 
-								local check = (lplr:GetAttribute("LastTeleported") - lplr:GetAttribute("SpawnTime")) < 1
-								RunLoops:BindToHeartbeat("TPRedirection", function(dt)
-									if root and tppos2 then 
-										local dist = ((check and 700 or 1200) * dt)
-										if (tppos2 - root.CFrame.p).Magnitude > dist then
-											root.CFrame = root.CFrame + (tppos2 - root.CFrame.p).Unit * dist
-											local yes = (tppos2 - root.CFrame.p).Unit * 20
-											root.Velocity = Vector3.new(yes.X, root.Velocity.Y, yes.Z)
-										else
-											root.CFrame = root.CFrame + (tppos2 - root.CFrame.p)
+									local check = (lplr:GetAttribute("LastTeleported") - lplr:GetAttribute("SpawnTime")) < 1
+									RunLoops:BindToHeartbeat("TPRedirection", function(dt)
+										if root and tppos2 then 
+											local dist = ((check and 700 or 1200) * dt)
+											if (tppos2 - root.CFrame.p).Magnitude > dist then
+												root.CFrame = root.CFrame + (tppos2 - root.CFrame.p).Unit * dist
+												local yes = (tppos2 - root.CFrame.p).Unit * 20
+												root.Velocity = Vector3.new(yes.X, root.Velocity.Y, yes.Z)
+											else
+												root.CFrame = root.CFrame + (tppos2 - root.CFrame.p)
+											end
 										end
-									end
-								end)
-								RunLoops:BindToStepped("TPRedirection", function()
-									if entityLibrary.isAlive then 
-										for i,v in pairs(lplr.Character:GetChildren()) do 
-											if v:IsA("BasePart") then v.CanCollide = false end
+									end)
+									RunLoops:BindToStepped("TPRedirection", function()
+										if entityLibrary.isAlive then 
+											for i,v in pairs(lplr.Character:GetChildren()) do 
+												if v:IsA("BasePart") then v.CanCollide = false end
+											end
 										end
-									end
-								end)
-								repeat
-									task.wait()
-								until (tppos2 - root.CFrame.p).Magnitude < 1
-								RunLoops:UnbindFromHeartbeat("TPRedirection")
-								RunLoops:UnbindFromStepped("TPRedirection")
+									end)
+									repeat
+										task.wait()
+									until (tppos2 - root.CFrame.p).Magnitude < 1
+									RunLoops:UnbindFromHeartbeat("TPRedirection")
+									RunLoops:UnbindFromStepped("TPRedirection")
 								warningNotification("TPRedirection", "Teleported.", 5)
 								if TPConnection then 
 									TPConnection:Disconnect() 
@@ -9342,7 +9279,6 @@ runFunction(function()
 		Name = "Fly Disable",
 		Function = function() end
 	})
-
     nukerluckyblock = Nuker.CreateToggle({
 		Name = "Break LuckyBlocks",
 		Function = function(callback) 
@@ -9718,21 +9654,42 @@ runFunction(function()
 												if not playerattackable then 
 													return res:CallServerAsync(shooting, proj, proj2, launchpos1, launchpos2, launchvelo, tag, tab1, ...)
 												end
-												local newlaunchpos = plr.RootPart.CFrame.p
-												local newlaunchvelo = CFrame.lookAt(newlaunchpos, newlaunchpos + (Vector3.new(plr.RootPart.Velocity.X, -1, plr.RootPart.Velocity.Z) * physicsUpdate)).lookVector * bedwars.ProjectileMeta[proj2].launchVelocity
-												launchvelo = table.find(noveloproj, proj2) and Vector3.new(0, -bedwars.ProjectileMeta[proj2].launchVelocity, 0) or newlaunchvelo
-												launchpos1 = newlaunchpos
-												launchpos2 = newlaunchpos
+
 												tab1.drawDurationSeconds = 1
+												repeat
+													task.wait(0.03)
+													local offsetStartPos = plr.RootPart.CFrame.p - plr.RootPart.CFrame.lookVector
+													local pos = plr.RootPart.Position
+													local playergrav = workspace.Gravity
+													local balloons = plr.Character:GetAttribute("InflatedBalloons")
+													if balloons and balloons > 0 then 
+														playergrav = (workspace.Gravity * (1 - ((balloons >= 4 and 1.2 or balloons >= 3 and 1 or 0.975))))
+													end
+													if plr.Character.PrimaryPart:FindFirstChild("rbxassetid://8200754399") then 
+														playergrav = (workspace.Gravity * 0.3)
+													end
+													local newLaunchVelo = bedwars.ProjectileMeta[proj2].launchVelocity
+													local shootpos, shootvelo = predictGravity(pos, plr.RootPart.Velocity, (pos - offsetStartPos).Magnitude / newLaunchVelo, plr, playergrav)
+													if proj2 == "telepearl" then
+														shootpos = pos
+														shootvelo = Vector3.zero
+													end
+													local newlook = CFrame.new(offsetStartPos, shootpos) * CFrame.new(Vector3.new(-bedwars.BowConstantsTable.RelX, -bedwars.BowConstantsTable.RelY, -bedwars.BowConstantsTable.RelZ))
+													shootpos = newlook.p + (newlook.lookVector * (offsetStartPos - shootpos).magnitude)
+													local calculated = LaunchDirection(offsetStartPos, shootpos, newLaunchVelo, workspace.Gravity, false)
+													if calculated then 
+														launchvelo = calculated
+														launchpos1 = offsetStartPos
+														launchpos2 = offsetStartPos
+														tab1.drawDurationSeconds = 1
+													else
+														break
+													end
+													if bedwars.RuntimeLib.await(res:CallServerAsync(shooting, proj, proj2, launchpos1, launchpos2, launchvelo, tag, tab1, workspace:GetServerTimeNow() - 0.045)) then break end
+												until false
+											else
+												return res:CallServerAsync(shooting, proj, proj2, launchpos1, launchpos2, launchvelo, tag, tab1, ...)
 											end
-											local called = res:CallServerAsync(shooting, proj, proj2, launchpos1, launchpos2, launchvelo, tag, tab1, ...):andThen(function(shoot)
-												if shoot then 
-													warningNotification("ProjectileExploit", "allowed server", 5)
-												else
-													warningNotification("ProjectileExploit", "failed server", 5)
-												end
-											end)
-											return called
 										end
 									})
 								end
@@ -9963,7 +9920,7 @@ runFunction(function()
 							end)
 						end
 						local splitted = origtpstring:split("/")
-						label.Text = "Session Info\nTime Played : "..os.date("!%X",math.floor(tick() - splitted[1])).."\nKills : "..(splitted[2] + bedwarsStore.statistics.kills).."\nBeds : "..(splitted[3] + bedwarsStore.statistics.beds).."\nWins : "..(splitted[4] + (victorysaid and 1 or 0)).."\nGames : "..splitted[5].."\nLagbacks : "..(splitted[6] + bedwarsStore.statistics.lagbacks).."\nUniversal Lagbacks : "..(splitted[7] + bedwarsStore.statistics.universalLagbacks).."\nReported : "..(splitted[8] + bedwarsStore.statistics.reported).."\nMap : "..mapname.."\nStaff : "..(splitted[8] + bedwarsStore.statistics.staff)
+						label.Text = "Session Info\nTime Played : "..os.date("!%X",math.floor(tick() - splitted[1])).."\nKills : "..(splitted[2] + bedwarsStore.statistics.kills).."\nBeds : "..(splitted[3] + bedwarsStore.statistics.beds).."\nWins : "..(splitted[4] + (victorysaid and 1 or 0)).."\nGames : "..splitted[5].."\nLagbacks : "..(splitted[6] + bedwarsStore.statistics.lagbacks).."\nUniversal Lagbacks : "..(splitted[7] + bedwarsStore.statistics.universalLagbacks).."\nReported : "..(splitted[8] + bedwarsStore.statistics.reported).."\nMap : "..mapname
 						local textsize = textService:GetTextSize(label.Text, label.TextSize, label.Font, Vector2.new(9e9, 9e9))
 						overlayframe.Size = UDim2.new(0, math.max(textsize.X + 19, 200), 0, (textsize.Y * 1.2) + 10)
 						bedwarsStore.TPString = splitted[1].."/"..(splitted[2] + bedwarsStore.statistics.kills).."/"..(splitted[3] + bedwarsStore.statistics.beds).."/"..(splitted[4] + (victorysaid and 1 or 0)).."/"..(splitted[5] + 1).."/"..(splitted[6] + bedwarsStore.statistics.lagbacks).."/"..(splitted[7] + bedwarsStore.statistics.universalLagbacks).."/"..(splitted[8] + bedwarsStore.statistics.reported)
@@ -10386,11 +10343,14 @@ local lighting = {["Enabled"] = false}
 												obj.Parent.Text = Messages[math.random(1,#Messages)]
 												obj.Parent.TextColor3 =  Color3.fromHSV(tick()%5/5,1,1)
 											end
-											if IndicatorMode.Value == "Custom" and Indicator.Enabled then
+											if IndicatorMode.Value == "Custom" and Indicator.Enabled then 
 												obj.Parent.TextColor3 =  Color3.fromHSV(CustomIndicatorColor.Hue, CustomIndicatorColor.Sat, CustomIndicatorColor.Value)
 												if IndicatorMode.Value == "Custom" and CustomIndicatorTextToggle.Enabled and Indicator.Enabled then
 													local CustomMessages = #CustomIndicatorText.ObjectList > 0 and CustomIndicatorText.ObjectList[math.random(1, #CustomIndicatorText.ObjectList)]
 													obj.Parent.Text = CustomMessages
+												end
+												if CustomIndicatorFontToggle.Enabled and Indicator.Enabled and IndicatorMode.Value == "Custom" then
+													obj.Parent.Font = CustomIndicatorFont.Value
 												end
 											end
 										end)
@@ -10406,6 +10366,12 @@ local lighting = {["Enabled"] = false}
 					end
 				end
 			})
+			local Font1 = {"SourceSans"}
+			for i,v in pairs(Enum.Font:GetEnumItems()) do 
+				if v.Name ~= "SourceSans" then 
+					table.insert(Font1, v.Name)
+				end
+			end
 			IndicatorMode = Indicator.CreateDropdown({
 				Name = "Type",
 				List = {"Default", "Meteor", "Custom"},
@@ -10421,13 +10387,24 @@ local lighting = {["Enabled"] = false}
 			})
 			CustomIndicatorTextToggle = Indicator.CreateToggle({
 				Name = "Custom Text",
-				Function = function() end,
+				Function = function(bv) end,
 				Default = true,
 				HoverText = "custom text messages for damage indicator."
+			})
+			CustomIndicatorFontToggle = Indicator.CreateToggle({
+				Name = "Custom Font",
+				Function = function(vb)  end,
+				Default = false,
+				HoverText = "custom font for damage indicator."
 			})
 			CustomIndicatorText = Indicator.CreateTextList({
 				Name = "Indicator Text",
 				TempText = "Custom indicator text",
+			})
+			CustomIndicatorFont = Indicator.CreateDropdown({
+				Name = "Font",
+				List = Font1,
+				Function = function() end
 			})
 			
 		
@@ -10769,25 +10746,36 @@ local lighting = {["Enabled"] = false}
 				HoverText = "Stops your camera from moving during teleport"
 			})
 	
+			local bubbleChatSettings
 			local Chat = {Enabled = false}
 			Chat = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
 				Name = "ChatBubble",
 				Function = function(callback)
 					if callback then
 						task.spawn(function()
+							repeat task.wait()
 							local ChatService = game:GetService("Chat")
-							ChatService.BubbleChatEnabled = true
-							local bubbleChatSettings = {
+							bubbleChatSettings = {
 								BackgroundColor3 = Color3.fromHSV(BubbleColor.Hue, BubbleColor.Sat, BubbleColor.Value),
 								TextSize = 20,
 								Font = Enum.Font.FredokaOne,
-								BubbleDuration = 10
+								BubbleDuration = BubbleDur.Value
 							}
 							ChatService:SetBubbleChatSettings(bubbleChatSettings)
+						until not Chat.Enabled
 						end)
+					else
+						task.wait(1)
+						bubbleChatSettings = {
+							BackgroundColor3 = Color3.fromHSV(255, 255, 255),
+							TextSize = 20,
+							Font = Enum.Font.GothamBold,
+							BubbleDuration = 10
+						}
+						ChatService:SetBubbleChatSettings(bubbleChatSettings)
 					end
 				end,
-				HoverText = "Customizable the bubble chat experience. (retoggle after changing settings)"
+				HoverText = "Customizable the bubble chat experience."
 			})
 			BubbleColor = Chat.CreateColorSlider({
 				Name = "Bubble Color",
@@ -10796,6 +10784,13 @@ local lighting = {["Enabled"] = false}
 						BackgroundColor3.Color = Color3.fromHSV(h, s, v)
 					end
 				end
+			})
+			BubbleDur = Chat.CreateSlider({
+				Name = "Bubble Duration",
+				Min = 1,
+				Max = 60,
+				Function = function() end,
+				Default = 10
 			})
 	
 			local PartyInviteLoop = {Enabled = false}
@@ -10918,7 +10913,7 @@ local lighting = {["Enabled"] = false}
 					if callback then
 					task.spawn(function()
 						if KillAll.Enabled then
-							warningNotification("7BitchesExploit","Can't toggle while FunnyTPAura is enabled.",5)
+							warningNotification("7BitchesExploit","Can't toggle while TPAura is enabled.",5)
 							playertp.ToggleButton(false)
 							return
 						end
@@ -11220,6 +11215,12 @@ local lighting = {["Enabled"] = false}
 		end
 		
 		
+		    local HumanoidRootPart
+		    local bedpos
+			local teleportinprogress
+			local bedtpconnection
+			local bedtpdisablefunc
+			local bedtperrored
 			local BedTP = {Enabled = false}
 			BedTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "BedTP",
@@ -11231,8 +11232,15 @@ local lighting = {["Enabled"] = false}
 								BedTP.ToggleButton(false)
 								return
 							end
+							if teleportinprogress and not bedtpconnection then
+								warningNotification("BedTP","Another teleport is currently in progress.",7)
+								repeat task.wait() until not teleportinprogress
+								bedtperrored = true
+								BedTP.ToggleButton(false)
+								return
+							end
 							if shared.Nobed then
-								warningNotification("BedTP","Can't teleport. You don't have a bed.",7)
+								warningNotification("BedTP","This feature requires you to have a bed.",7)
 								BedTP.ToggleButton(false)
 								return
 							end
@@ -11242,43 +11250,74 @@ local lighting = {["Enabled"] = false}
 								BedTP.ToggleButton(false)
 								return
 							end
-							local Char = game.Players.LocalPlayer.Character;
-						    local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-							if entityLibrary.isAlive then
-								local hum = entityLibrary.character.Humanoid
-								task.delay(0.1, function()
-									if hum and hum.Health > 0 then 
-										hum:ChangeState(Enum.HumanoidStateType.Dead)
-										hum.Health = 0
-										bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
-									end
-								end)
-								end
-								warningNotification("BedTP","Waiting for respawn..",4)
+							if bedtpdisablefunc then
+								warningNotification("BedTP","Wait for the 4.5 second cooldown to finish.",5)
+								BedTP.ToggleButton(false)
+								return
+							end
+							if teleportinprogress and not bedtpconnection then
+								warningNotification("BedTP","Another teleport is currently in progress.",7)
+								repeat task.wait() until not teleportinprogress
+								BedTP.ToggleButton(false)
+								return
+							end
+							bedtperrored = false
+							HumanoidRootPart = lplr.Character:WaitForChild("HumanoidRootPart")
+							entityLibrary.character.Humanoid.Health = 0
+							bedtpconnection = true
+							teleportinprogress = true
+							task.wait(1)
+							repeat task.wait() until entityLibrary.character.Humanoid.Health == 0 and entityLibrary.isAlive
+								InfoNotification("BedTP","Waiting for respawn..",4)
 								task.wait(0.50)
-								repeat task.wait() until entityLibrary.character.Humanoid.Health == 100 or entityLibrary.character.Humanoid.Health == 90
+								repeat task.wait() until entityLibrary.character.Humanoid.Health > 0
 								task.wait(0.50)
                             for i2,v8 in pairs(workspace:GetChildren()) do
                                 if v8.Name == "bed" then
-									if v8.Covers.BrickColor ~= game.Players.LocalPlayer.Team.TeamColor and BedTP.Enabled then
+									if v8.Covers.BrickColor ~= lplr.Team.TeamColor and BedTP.Enabled then
                                     tweenService, tweenInfo = tweenService, TweenInfo.new(0.49, Enum.EasingStyle.Linear)
-                                    bedtp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(v8.Position)})
+									bedpos = CFrame.new(v8.Position)
+                                    bedtp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = bedpos})
                                     bedtp:Play()
 									bedtp.Completed:Wait()
+									lplr.Character:FindFirstChild("HumanoidRootPart").CFrame = v8.CFrame + Vector3.new(0, 7, 0)
 									InfoNotification("BedTP","Teleported!",5)
 									BedTP.ToggleButton(false)
-									game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = v8.CFrame + Vector3.new(0, 7, 0)
-									repeat task.wait() until v8 == nil or v8.Parent == nil
-									bed = nil
+									bedtpconnection = false
                                 end
 								end
                             end
+							task.wait(4)
+						if bedtpconnection and entityLibrary.character.Humanoid.Health > 0 and teleportinprogress and BedTP.Enabled then
+							warningNotification("BedTP","Failed to play Tween.",7)
+							BedTP.ToggleButton(false)
+							bedtpconnection = false
+							teleportinprogress = false
+							bedtperrored = true
+							return
+					end
 						end)
+					else
+						if bedtpconnection then
+							teleportinprogress = false
+						end
+						task.wait(0.10)
+						if bedtpconnection and not bedtperrored then
+							bedtpdisablefunc = true
+							bedtpconnection = false
+							teleportinprogress = false
+							InfoNotification("BedTP","Feature retogglable in 4.5 seconds.",6)
+							task.wait(4.5)
+							bedtpdisablefunc = false
+						end
 					end
 				end,
 				HoverText = "Teleport to a random bed"
 			})
 
+			local diamondtpconnection
+			local diamondtperroed
+			local diamondtpdisablefunc
 			local DiamondTP = {Enabled = false}
 			DiamondTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "DiamondTP",
@@ -11295,50 +11334,76 @@ local lighting = {["Enabled"] = false}
 								BedTP.ToggleButton(false)
 								return
 							end
-							for i2,v7 in pairs(workspace.ItemDrops:GetChildren()) do
-                                if not v7.Name == "diamond" then
-									warningNotification("DiamondTP","Couldn't find any diamond drops. perhaps they haven't spawned yet.",7)
-									DiamondTP.ToggleButton(false)
-									return
-								end
+							local diamonddrops = workspace:FindFirstChild("ItemDrops"):FindFirstChild("diamond")
+							if not diamonddrops then
+								warningNotification("DiamondTP","Diamond drops not found. Perhaps they haven't spawned yet.",7)
+								DiamondTP.ToggleButton(false)
+								return
 							end
-							local Char = game.Players.LocalPlayer.Character;
-						    local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-							if entityLibrary.isAlive then
-								local hum = entityLibrary.character.Humanoid
-								task.delay(0.1, function()
-									if hum and hum.Health > 0 then 
-										hum:ChangeState(Enum.HumanoidStateType.Dead)
-										hum.Health = 0
-										bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
-									end
-								end)
-								end
+							if teleportinprogress and not diamondtpconnection then
+								warningNotification("DiamondTP","Another teleport is currently in progress.",7)
+								diamondtperrored = true
+								repeat task.wait() until not teleportinprogress
+								DiamondTP.ToggleButton(false)
+								return
+							end
+							if diamondtpdisablefunc then
+								warningNotification("DiamondTP","Please wait for the 2.5 second cooldown to finish.",7)
+								DiamondTP.ToggleButton(false)
+								return
+							end
+							entityLibrary.character.Humanoid.Health = 0
+							task.wait(1)
 								warningNotification("DiamondTP","Waiting for respawn..",4)
+								teleportinprogress = true
+								diamondtpconnection = true
 								task.wait(0.50)
-								repeat task.wait() until entityLibrary.character.Humanoid.Health == 100 or entityLibrary.character.Humanoid.Health == 90
+								repeat task.wait() until entityLibrary.character.Humanoid.Health > 0
 								task.wait(0.50)
-                            for i2,v8 in pairs(workspace.ItemDrops:GetChildren()) do
-                                if v8.Name == "diamond" then
 									if DiamondTP.Enabled then
                                     tweenService, tweenInfo = tweenService, TweenInfo.new(0.49, Enum.EasingStyle.Linear)
-                                    diamondtp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(v8.Position)})
+                                    diamondtp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(diamonddrops.Position)})
                                     diamondtp:Play()
 									diamondtp.Completed:Wait()
 									InfoNotification("DiamondTP","Teleported!",5)
 									DiamondTP.ToggleButton(false)
-									game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = v8.CFrame + Vector3.new(0, 7, 0)
-									repeat task.wait() until v8 == nil or v8.Parent == nil
-									bed = nil
-                                end
-								end
                             end
+							task.wait(4)
+							if diamondtpconnection and entityLibrary.Character.Humanoid > 0 and DiamondTP.Enabled then
+								warningNotification("DiamondTP","Failed to play Tween.",7)
+								diamondtperroed = true
+								teleportinprogress = false
+								DiamondTP.ToggleButton(false)
+								return
+							end
 						end)
+					else
+						if diamondtpconnection then
+							teleportinprogress = false
+						end
+						task.wait(0.10)
+						if diamondtpconnection and not diamondtperroed then
+							diamondtpdisablefunc = true
+							diamondtpconnection = false
+							teleportinprogress = false
+							InfoNotification("DiamondTP","Feature retogglable in 2.5 seconds.",6)
+							task.wait(2.5)
+							diamondtpdisablefunc = false
+						else
+							if diamondtpconnection then
+								diamondtpconnection = false
+								teleportinprogress = false
+								diamondtperroed = false
+							end
+							end
 					end
 				end,
 				HoverText = "Teleport to a random diamond drop."
 			})
 
+			local emeraldtpconnection
+			local emeraldtperrored
+			local emeraldtpdisablefunc
 			local EmeraldTP = {Enabled = false}
 			EmeraldTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "EmeraldTP",
@@ -11355,50 +11420,77 @@ local lighting = {["Enabled"] = false}
 								EmeraldTP.ToggleButton(false)
 								return
 							end
-							for i2,v7 in pairs(workspace.ItemDrops:GetChildren()) do
-                                if not v7.Name == "emerald" then
-									warningNotification("EmeraldTP","Couldn't find any emerald drops. perhaps they haven't spawned yet.",7)
-									DiamondTP.ToggleButton(false)
-									return
-								end
+							local emeralddrop = workspace:FindFirstChild("ItemDrops"):FindFirstChild("emerald")
+							if not emeralddrop then
+								warningNotification("EmeraldTP","Emerald drop not found. Perhaps they haven't spawned yet.",7)
+								EmeraldTP.ToggleButton(false)
+								return
 							end
-							local Char = game.Players.LocalPlayer.Character;
-						    local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-							if entityLibrary.isAlive then
-								local hum = entityLibrary.character.Humanoid
-								task.delay(0.1, function()
-									if hum and hum.Health > 0 then 
-										hum:ChangeState(Enum.HumanoidStateType.Dead)
-										hum.Health = 0
-										bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
-									end
-								end)
-								end
+							if teleportinprogress and not emeraldtpconnection then
+								warningNotification("EmeraldTP","Another teleport is currently in progress.",7)
+								emeraldtperrored = true
+								repeat task.wait() until not teleportinprogress
+								EmeraldTP.ToggleButton(false)
+								return
+							end
+							if emeraldtpdisablefunc then
+								warningNotification("EmeraldTP","Please wait for the 2.5 second cooldown to finish.",7)
+								EmeraldTP.ToggleButton(false)
+								return
+							end
+							entityLibrary.character.Humanoid.Health = 0
+							task.wait(0.10)
 								warningNotification("EmeraldTP","Waiting for respawn..",4)
+								emeraldtpconnection = true
+								teleportinprogress = true
 								task.wait(0.50)
-								repeat task.wait() until entityLibrary.character.Humanoid.Health == 100 or entityLibrary.character.Humanoid.Health == 90
+								repeat task.wait() until entityLibrary.character.Humanoid.Health > 0
 								task.wait(0.50)
-                            for i2,v8 in pairs(workspace.ItemDrops:GetChildren()) do
-                                if v8.Name == "emerald" then
 									if EmeraldTP.Enabled then
                                     tweenService, tweenInfo = tweenService, TweenInfo.new(0.49, Enum.EasingStyle.Linear)
-                                    emeraldtp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(v8.Position)})
+                                    emeraldtp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(emeralddrop.Position)})
                                     emeraldtp:Play()
 									emeraldtp.Completed:Wait()
 									InfoNotification("EmeraldTP","Teleported!",5)
 									EmeraldTP.ToggleButton(false)
-									game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = v8.CFrame + Vector3.new(0, 7, 0)
-									repeat task.wait() until v8 == nil or v8.Parent == nil
-									bed = nil
-                                end
-								end
-                            end
+									emeraldtpconnection = false
+									end
+									task.wait(4)
+							if emeraldtpconnection and entityLibrary.Character.Humanoid > 0 and EmeraldTP.Enabled then
+								warningNotification("EmeraldTP","Failed to play Tween.",7)
+								emeraldtperrored = true
+								teleportinprogress = false
+								EmeraldTP.ToggleButton(false)
+								return
+							end
 						end)
+					else
+						if emeraldtpconnection then
+							teleportinprogress = false
+						end
+						task.wait(0.10)
+						if emeraldtpconnection and not emeraldtperrored then
+							emeraldtpdisablefunc = true
+							emeraldtpconnection = false
+							teleportinprogress = false
+							InfoNotification("EmeraldTP","Feature retogglable in 2.5 seconds.",6)
+							task.wait(2.5)
+							emeraldtpdisablefunc = false
+						else
+							if emeraldtpconnection then
+								emeraldtpconnection = false
+								teleportinprogress = false
+								emeraldtperrored = false
+							end
+							end
 					end
 				end,
 				HoverText = "Teleport to a random emerald drop."
 			})
 
+			local middletpconnection
+			local middletperrored
+			local middletpdisablefunc
 			local MiddleTP = {Enabled = false}
 			MiddleTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "MiddleTP",
@@ -11417,41 +11509,72 @@ local lighting = {["Enabled"] = false}
 								return
 							end
 							if shared.Nobed then
-								warningNotification("MiddleTP","Can't teleport to the middle. you have no bed.",7)
+								warningNotification("MiddleTP","This feature requires you to have a bed.",7)
 								MiddleTP.ToggleButton(false)
 								return 
 							end
-							local Char = game.Players.LocalPlayer.Character;
-						    local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-							if entityLibrary.isAlive then
-								local hum = entityLibrary.character.Humanoid
-								task.delay(0.1, function()
-									if hum and hum.Health > 0 then 
-										hum:ChangeState(Enum.HumanoidStateType.Dead)
-										hum.Health = 0
-										bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
-									end
-								end)
-								end
+							if teleportinprogress and not middletpconnection then
+								warningNotification("MiddleTP","Another teleport is currently in progress.",7)
+								middletperrored = true
+								repeat task.wait() until not teleportinprogress
+								MiddleTP.ToggleButton(false)
+								return
+							end
+							if middletpdisablefunc then
+								warningNotification("MiddleTP","Please wait for the 4.5 second cooldown to finish.",7)
+								MiddleTP.ToggleButton(false)
+								return
+							end
+							entityLibrary.character.Humanoid.Health = 0
+							task.wait(1)
 								warningNotification("MiddleTP","Waiting for respawn..",5)
+								teleportinprogress = true
+								middletpconnection = true
 								task.wait(0.50)
-								repeat task.wait() until entityLibrary.character.Humanoid.Health == 100 or entityLibrary.character.Humanoid.Health == 90
+								repeat task.wait() until entityLibrary.character.Humanoid.Health > 0
 								task.wait(0.50)
-							local Char = game.Players.LocalPlayer.Character;
-                            local Hum = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
 							local Middle = game:GetService("Workspace"):WaitForChild("RespawnView")
-							if not bedless and MiddleTP.Enabled then
+							local MiddlePos = CFrame.new(Middle.Position)
+							if MiddleTP.Enabled then
 							tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(0.30, Enum.EasingStyle.Linear)
-							middletp = tweenService:Create(Char.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(Middle.Position)})
+							middletp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = MiddlePos})
 							middletp:Play()
 							middletp.Completed:Wait()
 							InfoNotification("MiddleTP","Teleported!",7)
 							MiddleTP.ToggleButton(false)
+							middletpconnection = false
+							end
+							task.wait(4)
+							if middletpconnection and entityLibrary.Character.Humanoid > 0 and MiddleTP.Enabled then
+								warningNotification("MiddleTP","Failed to play Tween.",7)
+								middletperrored = true
+								teleportinprogress = false
+								MiddleTP.ToggleButton(false)
+								return
 							end
 						end)
+					else
+						if middletpconnection then
+							teleportinprogress = false
+						end
+						task.wait(0.10)
+						if middletpconnection and not middletperrored then
+							middletpdisablefunc = true
+							middletpconnection = false
+							teleportinprogress = false
+							InfoNotification("MiddleTP","Feature retogglable in 4.5 seconds.",6)
+							task.wait(4.5)
+							middletpdisablefunc = false
+						else
+							if middletpconnection then
+								middletpconnection = false
+							    teleportinprogress = false
+								middletperrored = false
+							end
+						end
 					end
 				end,
-				HoverText = "Teleport to the middle of the map using TweenService"
+				HoverText = "Teleport to the center of the map."
 			})
 
 			local function addKit(tag, icon)
