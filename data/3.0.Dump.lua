@@ -1,5 +1,5 @@
 local CurrentVer = "3.0"
-local VoidwareFeatureVer = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/version/3.0", true))()
+local VoidwareFeatureVer = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/version/Normal", true))()
 local VoidwareDownloadable = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/3.0.lua", true)
 
 local function InfoNotification(title, text, delay)
