@@ -1,6 +1,6 @@
 local CurrentVer = "3.0"
 local VoidwareFeatureVer = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/version/Normal", true))()
-local VoidwareDownloadable = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/3.0.lua", true)
+local VoidwareDownloadable = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/FullModule.lua", true)
 --- Useless features.
 GuiLibrary["RemoveObject"]("PanicOptionsButton")
 GuiLibrary["RemoveObject"]("MissileTPOptionsButton")
