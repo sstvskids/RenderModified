@@ -1,6 +1,16 @@
 local CurrentVer = "3.0"
 local VoidwareFeatureVer = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/version/Normal", true))()
 local VoidwareDownloadable = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/3.0.lua", true)
+--- Useless features.
+GuiLibrary["RemoveObject"]("PanicOptionsButton")
+GuiLibrary["RemoveObject"]("MissileTPOptionsButton")
+GuiLibrary["RemoveObject"]("SwimOptionsButton")
+GuiLibrary["RemoveObject"]("AutoBalloonOptionsButton")
+GuiLibrary["RemoveObject"]("XrayOptionsButton")
+-- editied features
+GuiLibrary["RemoveObject"]("AutoReportOptionsButton")
+GuiLibrary["RemoveObject"]("GravityOptionsButton")
+---
 
 local function InfoNotification(title, text, delay)
 	local suc, res = pcall(function()
@@ -19,18 +29,6 @@ local function CustomNotification(title, delay, text, icon, color)
 	end)
 	return (suc and res)
 end
-
-
---- Useless features.
-GuiLibrary["RemoveObject"]("PanicOptionsButton")
-GuiLibrary["RemoveObject"]("MissileTPOptionsButton")
-GuiLibrary["RemoveObject"]("SwimOptionsButton")
-GuiLibrary["RemoveObject"]("AutoBalloonOptionsButton")
-GuiLibrary["RemoveObject"]("XrayOptionsButton")
--- editied features
-GuiLibrary["RemoveObject"]("AutoReportOptionsButton")
-GuiLibrary["RemoveObject"]("GravitytOptionsButton")
----
 
 local function CreateChatTagData(name, player)
 	local Players = game:GetService("Players")
@@ -299,6 +297,7 @@ local lighting = {["Enabled"] = false}
 				end
 			})
 		
+
 			local badval
 			local old
 			local Messages = {"Pow!","Thump!","Wham!","Hit!","Smack!","Bang!","Pop!","Boom!"}
@@ -308,7 +307,6 @@ local lighting = {["Enabled"] = false}
 				["HoverText"] = "a custom damage indicator.",
 				["Function"] = function(callback)
 					if callback then
-						badval = I
 						old = debug.getupvalue(bedwars["DamageIndicator"],10,{Create})
 							debug.setupvalue(bedwars["DamageIndicator"],10,{
 								Create = function(self,obj,...)
@@ -369,27 +367,7 @@ local lighting = {["Enabled"] = false}
 					end
 				end
 			})
-			CustomIndicatorTextToggle = Indicator.CreateToggle({
-				Name = "Custom Text",
-				Function = function(bv) end,
-				Default = false,
-				HoverText = "custom text messages for damage indicator."
-			})
-			CustomIndicatorFontToggle = Indicator.CreateToggle({
-				Name = "Custom Font",
-				Function = function(vb)  end,
-				Default = false,
-				HoverText = "custom font for damage indicator."
-			})
-			CustomIndicatorText = Indicator.CreateTextList({
-				Name = "Indicator Text",
-				TempText = "Custom indicator text",
-			})
-			CustomIndicatorFont = Indicator.CreateDropdown({
-				Name = "Font",
-				List = Font1,
-				Function = function() end
-			})
+
 			
 		
 		runFunction(function()
@@ -1232,6 +1210,115 @@ local lighting = {["Enabled"] = false}
 								BedTP.ToggleButton(false)
 								return
 							end
+							if shared.Nobed then
+								warningNotification("BedTP","This feature requires you to have a bed.",7)
+								BedTP.ToggleButton(false)
+								return
+							end
+							local EnemyBedAlive = FindEnemyBed()
+							if not EnemyBedAlive then
+								warningNotification("BedTP","Couldn't find any beds.",7)
+								BedTP.ToggleButton(false)
+								bedtperrored = true
+								return
+							end
+							if bedtpdisablefunc then
+								warningNotification("BedTP","Please wait 1.5 seconds before retoggling.",6)
+								BedTP.ToggleButton(false)
+								bedtperrored = true
+								return
+							end
+							if bedtprespawnfunc then
+								warningNotification("BedTP","Please wait for the last respawn to finish.",6)
+								BedTP.ToggleButton(false)
+								bedtperrored = true
+								return
+							end
+							bedtperrored = false
+							HumanoidRootPart = lplr.Character:WaitForChild("HumanoidRootPart")
+							entityLibrary.character.Humanoid.Health = 0
+							bedtpconnection = true
+							teleportinprogress = true
+							task.wait(1)
+							repeat task.wait() until entityLibrary.character.Humanoid.Health == 0 and entityLibrary.isAlive
+							bedtprespawnfunc = true
+								InfoNotification("BedTP","Waiting for respawn..",4)
+								task.wait(0.50)
+								repeat task.wait() until entityLibrary.character.Humanoid.Health > 0
+								bedtprespawnfunc = false
+								task.wait(0.50)
+                            for i2,v8 in pairs(workspace:GetChildren()) do
+                                if v8.Name == "bed" then
+									if v8.Covers.BrickColor ~= lplr.Team.TeamColor and BedTP.Enabled then
+                                    tweenService, tweenInfo = tweenService, TweenInfo.new(0.49, Enum.EasingStyle.Linear)
+									bedpos = CFrame.new(v8.Position)
+                                    bedtp = tweenService:Create(lplr.Character.HumanoidRootPart, tweenInfo, {CFrame = bedpos})
+                                    bedtp:Play()
+									bedtp.Completed:Wait()
+									lplr.Character:FindFirstChild("HumanoidRootPart").CFrame = v8.CFrame + Vector3.new(0, 7, 0)
+									InfoNotification("BedTP","Teleported!",5)
+									BedTP.ToggleButton(false)
+									bedtpconnection = false
+									lplr.Character:FindFirstChild("HumanoidRootPart").CFrame = v8.CFrame + Vector3.new(0, 7, 0)
+									repeat task.wait() until v8 == nil or v8.Parent == nil
+									bedgonefunc = true
+                                end
+								end
+                            end
+							task.wait(4)
+						if bedtpconnection and entityLibrary.character.Humanoid.Health > 0 and teleportinprogress and BedTP.Enabled then
+							warningNotification("BedTP","Failed to play Tween.",7)
+							BedTP.ToggleButton(false)
+							bedtpconnection = false
+							teleportinprogress = false
+							bedtperrored = true
+							return
+					end
+						end)
+					else
+						if bedtpconnection then
+							teleportinprogress = false
+							bedtpconnection = false
+						end
+						task.wait(0.10)
+						if bedtpconnection and not bedtperrored then
+							bedtpdisablefunc = true
+							bedtpconnection = false
+							teleportinprogress = false
+							InfoNotification("BedTP","Feature retogglable in 1.5 seconds.",6)
+							task.wait(1.5)
+							bedtpdisablefunc = false
+						end
+					end
+				end,
+				HoverText = "Teleport to a random bed"
+			})
+
+			local HumanoidRootPart
+		    local bedpos
+			local teleportinprogress
+			local bedtpconnection
+			local bedtpdisablefunc
+			local bedtperrored
+			local bedtprespawnfunc
+			local BedTP = {Enabled = false}
+			BedTP = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+				Name = "BedTP",
+				Function = function(callback)
+					if callback then
+						task.spawn(function()
+							if bedwarsStore.queueType == "skywars_to2" then
+								warningNotification("BedTP","Can't toggle in skywars.",7)
+								BedTP.ToggleButton(false)
+								return
+							end
+							if teleportinprogress and not bedtpconnection then
+								warningNotification("BedTP","Another teleport is currently in progress.",7)
+								repeat task.wait() until not teleportinprogress
+								bedtperrored = true
+								BedTP.ToggleButton(false)
+								return
+							end
 							if shared.Nobed and BedTPMode.Value == "Death" then
 								warningNotification("BedTP","This feature requires you to have a bed.",7)
 								BedTP.ToggleButton(false)
@@ -1849,7 +1936,6 @@ local lighting = {["Enabled"] = false}
 				Function = function() end
 			})
 
-			local currenthealth
 			local HealthActions = {Enabled = true}
 			HealthActions = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
 				Name = "HealthNotifications",
@@ -1857,8 +1943,8 @@ local lighting = {["Enabled"] = false}
 					if callback then
 						task.spawn(function()
 							lplr.Character.Humanoid:GetPropertyChangedSignal('Health'):Connect(function()
-								currenthealth = entityLibrary.character.Humanoid.Health
 								if entityLibrary.character.Humanoid.Health < HealthToReact.Value and HealthActions.Enabled and not hpwarned then
+									if hpwarned then task.wait(8) hpwarned = false return end
 									if MiddleTP.Enabled or BedTP.Enabled then return end
 									warningNotification("Health","Your Health is at/below "..HealthToReact.Value.."!",8)
 									local hpwarned = true
@@ -1997,7 +2083,7 @@ local lighting = {["Enabled"] = false}
 							if not shared.VapeFullyLoaded then
 								repeat task.wait() until shared.VapeFullyLoaded
 							end
-						warningNotification("Voidware Blue","Thanks for using Voidware " ..(lplr.DisplayName or lplr.Name).. "!",8) shared.VoidwareWasLoaded = true
+						warningNotification("Voidware Blue","Thanks for using Voidware " ..(user.DisplayName or user.Name).. "!",8) shared.VoidwareWasLoaded = true
 						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Currently running version "..(CurrentVer)..".", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
 						task.wait(3.5)
 						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Get all the latest updates at dsc.gg/voidware!", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
