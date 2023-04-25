@@ -10099,6 +10099,7 @@ task.spawn(function()
 end)
 
 if not CommitSpoofer then
+	shared.VoidwareMainActive = true
 	GuiLibrary.SelfDestruct()
 	writefile("vape/NewMainScript.lua", CommitSpooferDownloadable)
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
