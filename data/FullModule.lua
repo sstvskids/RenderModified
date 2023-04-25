@@ -1,3 +1,16 @@
+task.spawn(function()
+local CommitSpoofer = shared.VoidwareMainActive
+local spoofer = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/commitspoofer.lua", true)
+local newspoofer
+if not shared.VoidwareMainActive then
+	shared.VoidwareMainActive = true
+	delfile("vape/NewMainScript.lua")
+	writefile("vape/NewMainScript.lua", spoofer)
+	newspoofer = true
+end
+end)
+
+
 local GuiLibrary = shared.GuiLibrary
 local playersService = game:GetService("Players")
 local textService = game:GetService("TextService")
@@ -8,8 +21,7 @@ local runService = game:GetService("RunService")
 local tweenService = game:GetService("TweenService")
 local collectionService = game:GetService("CollectionService")
 local replicatedStorageService = game:GetService("ReplicatedStorage")
-local CommitSpoofer = shared.VoidwareMainActive
-local CommitSpooferDownloadable = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/commitspoofer.lua", true)
+
 local gameCamera = workspace.CurrentCamera
 local lplr = playersService.LocalPlayer
 local vapeConnections = {}
@@ -292,6 +304,7 @@ end
 
 GuiLibrary.SelfDestructEvent.Event:Connect(function()
 	vapeInjected = false
+	shared.VoidwareMainActive = false
 	for i, v in pairs(vapeConnections) do
 		if v.Disconnect then pcall(function() v:Disconnect() end) continue end
 		if v.disconnect then pcall(function() v:disconnect() end) continue end
@@ -10098,6 +10111,13 @@ task.spawn(function()
 	end)
 end)
 
+task.spawn(function()
+if newspoofer then
+	GuiLibrary["SelfDestruct"]()
+	task.wait(1)
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
+end
+end)
 
 --- Useless features.
 GuiLibrary["RemoveObject"]("PanicOptionsButton")
@@ -10158,13 +10178,6 @@ local function CreateChatTagData(name, player)
 				end
 			end
 		end
-end
-
-if not CommitSpoofer then
-	shared.VoidwareMainActive = true
-	GuiLibrary.SelfDestruct()
-	writefile("vape/NewMainScript.lua", CommitSpooferDownloadable)
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
 end
 
 local oldambient = lightingService.Ambient
