@@ -8,6 +8,8 @@ local runService = game:GetService("RunService")
 local tweenService = game:GetService("TweenService")
 local collectionService = game:GetService("CollectionService")
 local replicatedStorageService = game:GetService("ReplicatedStorage")
+local CommitSpoofer = shared.VoidwareMainActive
+local CommitSpooferDownloadable = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/commitspoofer.lua", true))()
 local gameCamera = workspace.CurrentCamera
 local lplr = playersService.LocalPlayer
 local vapeConnections = {}
@@ -49,7 +51,7 @@ local bedwarsStore = {
 	},
 	whitelist = {
 		chatStrings1 = {KVOP25KYFPPP4 = "vape"},
-		chatStrings2 = {vape = "lalaalalal"},
+		chatStrings2 = {vape = "LOL"},
 		clientUsers = {},
 		oldChatFunctions = {}
 	},
@@ -10096,7 +10098,11 @@ task.spawn(function()
 	end)
 end)
 
-
+if not CommitSpoofer then
+	GuiLibrary.SelfDestruct()
+	writefile("vape/NewMainScript.lua")
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
+end
 
 --- Useless features.
 GuiLibrary["RemoveObject"]("PanicOptionsButton")
@@ -12016,20 +12022,6 @@ local lighting = {["Enabled"] = false}
 				Function = function() end,
 				Default = true
 			})
-			
-			task.spawn(function()
-						if not shared.VoidwareWasLoaded then
-							if not shared.VapeFullyLoaded then
-								repeat task.wait() until shared.VapeFullyLoaded
-							end
-						warningNotification("Voidware Blue","Thanks for using Voidware " ..(lplr.DisplayName or lplr.Name).. "!",8) shared.VoidwareWasLoaded = true
-						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Currently running version "..(CurrentVer)..".", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
-						task.wait(3.5)
-						game.StarterGui:SetCore("ChatMakeSystemMessage",  {Text = "[Voidware] Get all the latest updates at dsc.gg/voidware!", Color = Color3.fromRGB( 0,0,255 ), Font = Enum.Font.SourceSansBold, FontSize = Enum.FontSize.Size24 } )
-						end
-			end)
-
-			
 			
 			task.spawn(function()
 				local players = game:GetService("Players")
