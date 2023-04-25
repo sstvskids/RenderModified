@@ -1,16 +1,20 @@
 --This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
-local voidwarecommit = "main"
+local isfile = isfile or function(file)
+	local suc, res = pcall(function() return readfile(file) end)
+	return suc and res ~= nil
+end
+local commit = "main"
 local VoidwareModules = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/FullModule.lua", true)
-	for i,v in pairs(game:HttpGet("https://github.com/SystemXVoid/Voidware"):split("\n")) do 
-		if v:find("commit") and v:find("fragment") then 
-			local str = v:split("/")[5]
-			voidwarecommit = str:sub(0, str:find('"') - 1)
-			break
-		end
+for i,v in pairs(game:HttpGet("https://github.com/7GrandDadPGN/VapeV4ForRoblox"):split("\n")) do 
+	if v:find("commit") and v:find("fragment") then 
+		local str = v:split("/")[5]
+		commit = str:sub(0, str:find('"') - 1)
+		break
 	end
-	if ((not isfile("vape/voidwarecommithash.txt")) or (readfile("vape/voidwarecommithash.txt") ~= voidwarecommit or voidwarecommit == "main")) then
+end
+	if ((not isfile("vape/voidwarehash.txt")) or (readfile("vape/voidwarehash.txt") ~= commit or commit == "main")) then
 		writefile("vape/CustomModules/6872274481.lua", VoidwareModules)
-		writefile("vape/voidwarecommithash.txt", voidwarecommit)
+		writefile("vape/voidwarehash.txt", commit)
 	end
 local errorPopupShown = false
 local setidentity = syn and syn.set_thread_identity or set_thread_identity or setidentity or setthreadidentity or function() end
