@@ -1,17 +1,3 @@
---- Voidware 3.0 Public! Enjoy.
-local isfile = isfile or function(file)
-	local suc, res = pcall(function() return readfile(file) end)
-	return suc and res ~= nil
-end
-if isfile("vape/autoupdatechecked.txt") then
-	loadstring(readfile("vape/autoupdatechecked.txt"))()
-else
-	writefile("vape/autoupdatechecked.txt","shared.VoidwareAutoUpdate = true")
-	loadstring(readfile("vape/autoupdatechecked.txt"))()
-end
-local CurrentVer = "3.0"
-local VoidwareFeatureVer = loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/version/3.0", true))()
-local VoidwareDownloadable = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/data/3.0.lua", true)
 local GuiLibrary = shared.GuiLibrary
 local playersService = game:GetService("Players")
 local textService = game:GetService("TextService")
@@ -2634,7 +2620,6 @@ runFunction(function()
 	local AutoPlayAgain = {Enabled = false}
 	local AutoLeaveStaff = {Enabled = true}
 	local AutoLeaveStaff2 = {Enabled = true}
-	local AutoLeaveRandom = {Enabled = false}
 	local leaveAttempted = false
 
 	local function getRole(plr)
@@ -2651,7 +2636,7 @@ runFunction(function()
 		return res
 	end
 
-	local flyAllowedmodules = {"Killaura", "Sprint", "AutoClicker", "AutoReport", "AutoReportV2", "AutoRelic", "AimAssist", "AutoLeave"}
+	local flyAllowedmodules = {"Sprint", "AutoClicker", "AutoReport", "AutoReportV2", "AutoRelic", "AimAssist", "AutoLeave", "Lighting","FPSUnlocker","ViewModelColor","PingDisplay","FPSDisplay"}
 	local function autoLeaveAdded(plr)
 		task.spawn(function()
 			if not shared.VapeFullyLoaded then
@@ -2661,6 +2646,22 @@ runFunction(function()
 				if AutoLeaveStaff.Enabled then
 					if AutoLeaveStaff2.Enabled then 
 						warningNotification("Vape", "Staff Detected : "..(plr.DisplayName and plr.DisplayName.." ("..plr.Name..")" or plr.Name).." : Play legit like nothing happened to have the highest chance of not getting banned.", 60)
+						if AutoLobby.Enabled then
+							bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
+						end
+						if AutoDestroy.Enabled then
+							if AutoLobby.Enabled then return end
+							if entityLibrary.isAlive then
+								local hum = entityLibrary.character.Humanoid
+								task.delay(0.1, function()
+									if hum and hum.Health > 0 then 
+										hum:ChangeState(Enum.HumanoidStateType.Dead)
+										hum.Health = 0
+										bedwars.ClientHandler:Get(bedwars.ResetRemote):SendToServer()
+									end
+								end)
+								end
+						end
 						GuiLibrary.SaveSettings = function() end
 						for i,v in pairs(GuiLibrary.ObjectsThatCanBeSaved) do 
 							if v.Type == "OptionsButton" then
@@ -2680,10 +2681,24 @@ runFunction(function()
 							Text = "Staff Detected\n"..(plr.DisplayName and plr.DisplayName.." ("..plr.Name..")" or plr.Name),
 							Duration = 60,
 						})
+						if AutoLobby.Enabled then
+							bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
+						end
+					end
+					if AutoDestroy.Enabled then
+						if AutoLobby.Enabled then return end
+						lplr.Humanoid.Health = 0
 					end
 					return
 				else
 					warningNotification("Vape", "Staff Detected : "..(plr.DisplayName and plr.DisplayName.." ("..plr.Name..")" or plr.Name), 60)
+					if AutoLobby.Enabled then
+						bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
+					end
+					if AutoDestroy.Enabled then
+						if AutoLobby.Enabled then return end
+						lplr.Humanoid.Health = 0
+					end
 				end
 			end
 		end)
@@ -2704,7 +2719,7 @@ runFunction(function()
 	end
 
 	AutoLeave = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-		Name = "AutoLeave", 
+		Name = "AutoLeaveV2", 
 		Function = function(callback)
 			if callback then
 				table.insert(AutoLeave.Connections, vapeEvents.EntityDeathEvent.Event:Connect(function(deathTable)
@@ -2716,15 +2731,7 @@ runFunction(function()
 								if not AutoPlayAgain.Enabled then
 									bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
 								else
-									if AutoLeaveRandom.Enabled then 
-										local listofmodes = {}
-										for i,v in pairs(bedwars.QueueMeta) do
-											if not v.disabled then table.insert(listofmodes, i) end
-										end
-										bedwars.LobbyClientEvents:joinQueue(listofmodes[math.random(1, #listofmodes)])
-									else
-										bedwars.LobbyClientEvents:joinQueue(bedwarsStore.queueType)
-									end
+									bedwars.LobbyClientEvents:joinQueue(bedwarsStore.queueType)
 								end
 							end
 						end
@@ -2740,15 +2747,7 @@ runFunction(function()
 							bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
 						else
 							if bedwars.ClientStoreHandler:getState().Party.queueState == 0 then
-								if AutoLeaveRandom.Enabled then 
-									local listofmodes = {}
-									for i,v in pairs(bedwars.QueueMeta) do
-										if not v.disabled then table.insert(listofmodes, i) end
-									end
-									bedwars.LobbyClientEvents:joinQueue(listofmodes[math.random(1, #listofmodes)])
-								else
-									bedwars.LobbyClientEvents:joinQueue(bedwarsStore.queueType)
-								end
+								bedwars.LobbyClientEvents:joinQueue(bedwarsStore.queueType)
 							end
 						end
 					end
@@ -2759,7 +2758,7 @@ runFunction(function()
 				end
 			end
 		end,
-		HoverText = "Leaves if a staff member joins your game or when the match ends."
+		HoverText = "Runs actions if a staff member joins or your game or when the match ends."
 	})
 	AutoLeaveDelay = AutoLeave.CreateSlider({
 		Name = "Delay",
@@ -2791,12 +2790,19 @@ runFunction(function()
 		HoverText = "Instead of uninjecting, It will now reconfig vape temporarily to a more legit config.",
 		Default = true
 	})
-	AutoLeaveRandom = AutoLeave.CreateToggle({
-		Name = "Random",
-		Function = function(callback) end,
-		HoverText = "Chooses a random mode"
-	})
 	AutoLeaveStaff2.Object.Visible = false
+	AutoLobby = AutoLeave.CreateToggle({
+		Name = "Lobby",
+		Function = function() end,
+		HoverText = "Automatically sends you to the lobby on staff join.",
+		Default = false
+	})
+	AutoDestroy = AutoLeave.CreateToggle({
+		Name = "Reset",
+		Function = function() end,
+		HoverText = "Resets your character on staff join to disable modules that require it.",
+		Default = true
+	})
 end)
 
 runFunction(function()
@@ -3551,7 +3557,16 @@ runFunction(function()
 			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.1},
 			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.05},
 			{CFrame = CFrame.new(0.63, -0.1, 1.37) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.15}
-		}
+		},
+		["Vertical"] = {
+            {CFrame = CFrame.new(0, 0, 1.5) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),Time = 0.25},
+            {CFrame = CFrame.new(0, 0, -1.5) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),Time = 0.25},
+            {CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), Time = 0.25}
+        },
+		["Self"] = {
+            {CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-90), math.rad(90), math.rad(90)),Time = 0.25},
+            {CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), Time = 0.25}
+        }
 	}
 
 	local function closestpos(block, pos)
@@ -3588,7 +3603,7 @@ runFunction(function()
 	end
 
     Killaura = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-        Name = "Killaura",
+        Name = "KillauraV2",
         Function = function(callback)
             if callback then
 				if killauraaimcirclepart then killauraaimcirclepart.Parent = gameCamera end
@@ -3861,7 +3876,7 @@ runFunction(function()
     })
     killauraanimmethod = Killaura.CreateDropdown({
         Name = "Animation", 
-        List = {"Normal", "Slow", "New", "Vertical Spin", "Exhibition", "Exhibition Old"},
+        List = {"Normal", "Slow", "New", "Vertical Spin", "Exhibition", "Exhibition Old","Vertical","Self"},
         Function = function(val) end
     })
     killauramouse = Killaura.CreateToggle({
@@ -10089,7 +10104,9 @@ GuiLibrary["RemoveObject"]("MissileTPOptionsButton")
 GuiLibrary["RemoveObject"]("SwimOptionsButton")
 GuiLibrary["RemoveObject"]("AutoBalloonOptionsButton")
 GuiLibrary["RemoveObject"]("XrayOptionsButton")
--- editied features
+GuiLibrary["RemoveObject"]("AutoRelicOptionsButton")
+GuiLibrary["RemoveObject"]("GravityOptionsButton")
+-- modified features
 GuiLibrary["RemoveObject"]("AutoReportOptionsButton")
 ---
 
@@ -10154,7 +10171,7 @@ local oldskyrt = oldsky.SkyboxRt
 local oldskyup = oldsky.SkyboxUp
 local oldfogcolor = lightingService.FogColor
 local lighting = {["Enabled"] = false}
-			lighting = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			lighting = GuiLibrary["ObjectsThatCanBeSaved"]["WorldWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "Lighting",
 				["HoverText"] = "ambients and skies",
 				["Function"] = function(callback)
@@ -10236,7 +10253,7 @@ local lighting = {["Enabled"] = false}
 
 		
 			local ChatMover = {["Enabled"] = false}
-			ChatMover = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			ChatMover = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "ChatMover",
 				["HoverText"] = "Moves the chat to another position",
 				["Function"] = function(callback)
@@ -10283,7 +10300,7 @@ local lighting = {["Enabled"] = false}
 			})
 		
 			local NoRoot = {["Enabled"] = false}
-			NoRoot = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			NoRoot = GuiLibrary["ObjectsThatCanBeSaved"]["BlatantWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "RootDestroyer",
 				["HoverText"] = "Destroys your HumanoidRootPart",
 				["Function"] = function(callback)
@@ -10301,7 +10318,7 @@ local lighting = {["Enabled"] = false}
 			})
 		
 			local InfYield = {["Enabled"] = false}
-			InfYield = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			InfYield = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "InfiniteYield",
 				["HoverText"] = "Loads Indinite Yield by Edge",
 				["Function"] = function(callback)
@@ -10314,45 +10331,43 @@ local lighting = {["Enabled"] = false}
 			})
 		
 			local DoublesQueue = {["Enabled"] = false}
-			DoublesQueue = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			DoublesQueue = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "DoublesQueue",
 				["HoverText"] = "Starts a queue for solos",
 				["Function"] = function(callback)
 					if callback then
 						DoublesQueue["ToggleButton"](false)
-						game:GetService("ReplicatedStorage")["events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"].joinQueue:FireServer({    ["queueType"] = "bedwars_to2",})
+						bedwars.LobbyClientEvents:joinQueue("bedwars_to2")
 					end
 				end
 			})
 		
 			local SkywarsQueue = {["Enabled"] = false}
-			SkywarsQueue = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			SkywarsQueue = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "SkywarsQueue",
 				["HoverText"] = "Starts a queue for Skywars",
 				["Function"] = function(callback)
 					if callback then
 						SkywarsQueue["ToggleButton"](false)
-						game:GetService("ReplicatedStorage")["events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"].joinQueue:FireServer({    ["queueType"] = "skywars_to2",})
+						bedwars.LobbyClientEvents:joinQueue("skywars_to2")
 					end
 				end
 			})
 		
 			local CustomMatches = {["Enabled"] = false}
-			CustomMatches = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			CustomMatches = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "QuickCustoms",
 				["HoverText"] = "Starts a queue for sqauds",
 				["Function"] = function(callback)
 					if callback then
 						CustomMatches["ToggleButton"](false)
-							local args = {
-								[1] = "CB33B7DA-2276-43AF-B17A-90315A0D617C",
-								[2] = {
-									[1] = "bedwars_to4",
-									[2] = ""
-								}
-							}
-							game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged:FindFirstChild("CustomMatches:CreateCustomMatch"):FireServer(unpack(args))				
-			
+						game:GetService("ReplicatedStorage").rbxts_include.node_modules["@rbxts"].net.out._NetManaged["CustomMatches:CreateCustomMatch"]:FireServer(table.unpack({
+							[1] = "CEDA847E-296E-4A72-9288-E95B18116D4D",
+							[2] = {
+								[1] = "bedwars_to4",
+								[2] = "",
+							},
+						}))
 							InfoNotification("QuickCustoms", "Creating the custom match... (Bedwars Sqauds)", 6)
 							task.wait(6.88)
 							warningNotification("QuickCustoms", "Match Created. Joining..", 6)
@@ -10363,13 +10378,13 @@ local lighting = {["Enabled"] = false}
 			local badval
 			local old
 			local Messages = {"Pow!","Thump!","Wham!","Hit!","Smack!","Bang!","Pop!","Boom!"}
+			local VoidwareMessages = {"LOL","Bang","Fucking Legit","L Legit","Voidware!","Death","Skull","Imagine","Easy","EZ"}
 			local Indicator = {["Enabled"] = false}
-			Indicator = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			Indicator = GuiLibrary["ObjectsThatCanBeSaved"]["RenderWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "DamageIndicator",
 				["HoverText"] = "a custom damage indicator.",
 				["Function"] = function(callback)
 					if callback then
-						badval = I
 						old = debug.getupvalue(bedwars["DamageIndicator"],10,{Create})
 							debug.setupvalue(bedwars["DamageIndicator"],10,{
 								Create = function(self,obj,...)
@@ -10390,7 +10405,7 @@ local lighting = {["Enabled"] = false}
 													obj.Parent.Text = CustomMessages
 													else
 														if IndicatorMode.Value == "Custom" and CustomIndicatorTextToggle.Enabled and Indicator.Enabled and not CustomMessages then
-														obj.Parent.Text = "Voidware on top!"
+															obj.Parent.Text = VoidwareMessages[math.random(1,#VoidwareMessages)]
 														end
 													end
 												end
@@ -10455,12 +10470,12 @@ local lighting = {["Enabled"] = false}
 		
 		runFunction(function()
 			local PartyLeave = {["Enabled"] = false}
-			PartyLeave = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			PartyLeave = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "LeaveParty",
 				["HoverText"] = "leaves the current party your in",
 				["Function"] = function(callback)
 					if callback then
-						game:GetService("ReplicatedStorage"):FindFirstChild("events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events").leaveParty:FireServer()
+						replicatedStorageService:FindFirstChild("events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events").leaveParty:FireServer()
 							PartyLeave["ToggleButton"](false)
 					end
 				end
@@ -10468,7 +10483,7 @@ local lighting = {["Enabled"] = false}
 		end)
 		
 			local LeaveQueue = {["Enabled"] = false}
-			LeaveQueue = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			LeaveQueue = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "LeaveQueue",
 				["HoverText"] = "Forcefully leaves the current queue (useful if a queue errored)",
 				["Function"] = function(callback)
@@ -10480,80 +10495,80 @@ local lighting = {["Enabled"] = false}
 			})
 		
 			local RankedQueue = {["Enabled"] = false}
-			RankedQueue = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			RankedQueue = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "RankedQueue",
 				["HoverText"] = "Starts a queue for ranked",
 				["Function"] = function(callback)
 					if callback then
 						RankedQueue["ToggleButton"](false)
-						game:GetService("ReplicatedStorage")["events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"].joinQueue:FireServer({    ["queueType"] = "bedwars_ranked_s7",})
+						bedwars.LobbyClientEvents:joinQueue("bedwars_ranked_s7")
 					end
 				end
 			})
 		
 			local DuelsQueue = {["Enabled"] = false}
-			DuelsQueue = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			DuelsQueue = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "DuelsQueue",
 				["HoverText"] = "Starts a queue for duels",
 				["Function"] = function(callback)
 					if callback then
 						DuelsQueue["ToggleButton"](false)
-						game:GetService("ReplicatedStorage")["events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"].joinQueue:FireServer({    ["queueType"] = "bedwars_duels",})
+						bedwars.LobbyClientEvents:joinQueue("bedwars_duels")
 					end
 				end
 			})
 		
 			local SolosQueue = {["Enabled"] = false}
-			SolosQueue = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			SolosQueue = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "SolosQueue",
 				["HoverText"] = "Starts a queue for solos",
 				["Function"] = function(callback)
 					if callback then
 						SolosQueue["ToggleButton"](false)
-						game:GetService("ReplicatedStorage")["events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"].joinQueue:FireServer({    ["queueType"] = "bedwars_to1",})
+						bedwars.LobbyClientEvents:joinQueue("bedwars_to1")
 					end
 				end
 			})
 		
 			local SquadsQueue = {["Enabled"] = false}
-			SquadsQueue = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			SquadsQueue = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "SquadsQueue",
 				["HoverText"] = "Starts a queue for Squads",
 				["Function"] = function(callback)
 					if callback then
 						SquadsQueue["ToggleButton"](false)
-						game:GetService("ReplicatedStorage")["events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"].joinQueue:FireServer({    ["queueType"] = "bedwars_to4",})
+						bedwars.LobbyClientEvents:joinQueue("bedwars_to4")
 					end
 				end
 			})
 		
 			local bedwars_5v5 = {["Enabled"] = false}
-			bedwars_5v5 = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			bedwars_5v5 = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "5v5Queue",
 				["HoverText"] = "Starts a queue for 5v5",
 				["Function"] = function(callback)
 					if callback then
 						bedwars_5v5["ToggleButton"](false)
-						game:GetService("ReplicatedStorage")["events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"].joinQueue:FireServer({    ["queueType"] = "bedwars_5v5",})
+						bedwars.LobbyClientEvents:joinQueue("bedwars_5v5")
 					end
 				end
 			})
 		
 			local bedwars_30v30 = {["Enabled"] = false}
-			bedwars_30v30 = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+			bedwars_30v30 = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
 				["Name"] = "30v30Queue",
 				["HoverText"] = "Starts a queue for 30v30",
 				["Function"] = function(callback)
 					if callback then
 						bedwars_30v30["ToggleButton"](false)
-						game:GetService("ReplicatedStorage")["events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"].joinQueue:FireServer({    ["queueType"] = "bedwars_20v20",})
+						bedwars.LobbyClientEvents:joinQueue("bedwars_20v20")
 					end
 				end
 			})
 		
 		
 			local confetti = {Enabled = false}
-			confetti = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			confetti = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "Annoyer",
 				Function = function(callback)
 					if callback then 
@@ -10561,7 +10576,7 @@ local lighting = {["Enabled"] = false}
 							repeat 
 								task.wait(confettispeed.Value)
 								if not confetti.Enabled then return end 
-								game:GetService("ReplicatedStorage"):WaitForChild("events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"):WaitForChild("useAbility"):FireServer("PARTY_POPPER")
+								replicatedStorageService:WaitForChild("events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"):WaitForChild("useAbility"):FireServer("PARTY_POPPER")
 							until (not confetti.Enabled)
 						end)
 					end
@@ -10577,7 +10592,7 @@ local lighting = {["Enabled"] = false}
 			})
 		
 			local TexturePack = {Enabled = false}
-			TexturePack = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			TexturePack = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "MinecraftTexturePack",
 				Function = function(callback)
 					if callback then
@@ -10598,63 +10613,9 @@ local lighting = {["Enabled"] = false}
 				HoverText = "gives you a minecraft texture pack"
 			})
 
-			local RedTexturePack = {Enabled = false}
-			RedTexturePack = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
-				Name = "RedTexturePack",
-				Function = function(callback)
-					if callback then
-						task.spawn(function()
-								if tpack or TexturePack.Enabled then
-									warningNotification("TexturePack","A Previous texture pack was already toggled. Please disable the previous and rejoin.",5) 
-									RedTexturePack.ToggleButton(false)
-									return
-								end
-								Connection = cam.Viewmodel.ChildAdded:Connect(function(v)
-									if v:FindFirstChild("Handle") then
-										pcall(function()
-											v:FindFirstChild("Handle").Size = v:FindFirstChild("Handle").Size / 1.5
-											v:FindFirstChild("Handle").Material = Enum.Material.Neon
-											v:FindFirstChild("Handle").TextureID = ""
-											v:FindFirstChild("Handle").Color = Color3.fromRGB(196, 40, 28)
-										end)
-										local vname = string.lower(v.Name)
-										if vname:find("sword") or vname:find("blade") then
-											v:FindFirstChild("Handle").MeshId = "rbxassetid://11216117592"
-										elseif vname:find("pick") then
-											v:FindFirstChild("Handle").MeshId = "rbxassetid://12615822685"
-										end
-									end
-								end)
-						end)
-					else
-						tpack = true
-						warningNotification("TexturePack","Disabled next game.",5)
-						Connection:Disconnect()
-			
-					end
-				end,
-				HoverText = "gives you a minecraft texture pack"
-			})
-
-		
-			local Stats = {Enabled = false}
-			Stats = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
-				Name = "MinecraftStats",
-				Function = function(callback)
-					if callback then
-						task.spawn(function()
-							loadstring(game:HttpGet("https://raw.githubusercontent.com/sstvskids/minecraft_easyggscoreboard/main/scoreboard"))()
-						end)
-					else
-						game:GetService("CoreGui").BedWarsUI:Destroy()
-					end
-				end,
-				HoverText = "sub to stavexploitz trollage"
-			})
-
 		
 			local breathe = {Enabled = false}
-			breathe = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			breathe = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "DragonBreathe",
 				Function = function(callback)
 					if callback then 
@@ -10662,7 +10623,7 @@ local lighting = {["Enabled"] = false}
 							repeat 
 								task.wait(breathespeed.Value) 
 								if not breathe.Enabled then return end
-								game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("DragonBreath"):FireServer({player = game:GetService("Players").LocalPlayer})
+								replicatedStorageService:WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("DragonBreath"):FireServer({player = game:GetService("Players").LocalPlayer})
 							until (not breathe.Enabled)
 						end)
 					end
@@ -10677,7 +10638,7 @@ local lighting = {["Enabled"] = false}
 			})
 		
 			local crasher = {Enabled = false}
-			crasher = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			crasher = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "FPSLagShield",
 				Function = function(callback)
 					if callback then
@@ -10700,7 +10661,7 @@ local lighting = {["Enabled"] = false}
 			})
 		
 			local playagain = {Enabled = false}
-			playagain = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			playagain = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "PlayAgain",
 				Function = function(callback)
 					if callback then
@@ -10712,7 +10673,7 @@ local lighting = {["Enabled"] = false}
 		
 			
 			local KillAll = {Enabled = false}
-			KillAll = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			KillAll = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 				Name = "TPAura",
 				Function = function(callback)
 					if callback then
@@ -10801,7 +10762,7 @@ local lighting = {["Enabled"] = false}
 	
 			local bubbleChatSettings
 			local Chat = {Enabled = false}
-			Chat = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			Chat = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
 				Name = "ChatBubble",
 				Function = function(callback)
 					if callback then
@@ -10847,36 +10808,17 @@ local lighting = {["Enabled"] = false}
 			})
 	
 			local PartyInviteLoop = {Enabled = false}
-			PartyInviteLoop = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			PartyInviteLoop = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "PartyInviteLoop",
 				Function = function(callback)
 					if callback then
-						warningNotification("PartyInviteLoop","Be aware that you can't play again with this feature. you have to lobby.",5)
 						task.spawn(function()
 							for i,v in pairs(game.Players:GetChildren()) do
-								if v.Name == game.Players.LocalPlayer.Name then
-									else
-										local args = {[1] = {["player"] = v}}
-										game:GetService("ReplicatedStorage"):FindFirstChild("events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events").inviteToParty:FireServer(unpack(args))
+								if v ~= lplr then
+									local args = {[1] = {["player"] = v}}
+										replicatedStorageService:FindFirstChild("events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events").inviteToParty:FireServer(unpack(args))
 									end
 								end
-				
-							for i,v in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
-								if (v.Name:find("arty") or v.Name:find("otification"))and v:IsA("RemoteEvent") then
-									for i2,v2 in pairs(getconnections(v.OnClientEvent)) do
-										v2:Disable()
-									end
-								end
-							end
-				
-							spawn(function()
-								while PartyInviteLoop.Enabled do
-									for i = 135, 9999999  do
-									local args = {[1] = {["queueType"] = "bedwars_to1"}}
-									wait()
-									end
-								end
-							end)
 						end)
 					end
 				end,
@@ -10884,14 +10826,13 @@ local lighting = {["Enabled"] = false}
 			})
 
 			local hpbar = {Enabled = false}
-			hpbar = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			hpbar = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
 				Name = "CustomHealthbar",
 				Function = function(callback)
 					if callback then
 						task.spawn(function()
 							repeat task.wait() until game:IsLoaded()
-							getgenv().loadchecked = true
-							repeat task.wait(0.1)
+							repeat task.wait()
 								local healthbar = lplr.PlayerGui:WaitForChild("hotbar"):WaitForChild("1"):WaitForChild("HotbarHealthbarContainer"):WaitForChild("HealthbarProgressWrapper"):WaitForChild("1")
 								if hpbar.Enabled and hotbarmode.Value =="Default" then
 									healthbar.BackgroundColor3 = Color3.fromRGB(0, 4, 255)
@@ -10923,44 +10864,30 @@ local lighting = {["Enabled"] = false}
 				end
 			})
 
+	local uis
 	local flyjump = {["Enabled"] = false}
-	flyjump = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
+	flyjump = GuiLibrary["ObjectsThatCanBeSaved"]["BlatantWindow"]["Api"].CreateOptionsButton({
 		["Name"] = "FlyJump",
 		["HoverText"] = "Jump without touching ground",
 		["Function"] = function(callback) 
 			if callback then
-				task.spawn(function()    
+				task.spawn(function()
+					    uis = game:GetService("UserInputService")    
 						game:GetService('RunService').RenderStepped:connect(function()
-							game:GetService("UserInputService").JumpRequest:Connect(function()
+							uis.JumpRequest:Connect(function()
 								if flyjump.Enabled then
-									game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+									lplr.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
 								end
 							end)
 						end)
 					end)
-				else
-					if keycodeconnection then
-						keycodeconnection:Disconnect()
-					end
 				end
 			end
 		})
 
-			local Reinject = {["Enabled"] = false}
-			Reinject = GuiLibrary["ObjectsThatCanBeSaved"]["CustomWindow"]["Api"].CreateOptionsButton({
-				["Name"] = "BetterReinject",
-				["HoverText"] = "an actual reinject button instead of those shitty ones",
-				["Function"] = function(callback)
-					if callback then
-						Reinject["ToggleButton"](false)
-						GuiLibrary["SelfDestruct"]()
-						loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
-					end
-				end
-			})
 
 			local playertp = {Enabled = false}
-			playertp = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			playertp = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 				Name = "7BitchesExploit",
 				Function = function(callback)
 					if callback then
@@ -11022,7 +10949,7 @@ local lighting = {["Enabled"] = false}
 
 
 			local notifications = {Enabled = false}
-			notifications = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			notifications = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "ActionNotifications",
 				Function = function(notified)
 					if notified then
@@ -11113,7 +11040,7 @@ local lighting = {["Enabled"] = false}
 			})
 
 			local playerlist = {Enabled = false}
-			playerlist = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			playerlist = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "OldPlayerList",
 				Function = function(callback)
 					if callback then
@@ -11137,12 +11064,12 @@ local lighting = {["Enabled"] = false}
 			local olddeflate
 			local velo
 			local BounceFly = {Enabled = false}
-			BounceFly = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			BounceFly = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 				Name = "FunnyFly",
 				Function = function(callback)
 					if callback then
 						task.spawn(function()
-							local uis = game:GetService("UserInputService")
+							uis = game:GetService("UserInputService")
 							if lplr.Character:FindFirstChild("InventoryFolder").Value:FindFirstChild("balloon") then
 								usedballoon = true
 								olddeflate = bedwars["BalloonController"].deflateBalloon
@@ -11276,7 +11203,7 @@ local lighting = {["Enabled"] = false}
 			local bedtperrored
 			local bedtprespawnfunc
 			local BedTP = {Enabled = false}
-			BedTP = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			BedTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "BedTP",
 				Function = function(callback)
 					if callback then
@@ -11402,7 +11329,7 @@ local lighting = {["Enabled"] = false}
 			local diamondtperroed
 			local diamondtpdisablefunc
 			local DiamondTP = {Enabled = false}
-			DiamondTP = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			DiamondTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "DiamondTP",
 				Function = function(callback)
 					if callback then
@@ -11488,7 +11415,7 @@ local lighting = {["Enabled"] = false}
 			local emeraldtperrored
 			local emeraldtpdisablefunc
 			local EmeraldTP = {Enabled = false}
-			EmeraldTP = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			EmeraldTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "EmeraldTP",
 				Function = function(callback)
 					if callback then
@@ -11575,7 +11502,7 @@ local lighting = {["Enabled"] = false}
 			local middletperrored
 			local middletpdisablefunc
 			local MiddleTP = {Enabled = false}
-			MiddleTP = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			MiddleTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "MiddleTP",
 				Function = function(callback)
 					if callback then
@@ -11677,7 +11604,7 @@ local lighting = {["Enabled"] = false}
 		
 		
 
-		local AutoReport = {Enabled = false}
+	local AutoReport = {Enabled = false}
 	local AutoReportList = {ObjectList = {}}
 	local AutoReportNotify = {Enabled = false}
 	local alreadyreported = {}
@@ -11864,7 +11791,7 @@ local lighting = {["Enabled"] = false}
 	})
 
 	local fpsunlocker = {Enabled = true}
-			fpsunlocker = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			fpsunlocker = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "FPSUnlocker",
 				Function = function(callback)
 					if callback then
@@ -11881,7 +11808,7 @@ local lighting = {["Enabled"] = false}
 			
 
 			local joincustoms = {Enabled = true}
-			joincustoms = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			joincustoms = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "JoinCustoms",
 				Function = function(callback)
 					if callback then
@@ -11893,7 +11820,7 @@ local lighting = {["Enabled"] = false}
 							else
 								InfoNotification("JoinCustoms","Joining "..customcode.Value,5)
 							end
-							replicatedStorage.rbxts_include.node_modules["@rbxts"].net.out._NetManaged["CustomMatches:JoinByCode"]:FireServer(table.unpack({
+							replicatedStorageService.rbxts_include.node_modules["@rbxts"].net.out._NetManaged["CustomMatches:JoinByCode"]:FireServer(table.unpack({
 								[1] = "78EF587B-8863-4186-A199-EC5EB364C85C",
 								[2] = {
 									[1] = customcode.Value,
@@ -11912,7 +11839,7 @@ local lighting = {["Enabled"] = false}
 
 			local currenthealth
 			local HealthActions = {Enabled = true}
-			HealthActions = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			HealthActions = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "HealthNotifications",
 				Function = function(callback)
 					if callback then
@@ -11941,7 +11868,7 @@ local lighting = {["Enabled"] = false}
 			})
 
 			local pingdisplay = {Enabled = true}
-			pingdisplay = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			pingdisplay = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "PingDisplay",
 				Function = function(callback)
 					if callback then
@@ -11977,7 +11904,7 @@ local lighting = {["Enabled"] = false}
 			})
 
 			local fpsdisplay = {Enabled = true}
-			fpsdisplay = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			fpsdisplay = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "FPSDisplay",
 				Function = function(callback)
 					if callback then
@@ -12023,7 +11950,7 @@ local lighting = {["Enabled"] = false}
 			})
 
 			local automid = {Enabled = true}
-			automid = GuiLibrary.ObjectsThatCanBeSaved.CustomWindow.Api.CreateOptionsButton({
+			automid = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 				Name = "AutoMiddle",
 				Function = function(callback)
 					if callback then
@@ -12051,7 +11978,44 @@ local lighting = {["Enabled"] = false}
 				HoverText = "Middle TP built for skywars!"
 			})
 	
-
+			local VMConnection
+			local vmc = {Enabled = true}
+			vmc = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+				Name = "ViewModelColor",
+				Function = function(callback)
+					if callback then
+						task.spawn(function()
+							VMConnection = gameCamera.Viewmodel.ChildAdded:Connect(function(v)
+								if v:FindFirstChild("Handle") then
+									pcall(function()
+										repeat task.wait()
+										if ViewModelNeon.Enabled then
+										v:FindFirstChild("Handle").Material = Enum.Material.Neon
+										else
+										v:FindFirstChild("Handle").Material = Enum.Material.Plastic
+										end
+										v:FindFirstChild("Handle").TextureID = ""
+										v:FindFirstChild("Handle").Color = Color3.fromHSV(ViewModelColor.Hue, ViewModelColor.Sat, ViewModelColor.Value)
+										until not vmc.Enabled
+									end)
+								end
+						end)
+						end)
+					else
+						VMConnection:Disconnect()
+					end
+				end,
+				HoverText = "Change the color of the current tool your holding. (first person only)"
+			})
+			ViewModelColor = vmc.CreateColorSlider({
+				Name = "Color",
+				Function = function() end
+			})
+			ViewModelNeon = vmc.CreateToggle({
+				Name = "Neon",
+				Function = function() end,
+				Default = true
+			})
 			
 			task.spawn(function()
 						if not shared.VoidwareWasLoaded then
