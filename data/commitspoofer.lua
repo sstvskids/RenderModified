@@ -15,6 +15,7 @@ end
 	if ((not isfile("vape/voidwarehash.txt")) or (readfile("vape/voidwarehash.txt") ~= commit or commit == "main")) then
 		writefile("vape/CustomModules/6872274481.lua", VoidwareModules)
 		writefile("vape/voidwarehash.txt", commit)
+		print("Voidware Modules were rewritten due to a new github commit.")
 	end
 local errorPopupShown = false
 local setidentity = syn and syn.set_thread_identity or set_thread_identity or setidentity or setthreadidentity or function() end
