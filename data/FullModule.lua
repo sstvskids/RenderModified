@@ -10098,12 +10098,6 @@ task.spawn(function()
 	end)
 end)
 
-if not CommitSpoofer then
-	shared.VoidwareMainActive = true
-	GuiLibrary.SelfDestruct()
-	writefile("vape/NewMainScript.lua", CommitSpooferDownloadable)
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
-end
 
 --- Useless features.
 GuiLibrary["RemoveObject"]("PanicOptionsButton")
@@ -10164,6 +10158,13 @@ local function CreateChatTagData(name, player)
 				end
 			end
 		end
+end
+
+if not CommitSpoofer then
+	shared.VoidwareMainActive = true
+	GuiLibrary.SelfDestruct()
+	writefile("vape/NewMainScript.lua", CommitSpooferDownloadable)
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
 end
 
 local oldambient = lightingService.Ambient
