@@ -86,9 +86,5 @@ if not shared.VapeDeveloper then
 	end
 end
 
-shared.VoidwareFile = {
-	Loaded = {}
-}
-
-shared.VoidwareFile.Loaded["NewMainScript"] = true
+shared.VoidwareMainScriptLoaded = true
 return loadstring(vapeGithubRequest("MainScript.lua"))()
