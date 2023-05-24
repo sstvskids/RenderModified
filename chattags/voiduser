@@ -1,6 +1,0 @@
-local Players = game:GetService("Players")
-	local lp = Players.LocalPlayer
-	local char = lp.Character
-	setclipboard("https://discord.gg/Zpz3QX9MVG")
-	writefile("vape/Profiles/AprilFooled.txt","verified fool")
-	lp:kick("L skid you were pranked so ez, There was never a private version of the Voidware config, I just gave the Voidware Purple Public config to soggy for prank LOL and he believed it HAPPY APRIL FOOLS!")
