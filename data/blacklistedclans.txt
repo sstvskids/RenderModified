@@ -1,1 +1,1 @@
-return {"VAIPE", "L8R", "LATER", "gg", "44s", "AMU", "SUN", "AG", "LG", "TZ", "TC", "CZ", "CZs", "xAC', "PA", "44s", "69", "Fz", "iEzLz", "SEN", "lava", "uwu", "ZT"}
+return {"VAIPE"}
