@@ -1,2 +1,2 @@
 ---- MAKE SURE TO ADD COMMAS TO EACH CLAN U ADD (ALSO ADD TO THE LAST CLAN) DELETE THIS FILE IF YOUR CONFIG ISN'T LOADING!
-return {"L8R", "LATER", "gg", "44s", "AMU", "SUN", "AG", "xAC", "LG", "TZ", "TC", "CZ", "CZs", "PA", "69", "Fz", "iEzLz", "SEN", "FSH", "lava", "uwu", "ZT", "DL", "LSR", "8R", "DV", "DV2", "DV3", "DV4", "DV5", "DV6", "DV7", "DV8", "DV9", "DV10", "REM", "XP", "B8", "MM", "IPS", "JAPAN"}
+return {"L8R", "LATER", "gg", "44s", "AMU", "SUN", "AG", "xAC", "LG", "TZ", "TC", "CZ", "CZs", "PA", "69", "Fz", "iEzLz", "SEN", "FSH", "lava", "uwu", "ZT", "DL", "LSR", "8R", "DV", "DV2", "DV3", "DV4", "DV5", "DV6", "DV7", "DV8", "DV9", "DV10", "REM", "XP", "B8", "MM", "IPS", "JAPAN", "TYP",}
