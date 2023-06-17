@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 --// importing the textures
-local objs = game:GetObjects("rbxassetid://13732134128")
+local objs = game:GetObjects("rbxassetid://13481568688")
 local import = objs[1]
 
 import.Parent = game:GetService("ReplicatedStorage")
@@ -15,26 +15,93 @@ index = {
 	{
 		name = "wood_sword",
 		offset = CFrame.Angles(math.rad(0),math.rad(-100),math.rad(-90)),
-		model = import:WaitForChild("wood_sword"),
+		model = import:WaitForChild("Wood_Sword"),
 	},
 	
 	{
 		name = "stone_sword",
 		offset = CFrame.Angles(math.rad(0),math.rad(-100),math.rad(-90)),
-		model = import:WaitForChild("stone_sword"),
+		model = import:WaitForChild("Stone_Sword"),
 	},
 	
 	{
 		name = "iron_sword",
 		offset = CFrame.Angles(math.rad(0),math.rad(-100),math.rad(-90)),
-		model = import:WaitForChild("iron_sword"),
+		model = import:WaitForChild("Iron_Sword"),
 	},
 	
 	{
 		name = "diamond_sword",
 		offset = CFrame.Angles(math.rad(0),math.rad(-100),math.rad(-90)),
-		model = import:WaitForChild("diamond_sword"),
-	}
+		model = import:WaitForChild("Diamond_Sword"),
+	},
+	
+	{
+		name = "emerald_sword",
+		offset = CFrame.Angles(math.rad(0),math.rad(-100),math.rad(-90)),
+		model = import:WaitForChild("Emerald _Sword"),
+	},
+	
+	{
+		name = "wood_pickaxe",
+		offset = CFrame.Angles(math.rad(0),math.rad(-190),math.rad(-95)),
+		model = import:WaitForChild("Wood_Pickaxe"),
+	},
+	
+	{
+		name = "stone_pickaxe",
+		offset = CFrame.Angles(math.rad(0),math.rad(-190),math.rad(-95)),
+		model = import:WaitForChild("Stone_Pickaxe"),
+	},
+	
+	{
+		name = "iron_pickaxe",
+		offset = CFrame.Angles(math.rad(0),math.rad(-190),math.rad(-95)),
+		model = import:WaitForChild("Iron_Pickaxe"),
+	},
+	
+	{
+		name = "diamond_pickaxe",
+		offset = CFrame.Angles(math.rad(0),math.rad(80),math.rad(-95)),
+		model = import:WaitForChild("Diamond_Pickaxe"),
+	},
+	
+	{
+		name = "wood_axe",
+		offset = CFrame.Angles(math.rad(0),math.rad(-10),math.rad(-95)),
+		model = import:WaitForChild("Wood_Axe"),
+	},
+	
+	{
+		name = "stone_axe",
+		offset = CFrame.Angles(math.rad(0),math.rad(-10),math.rad(-95)),
+		model = import:WaitForChild("Stone_Axe"),
+	},
+	
+	{
+		name = "iron_axe",
+		offset = CFrame.Angles(math.rad(0),math.rad(-10),math.rad(-95)),
+		model = import:WaitForChild("Iron_Axe"),
+	},
+	
+	{
+		name = "diamond_axe",
+		offset = CFrame.Angles(math.rad(0),math.rad(-90),math.rad(-95)),
+		model = import:WaitForChild("Diamond_Axe"),
+	},
+	
+	{
+		name = "fireball",
+		offset = CFrame.Angles(math.rad(0),math.rad(-90),math.rad(95)),
+		model = import:WaitForChild("Fireball"),
+	},
+	
+	{
+		name = "telepearl",
+		offset = CFrame.Angles(math.rad(0),math.rad(-90),math.rad(95)),
+		model = import:WaitForChild("Telepearl"),
+	},
+	
 	
 }
 
@@ -61,7 +128,6 @@ local func = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(funct
 			model.CFrame = tool:WaitForChild("Handle").CFrame * v.offset
 			model.CFrame *= CFrame.Angles(math.rad(0),math.rad(-50),math.rad(0))
 			model.Parent = tool
-model.CanCollide = false
 			
 			local weld = Instance.new("WeldConstraint",model)
 			weld.Part0 = model
@@ -85,7 +151,6 @@ model.CanCollide = false
 			model2.CFrame *= CFrame.Angles(math.rad(0),math.rad(-50),math.rad(0))
 			model2.CFrame *= CFrame.new(1,0,-.9)
 			model2.Parent = tool2
-model2.CanCollide = false
 			
 			local weld2 = Instance.new("WeldConstraint",model)
 			weld2.Part0 = model2
@@ -96,7 +161,7 @@ model2.CanCollide = false
 	end
 	
 end)
-
 shared.SnoopyTxt.Destroy = function()
 	pcall(function() func:Disconnect() end)
 end
+
