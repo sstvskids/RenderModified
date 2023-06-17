@@ -356,7 +356,7 @@ GUI.CreateButton({
 	Icon = "vape/assets/WorldIcon.png", 
 	IconSize = 16
 })
-GUI.CreateDivider("Voidware")
+GUI.CreateDivider("Custom")
 GUI.CreateButton({
 	Name = "MatchMaking", 
 	Function = function(callback) MatchMaking.SetVisible(callback) end, 
