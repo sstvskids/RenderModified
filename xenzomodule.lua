@@ -232,8 +232,8 @@ Tag = function(name, player, color)
 end,
 GetFile = function(file, path)
 	local errored = true
-	local Aristoisver = shared.AristoisCommitHash ~= nil and shared.AristoisCommitHash or "main"
-	local suc, res = pcall(function() return readfile("vape/Aristois/"..file) end)
+	local Aristoisver = "main"
+	local suc, res = pcall(function() return readfile("vape/AristoisStore/"..file) end)
 	if not suc then
 		local git, data
 		task.delay(10, function()
@@ -242,7 +242,7 @@ GetFile = function(file, path)
 				GuiLibrary.CreateNotification("Aristois", "The connection to github is taking a while. either a github moment or your wifi is just bad.", 20)
 			end
 		end)
-		git, data = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Aristois/"..Aristoisver.."/"..file, true) end)
+		git, data = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/"..Aristoisver.."/"..file, true) end)
 		if not git or data == "404: Not Found" then
 			GuiLibrary.CreateNotification("Aristois", "Failed to get vape/Aristois/"..file.." | "..data, 40)
 			return data
@@ -321,6 +321,12 @@ end))
 local isfile = isfile or function(file)
 	local suc, res = pcall(function() return readfile(file) end)
 	return suc and res ~= nil
+end
+for i,v in pairs(AristoisStore.SystemFiles) do
+	if not isfile(v) or not readfile(v):find("--- Aristois Custom Modules Hashed File") then
+	AristoisFileRecovery()
+	break
+end
 end
 local networkownerswitch = tick()
 local isnetworkowner = isnetworkowner or function(part)
