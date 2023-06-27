@@ -1,1 +1,1 @@
-{"AnnouncementText":"skill issue","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"No Voidware fou you until release.","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
