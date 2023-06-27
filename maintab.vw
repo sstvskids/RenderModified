@@ -1,1 +1,1 @@
-{"AnnouncementText":false,"Announcement":false,"Disabled":false,"AnnouncementDuration":false}
+{"AnnouncementText":false,"Announcement":false,"Disabled":true,"AnnouncementDuration":false}
