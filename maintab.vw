@@ -1,1 +1,1 @@
-{"AnnouncementText":"Voidware :troll:","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"bedwars devs best ac rel","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
