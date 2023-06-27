@@ -1,1 +1,1 @@
-{"AnnouncementText":false,"Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"skill issue","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
