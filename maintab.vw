@@ -1,1 +1,1 @@
-{"AnnouncementText":"bedwars devs best ac rel","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":false,"Announcement":false,"Disabled":false,"AnnouncementDuration":30}
