@@ -1,1 +1,1 @@
-{"AnnouncementText":"No Voidware fou you until release.","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"No Voidware for you until release.","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
