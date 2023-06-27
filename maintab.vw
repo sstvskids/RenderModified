@@ -1,1 +1,1 @@
-{"AnnouncementText":false,"Announcement":false,"Disabled":true,"AnnouncementDuration":false}
+{"AnnouncementText":"Voidware coming soon! :shush_face:","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
