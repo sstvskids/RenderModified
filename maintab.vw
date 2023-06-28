@@ -1,1 +1,1 @@
-{"AnnouncementText":"bw devs moment","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"bw devs bro","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
