@@ -2024,5 +2024,9 @@ if shared.VapeIndependent then
 	shared.VapeFullyLoaded = true
 	return GuiLibrary
 else
-	loadVape()
+	local suc, result = pcall(loadVape)
+	if not suc then
+		GuiLibrary.CreateNotification("Voidware", "Failed to load configuration. | "..result, 200, "assets/WarningNotification.png")
+		frame.Frame.Frame.ImageColor3 = Color3.fromRGB(255, 0, 0)
+	end
 end
