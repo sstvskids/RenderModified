@@ -1,1 +1,1 @@
-{"AnnouncementText":"what the hell lol","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"bw devs moment","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
