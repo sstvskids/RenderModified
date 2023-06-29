@@ -1,1 +1,1 @@
-{"AnnouncementText":"hi","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"so uh gg","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
