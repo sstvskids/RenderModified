@@ -1,3 +1,4 @@
+--- Voidware Custom Modules Hashed File
 --This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
 repeat task.wait() until game:IsLoaded()
 local GuiLibrary
@@ -1366,6 +1367,17 @@ local TargetInfoDisplayNames = TargetInfo.CreateToggle({
 	Default = true
 })
 local TargetInfoBackground = {Enabled = false}
+local TargetInfoMainInfo = Instance.new("Frame")
+local TargetInfoHealth = Instance.new("Frame")
+local TargetInfoMainInfoCorner = Instance.new("UICorner")
+local TargetInfoName = Instance.new("TextLabel")
+shared.VapeAutoUpdateOnHealth = true
+shared.UpdateVapeTargetHUD = function(tab)
+	tab = tab or {}
+	TargetInfoMainInfo.BackgroundColor3 = tab.MainFrameColor or TargetInfoMainInfo.BackgroundColor3
+	TargetInfoMainInfoCorner.CornerRadius = UDim.new(0, tab.CornerRounding or 4)
+	TargetInfoName.Font = tab.TextFont and Enum.Font[tab.TextFont] or TargetInfoName.Font
+end
 local TargetInfoMainFrame = Instance.new("Frame")
 TargetInfoMainFrame.BackgroundColor3 = Color3.fromRGB(26, 25, 26)
 TargetInfoMainFrame.BorderSizePixel = 0
@@ -1373,14 +1385,12 @@ TargetInfoMainFrame.BackgroundTransparency = 1
 TargetInfoMainFrame.Size = UDim2.new(0, 220, 0, 72)
 TargetInfoMainFrame.Position = UDim2.new(0, 0, 0, 5)
 TargetInfoMainFrame.Parent = TargetInfo.GetCustomChildren()
-local TargetInfoMainInfo = Instance.new("Frame")
 TargetInfoMainInfo.BackgroundColor3 = Color3.fromRGB(31, 30, 31)
 TargetInfoMainInfo.Size = UDim2.new(0, 220, 0, 80)
 TargetInfoMainInfo.BackgroundTransparency = 0.25
 TargetInfoMainInfo.Position = UDim2.new(0, 0, 0, 0)
 TargetInfoMainInfo.Name = "MainInfo"
 TargetInfoMainInfo.Parent = TargetInfoMainFrame
-local TargetInfoName = Instance.new("TextLabel")
 TargetInfoName.TextSize = 17
 TargetInfoName.Font = Enum.Font.SourceSans
 TargetInfoName.TextColor3 = Color3.fromRGB(162, 162, 162)
@@ -1394,16 +1404,6 @@ TargetInfoName.ZIndex = 2
 TargetInfoName.TextXAlignment = Enum.TextXAlignment.Left
 TargetInfoName.TextYAlignment = Enum.TextYAlignment.Top
 TargetInfoName.Parent = TargetInfoMainInfo
-local TargetInfoNameShadow = TargetInfoName:Clone()
-TargetInfoNameShadow.Size = UDim2.new(1, 0, 1, 0)
-TargetInfoNameShadow.TextTransparency = 0.5
-TargetInfoNameShadow.TextColor3 = Color3.new()
-TargetInfoNameShadow.ZIndex = 1
-TargetInfoNameShadow.Position = UDim2.new(0, 1, 0, 1)
-TargetInfoName:GetPropertyChangedSignal("Text"):Connect(function()
-	TargetInfoNameShadow.Text = TargetInfoName.Text
-end)
-TargetInfoNameShadow.Parent = TargetInfoName
 local TargetInfoHealthBackground = Instance.new("Frame")
 TargetInfoHealthBackground.BackgroundColor3 = Color3.fromRGB(54, 54, 54)
 TargetInfoHealthBackground.Size = UDim2.new(0, 138, 0, 4)
@@ -1421,7 +1421,6 @@ TargetInfoHealthBackgroundShadow.ImageColor3 = Color3.new()
 TargetInfoHealthBackgroundShadow.ScaleType = Enum.ScaleType.Slice
 TargetInfoHealthBackgroundShadow.SliceCenter = Rect.new(10, 10, 118, 118)
 TargetInfoHealthBackgroundShadow.Parent = TargetInfoHealthBackground
-local TargetInfoHealth = Instance.new("Frame")
 TargetInfoHealth.BackgroundColor3 = Color3.fromRGB(40, 137, 109)
 TargetInfoHealth.Size = UDim2.new(1, 0, 1, 0)
 TargetInfoHealth.ZIndex = 3
@@ -1441,7 +1440,6 @@ TargetInfoImage.BackgroundTransparency = 1
 TargetInfoImage.Image = 'rbxthumb://type=AvatarHeadShot&id='..playersService.LocalPlayer.UserId..'&w=420&h=420'
 TargetInfoImage.Position = UDim2.new(0, 5, 0, 10)
 TargetInfoImage.Parent = TargetInfoMainInfo
-local TargetInfoMainInfoCorner = Instance.new("UICorner")
 TargetInfoMainInfoCorner.CornerRadius = UDim.new(0, 4)
 TargetInfoMainInfoCorner.Parent = TargetInfoMainInfo
 local TargetInfoHealthBackgroundCorner = Instance.new("UICorner")
@@ -1481,7 +1479,9 @@ shared.VapeTargetInfo = {
 				TargetInfoHealthExtra:TweenSize(UDim2.new(math.clamp((v.Humanoid.Health / v.Humanoid.MaxHealth) - 1, 0, 1), 0, 1, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.25, true)
 				if TargetInfoHealthTween then TargetInfoHealthTween:Cancel() end
 				TargetInfoHealthTween = game:GetService("TweenService"):Create(TargetInfoHealth, TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromHSV(math.clamp(v.Humanoid.Health / v.Humanoid.MaxHealth, 0, 1) / 2.5, 0.89, 1)})
+				if shared.VapeAutoUpdateOnHealth then
 				TargetInfoHealthTween:Play()
+				end
 				TargetInfoName.Text = (TargetInfoDisplayNames.Enabled and v.Player.DisplayName or v.Player.Name)
 				break
 			end
