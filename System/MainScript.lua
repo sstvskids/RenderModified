@@ -2019,14 +2019,56 @@ local function loadVape()
 	coroutine.resume(saveSettingsLoop)
 	shared.VapeFullyLoaded = true
 end
+local function errorNotification(title, text, duration)
+	local frame = GuiLibrary.CreateNotification(title, text, duration, "assets/WarningNotification.png")
+	frame.Frame.Frame.ImageColor3 = Color3.fromRGB(255, 0, 0)
+	frame.IconLabel.ImageColor3 = Color3.new(220, 0, 0)
+end
+local suc, result
+local mainscriptloaded = false
+local function VoidwareRecovery()
+	if shared.VoidwareRecoveryReinject then
+		if not mainscriptloaded then repeat task.wait() until mainscriptloaded end
+		if not suc and not shared.VoidwareFileRecovery then
+			pcall(function() writefile("vape/Voidware/BedwarsOld.lua", readfile("vape/Voidware/Bedwars.lua")) end)
+			pcall(function() delfile("vape/Voidware/Bedwars.lua") end)
+			pcall(function() delfolder("vape/Voidware/data") end)
+			pcall(function() delfile("vape/Voidware/maintab.vw") end)
+			shared.VoidwareFileRecovery = true
+			pcall(shared.GuiLibrary.SelfDestruct)
+			if vapeInjected then repeat task.wait() until not vapeInjected end
+			pcall(function() loadstring(readfile("vape/NewMainScript.lua"))() end)
+		else
+			if not suc and shared.VoidwareFileRecovery then
+				task.spawn(errorNotification, "Voidware", "Automatic Repair Failed to Repair This Config. Please try reinstalling Voidware.", 300)
+				shared.VoidwareRecoveryReinject = nil
+				shared.VoidwareFileRecovery = nil
+			end
+		end
+	else
+		local autoreinject, result = pcall(function() 
+			pcall(shared.GuiLibrary.SelfDestruct)
+			if vapeInjected then repeat task.wait() until not vapeInjected end
+			pcall(function() loadstring(readfile("vape/NewMainScript.lua"))() end)
+			shared.VoidwareRecoveryReinject = true
+		end)
+		if not autoreinject then
+			shared.VoidwareRecoveryReinject = true
+		end
+	end
+end
 if shared.VapeIndependent then
 	task.spawn(loadVape)
 	shared.VapeFullyLoaded = true
 	return GuiLibrary
 else
-	local suc, result = pcall(loadVape)
+	suc, result = pcall(loadVape)
 	if not suc then
-		GuiLibrary.CreateNotification("Voidware", "Failed to load configuration. | "..result, 200, "assets/WarningNotification.png")
-		frame.Frame.Frame.ImageColor3 = Color3.fromRGB(255, 0, 0)
+		if shared.VoidwareDeveloper then
+			task.spawn(errorNotification, "Voidware", "Failed to load configuration. | "..result, 300)
+		else
+			task.spawn(VoidwareRecovery)
+		end
 	end
 end
+mainscriptloaded = true
