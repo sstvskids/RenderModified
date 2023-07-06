@@ -101,3 +101,5 @@ local func = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(funct
     end
     
 end)
+
+shared.txtfunc = func
