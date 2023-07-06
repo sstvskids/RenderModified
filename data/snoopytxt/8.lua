@@ -46,7 +46,7 @@ index = {
 }
 
 --// main viewmodel renderer
-local func = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)
+shared.txtfunc  = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)
     
     if(not tool:IsA("Accessory")) then return end
     
@@ -102,4 +102,3 @@ local func = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(funct
     
 end)
 
-shared.txtfunc = func
