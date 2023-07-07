@@ -1,4 +1,3 @@
---- Voidware Custom Modules Hashed File
 --This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
 repeat task.wait() until game:IsLoaded()
 local GuiLibrary
@@ -16,6 +15,18 @@ local inputService = game:GetService("UserInputService")
 local isfile = isfile or function(file)
 	local suc, res = pcall(function() return readfile(file) end)
 	return suc and res ~= nil
+end
+local bedwarsmodule = "vape/CustomModules/6872274481.lua"
+if (isfile(bedwarsmodule) and not readfile(bedwarsmodule):find("Voidware") or not isfile(bedwarsmodule)) then
+	pcall(delfolder, "vape/Voidware")
+	pcall(delfile, "vape/MainScript.lua")
+	pcall(function()
+		if readfile("vape/NewMainScript.lua"):find("Voidware") then
+			local mainscript = game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true)
+			mainscript = "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..mainscript
+			writefile("vape/NewMainScript.lua", mainscript)
+		end
+	end)
 end
 local setidentity = syn and syn.set_thread_identity or set_thread_identity or setidentity or setthreadidentity or function() end
 local getidentity = syn and syn.get_thread_identity or get_thread_identity or getidentity or getthreadidentity or function() return 0 end
@@ -2045,7 +2056,7 @@ local function VoidwareRecovery()
 			shared.VoidwareFileRecovery = true
 		else
 			if not suc and shared.VoidwareFileRecovery and shared.VoidwareRecoveryReinject then
-				task.spawn(errorNotification, "Voidware", "Automatic Repair Failed to Repair This Config. Please try manually reinstalling Voidware.", 300)
+				task.spawn(errorNotification, "Voidware", "Automatic Repair Failed to Repair This Config. Please try reinstalling Voidware.", 300)
 				shared.VoidwareRecoveryReinject = nil
 				shared.VoidwareFileRecovery = nil
 			end
@@ -2056,7 +2067,7 @@ local function VoidwareRecovery()
 			if vapeInjected then repeat task.wait() until not vapeInjected end
 			game:GetService("StarterGui"):SetCore("SendNotification", {
 				Title = "Voidware",
-				Text = "Delaying load time for 10s to avoid config crashing.",
+				Text = "Config Modules Failed to load! Delaying load time for 10s to avoid config crashing.",
 				Duration = 8,
 			})
 			shared.VapeExecuted = true
