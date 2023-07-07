@@ -1951,16 +1951,15 @@ GeneralSettings.CreateButton2({
 GeneralSettings.CreateButton2({
 	Name = "REINJECT",
 	Function = function() 
+	local commit = isfile("vape/commithash.txt") and readfile("vape/commithash.txt") or "main"
 	GuiLibrary.SelfDestruct()
 	if isfile("vape/NewMainScript.lua") then
-		loadstring(readfile("vape/NewMainScript.lua"))()
+		loadstring(readfile("vape/MainScript.lua"))()
 	else
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..isfile("vape/commithash.txt") and readfile("vape/commithash.txt") or "main".."/NewMainScript.lua", true))()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..commit.."/MainScript.lua", true))()
 	end
 	end
 })
-
-shared.FullVapeUninject = function() GuiLibrary.SelfDestruct() end -- fixes the bug needing multiple attempts to reinject.
 
 local function loadVape()
 	if not shared.VapeIndependent then
@@ -2006,6 +2005,8 @@ local function loadVape()
 			end)
 		end
 		GuiLibrary.LoadedAnimation(welcomeMessage.Enabled)
+		shared.VoidwareRecoveryReinject = nil
+		shared.VoidwareFileRecovery = nil
 	else
 		shared.VapeSwitchServers = nil
 	end
@@ -2030,16 +2031,20 @@ local function VoidwareRecovery()
 	if shared.VoidwareRecoveryReinject then
 		if not mainscriptloaded then repeat task.wait() until mainscriptloaded end
 		if not suc and not shared.VoidwareFileRecovery then
-			pcall(function() writefile("vape/Voidware/BedwarsOld.lua", readfile("vape/Voidware/Bedwars.lua")) end)
-			pcall(function() delfile("vape/Voidware/Bedwars.lua") end)
-			pcall(function() delfolder("vape/Voidware/data") end)
-			pcall(function() delfile("vape/Voidware/maintab.vw") end)
+			pcall(delfolder, "vape/Voidware/data")
+			pcall(function()
+				local data = game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/System/Bedwars.lua", true)
+				if data ~= "404: Not Found" then
+				writefile("vape/CustomModules/6872274481.lua", data)
+				local uninjected = pcall(GuiLibrary.SelfDestruct)
+				if uninjected then
+				pcall(function() loadstring(readfile("vape/MainScript.lua"))() end)
+				end
+				end
+			end)
 			shared.VoidwareFileRecovery = true
-			pcall(shared.GuiLibrary.SelfDestruct)
-			if vapeInjected then repeat task.wait() until not vapeInjected end
-			pcall(function() loadstring(readfile("vape/NewMainScript.lua"))() end)
 		else
-			if not suc and shared.VoidwareFileRecovery then
+			if not suc and shared.VoidwareFileRecovery and shared.VoidwareRecoveryReinject then
 				task.spawn(errorNotification, "Voidware", "Automatic Repair Failed to Repair This Config. Please try reinstalling Voidware.", 300)
 				shared.VoidwareRecoveryReinject = nil
 				shared.VoidwareFileRecovery = nil
@@ -2049,7 +2054,14 @@ local function VoidwareRecovery()
 		local autoreinject, result = pcall(function() 
 			pcall(shared.GuiLibrary.SelfDestruct)
 			if vapeInjected then repeat task.wait() until not vapeInjected end
-			pcall(function() loadstring(readfile("vape/NewMainScript.lua"))() end)
+			game:GetService("StarterGui"):SetCore("SendNotification", {
+				Title = "Voidware",
+				Text = "Delaying load time for 10s to avoid config crashing.",
+				Duration = 8,
+			})
+			shared.VapeExecuted = true
+			local autoreinject
+			task.delay(10, function() autoreinject = pcall(function() shared.VapeExecuted = false loadstring(readfile("vape/MainScript.lua"))() end) end)
 			shared.VoidwareRecoveryReinject = true
 		end)
 		if not autoreinject then
