@@ -51,7 +51,7 @@ local Players = game:GetService("Players")
 				}
 				
 				--// main viewmodel renderer
-				local func = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)
+				shared.SnoopyTexturePack = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)
 					
 					if(not tool:IsA("Accessory")) then return end
 					
@@ -106,7 +106,3 @@ local Players = game:GetService("Players")
 					end
 					
 				end)
-
-                shared.SnoopyTxt.Destroy = function()
-                    func:Disconnect()
-                end

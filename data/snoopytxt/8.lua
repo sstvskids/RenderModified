@@ -46,7 +46,7 @@ index = {
 }
 
 --// main viewmodel renderer
-shared.txtfunc  = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)
+sshared.SnoopyTexturePack = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)
     
     if(not tool:IsA("Accessory")) then return end
     

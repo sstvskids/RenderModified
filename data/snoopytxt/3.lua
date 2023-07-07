@@ -106,7 +106,7 @@ index = {
 }
 
 --// main viewmodel renderer
-local func = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)
+shared.SnoopyTexturePack = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)
 	
 	if(not tool:IsA("Accessory")) then return end
 	
@@ -161,7 +161,3 @@ local func = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(funct
 	end
 	
 end)
-shared.SnoopyTxt.Destroy = function()
-	pcall(function() func:Disconnect() end)
-end
-

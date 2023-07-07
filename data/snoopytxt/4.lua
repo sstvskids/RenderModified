@@ -38,7 +38,7 @@ local swordIndex = {
 }
 
 -- Very epic index for pickaxes
-local pickaxeIndex = {
+shared.SnoopyPickaxePack = {
     {
         name = "wood_pickaxe",
         offset = CFrame.Angles(math.rad(0), math.rad(-190), math.rad(-95)),
@@ -62,7 +62,7 @@ local pickaxeIndex = {
 }
 
 -- Main viewmodel renderer for swords
-local swordFunc = Workspace.Camera.Viewmodel.ChildAdded:Connect(function(tool)
+shared.SnoopyTexturePack = Workspace.Camera.Viewmodel.ChildAdded:Connect(function(tool)
     if not tool:IsA("Accessory") then
         return
     end
@@ -151,10 +151,3 @@ local pickaxeFunc = Workspace.Camera.Viewmodel.ChildAdded:Connect(function(tool)
     end
 end)
 
-
-shared.SnoopyTxt.Destroy = function()
-	pcall(function() pickaxeFunc:Disconnect() end)
-    pcall(function() swordFunc:Disconnect() end)
-end
-
---//If your reading this anyone who has tried to leak this has not leaked it but has just reposted it, this pack was released by Snoopy.
