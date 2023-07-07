@@ -1,3 +1,4 @@
+--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
 local errorPopupShown = false
 local setidentity = syn and syn.set_thread_identity or set_thread_identity or setidentity or setthreadidentity or function() end
 local getidentity = syn and syn.get_thread_identity or get_thread_identity or getidentity or getthreadidentity or function() return 8 end
@@ -6,8 +7,7 @@ local isfile = isfile or function(file)
 	return suc and res ~= nil
 end
 local delfile = delfile or function(file) writefile(file, "") end
-local VoidwareFileHash = "--- Voidware Custom Modules Hashed File"
-local VoidwareFolderTable = {"vape", "vape/Voidware", "vape/Voidware/data"}
+
 local function displayErrorPopup(text, func)
 	local oldidentity = getidentity()
 	setidentity(8)
@@ -28,14 +28,7 @@ local function displayErrorPopup(text, func)
 	prompt:_open(text)
 	setidentity(oldidentity)
 end
-task.spawn(function()
-	for _,v in pairs(VoidwareFolderTable) do
-		if not isfolder(v) then
-			makefolder(v)
-			print("[VOIDWARE] created folder "..v)
-		end
-	end
-end)
+
 local function vapeGithubRequest(scripturl)
 	if not isfile("vape/"..scripturl) then
 		local suc, res
@@ -56,63 +49,4 @@ local function vapeGithubRequest(scripturl)
 	return readfile("vape/"..scripturl)
 end
 
-task.spawn(function()
-shared.VoidwareCommitHash = "main"
-	for i,v in pairs(game:HttpGet("https://github.com/SystemXVoid/Voidware"):split("\n")) do 
-		if v:find("commit") and v:find("fragment") then 
-			local comsplit = v:split("/")[5]
-			shared.VoidwareCommitHash = comsplit:sub(0, comsplit:find('"') - 1)
-			break
-		end
-	end
-end)
-
-if not shared.VapeDeveloper then 
-	local commit = "main"
-	for i,v in pairs(game:HttpGet("https://github.com/7GrandDadPGN/VapeV4ForRoblox"):split("\n")) do 
-		if v:find("commit") and v:find("fragment") then 
-			local str = v:split("/")[5]
-			commit = str:sub(0, str:find('"') - 1)
-			break
-		end
-	end
-	if commit then
-		if isfolder("vape") then 
-			if ((not isfile("vape/commithash.txt")) or (readfile("vape/commithash.txt") ~= commit or commit == "main")) then
-				for i,v in pairs({"vape/Universal.lua", "vape/GuiLibrary.lua"}) do 
-					if isfile(v) and readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
-					if not readfile(v):find(VoidwareFileHash) then
-						delfile(v)
-					end
-					end 
-				end
-				if isfolder("vape/CustomModules") then 
-					for i,v in pairs(listfiles("vape/CustomModules")) do 
-						if isfile(v) and readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
-						if not readfile(v):find(VoidwareFileHash) then
-							delfile(v)
-						end
-						end
-					end
-				end
-				if isfolder("vape/Libraries") then 
-					for i,v in pairs(listfiles("vape/Libraries")) do 
-						if isfile(v) and readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
-						if not readfile(v):find(VoidwareFileHash) then
-							delfile(v)
-						end
-						end 
-					end
-				end
-				writefile("vape/commithash.txt", commit)
-			end
-		else
-			makefolder("vape")
-			writefile("vape/commithash.txt", commit)
-		end
-	else
-		displayErrorPopup("Failed to connect to github, please try using a VPN.")
-		error("Failed to connect to github, please try using a VPN.")
-	end
-end
 return loadstring(vapeGithubRequest("MainScript.lua"))()
