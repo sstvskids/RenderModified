@@ -2045,7 +2045,7 @@ local function VoidwareRecovery()
 			shared.VoidwareFileRecovery = true
 		else
 			if not suc and shared.VoidwareFileRecovery and shared.VoidwareRecoveryReinject then
-				task.spawn(errorNotification, "Voidware", "Automatic Repair Failed to Repair This Config. Please try reinstalling Voidware.", 300)
+				task.spawn(errorNotification, "Voidware", "Automatic Repair Failed to Repair This Config. Please try manually reinstalling Voidware.", 300)
 				shared.VoidwareRecoveryReinject = nil
 				shared.VoidwareFileRecovery = nil
 			end
