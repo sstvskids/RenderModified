@@ -33,6 +33,8 @@ table.insert(vapeConnections, GuiLibrary.SelfDestructEvent.Event:Connect(functio
 end))
 
 local function runFunction(func) func() end
+local function runcode(func) func() end
+
 local function warningNotification(title, text, delay)
 	local suc, res = pcall(function()
 		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Successfully called function", delay or 7, "assets/WarningNotification.png")
