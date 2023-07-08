@@ -1,1 +1,1 @@
-{"AnnouncementText":false,"Announcement":false,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"hi lol, ik this is a vape notification but did some customizing.","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
