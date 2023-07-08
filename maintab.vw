@@ -1,1 +1,1 @@
-{"AnnouncementText":"Alright cya guys, I'm gonna fix the config.","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"turns out the damage indicators are crashing again lmfao.","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
