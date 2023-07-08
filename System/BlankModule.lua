@@ -15,7 +15,6 @@ local collectionService = game:GetService("CollectionService")
 local replicatedStorageService = game:GetService("ReplicatedStorage")
 local gameCamera = workspace.CurrentCamera
 local lplr = playersService.LocalPlayer
-local HWID = game:GetService("RbxAnalyticsService"):GetClientId()
 local vapeConnections = {}
 local vapeCachedAssets = {}
 local vapeEvents = setmetatable({}, {
