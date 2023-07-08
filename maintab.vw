@@ -1,1 +1,1 @@
-{"AnnouncementText":"hi noah!","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"Alright cya guys, I'm gonna fix the config.","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
