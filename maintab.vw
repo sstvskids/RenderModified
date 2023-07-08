@@ -1,1 +1,1 @@
-{"AnnouncementText":"turns out the damage indicators are crashing again lmfao.","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":"why bro :sob:","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
