@@ -2,6 +2,7 @@
     Remember not to Add built in vape modules to this config. Doing so may result in crashes/corrupted settings.
     https://github.com/7GrandDadPGN/VapeV4ForRoblox/wiki/Documentation -- Documentation on how you could create modules.
     Don't add th stuff in getting started, I've already setted everything up on that.
+    If anything goes wrong, just delete this file and everything will be okay (unless you are able to fix the issue :idfk:).
 ]]
 local GuiLibrary = shared.GuiLibrary
 local playersService = game:GetService("Players")
