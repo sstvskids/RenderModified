@@ -1997,7 +1997,6 @@ local function recoverVoidware()
 			if suc and data ~= "" and data ~= "404: Not Found" then
 				if not isfolder("vape") then makefolder("vape") end
 				if not isfolder("vape/CustomModules") then makefolder("vape/CustomModules") end
-				data = "-- Voidware Custom Modules Signed File\n"..data
 				pcall(writefile, "vape/CustomModules/6872274481.lua", data)
 			end
 			suc, data = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/System/GuiLibrary.lua", true) end)
