@@ -1,6 +1,8 @@
-[=] Fixed a majour bug causing executor crashing (hopefully lol) (wasn't damageindicator btw)
+[=] Fixed a majour bug causing executor crashing (hopefully lol)
 
-[+] Added Disabler
+[+] Added Disabler (also spoofed inv check, u will still need the scythe, just not in your hand :idfk:)
+
+[-] Removed ScytheDisabler
 
 [+] Made All Tween Teleport Modules Instant (no need for death or tween, it will instant tp if you had a scythe and disabler enabled, otherwise it would still use the death & tween method.)
 
@@ -12,8 +14,10 @@
 
 [=] Fixed vape private commands not working (chat tag still doesn't work but wtv :omegalol:)
 
-[+] Broke a few Universial modules (fixing tmr :troll:)
+[+] Broke a few Universal modules (fixing tmr :troll:)
 
 [+] Added VapePrivateDetector (a better one for the new wl system :idfk:)
 
 [+] Added a Blatant Hide Legit Module (Ghost profile only, removes all modules that will make you get caught cheating)
+
+[+] Added more Kill aura Animations (also revamped some)
