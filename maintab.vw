@@ -1,1 +1,1 @@
-{"AnnouncementText":"If you crash everytime with voidware. Just disable DamageIndicator and should be fine.","Announcement":true,"Disabled":true,"AnnouncementDuration":30}
+{"AnnouncementText":false,"Announcement":false,"Disabled":false,"AnnouncementDuration":30}
