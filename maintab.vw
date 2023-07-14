@@ -1,1 +1,1 @@
-{"AnnouncementText":"why does my shit have to be so cringe :skull:","Announcement":true,"Disabled":false,"AnnouncementDuration":40}
+{"AnnouncementText":"like I make a custom vape and all the sudden so many problems :sob:","Announcement":true,"Disabled":false,"AnnouncementDuration":40}
