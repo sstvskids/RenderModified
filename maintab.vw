@@ -1,1 +1,1 @@
-{"AnnouncementText":"like I make a custom vape and all the sudden so many problems :sob:","Announcement":true,"Disabled":false,"AnnouncementDuration":40}
+{"AnnouncementText":"Alright cya","Announcement":true,"Disabled":false,"AnnouncementDuration":40}
