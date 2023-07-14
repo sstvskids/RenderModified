@@ -2093,9 +2093,22 @@ else
 	if suc then
 		shared.VoidwareRecoveryReinject = nil
 		shared.VoidwareRecoveryStage2 = nil
+		shared.VoidwareFastReinject = nil
 	else
-		if shared.VoidwareDeveloper then
-		task.spawn(errorNotification, "Voidware", "Failed to load the current profiles | "..err)
+		if shared.VoidwareDeveloper or (err == "Cannot require a non-RobloxScript module from a RobloxScript" and game.PlaceId == "6872265039") then
+		if (err == "Cannot require a non-RobloxScript module from a RobloxScript" and game.PlaceId == "6872265039") and not shared.VoidwareFastReinject then
+			local uninject = pcall(GuiLibrary.SelfDestruct)
+			if uninject then
+				if isfile("vape/NewMainScript.lua") then
+					loadstring(readfile("vape/NewMainScript.lua"))()
+				else
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/System/NewMainScript.lua", true))() 
+				end
+				shared.VoidwareFastReinject = true
+			end
+		else
+			task.spawn(errorNotification, "Voidware", "Failed to load the current profiles. | "..err)
+		end
 		error(err)
 		else
 		task.spawn(recoverVoidware)
