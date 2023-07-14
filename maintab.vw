@@ -1,1 +1,1 @@
-{"AnnouncementText":"hi again.","Announcement":true,"Disabled":false,"AnnouncementDuration":40}
+{"AnnouncementText":"don't mind these, just testing out the auto-update.","Announcement":true,"Disabled":false,"AnnouncementDuration":40}
