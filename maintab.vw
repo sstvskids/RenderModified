@@ -1,1 +1,1 @@
-{"AnnouncementText":"hello again :omegalol:","Announcement":true,"Disabled":false,"AnnouncementDuration":30}
+{"AnnouncementText":false,"Announcement":false,"Disabled":false,"AnnouncementDuration":30}
