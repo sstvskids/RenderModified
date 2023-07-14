@@ -1,23 +1,19 @@
-[=] Fixed a majour bug causing executor crashing (hopefully lol)
+[BEDWARS MATCH VAPE]
 
-[+] Added Disabler (also spoofed inv check, u will still need the scythe, just not in your hand :idfk:)
+[-] Removed AntiDeath (kinda useless, use infinite fly :troll:)
 
-[-] Removed ScytheDisabler
+[=] Added some fixes to the whitelist (cmds, account whitelisting, etc.)
 
-[+] Made All Tween Teleport Modules Instant (no need for death or tween, it will instant tp if you had a scythe and disabler enabled, otherwise it would still use the death & tween method.)
+[=] Fixed Vape Private Commands for the third time
 
-[-] Removed VapeTargetHUD (might make my own soon ngl)
+[=] Fixed Module Dupe (happened due to universal vape had the same modules, and didn't remove them for the main module :omegalol:)
 
-[-] Temporarily Removed QueueType Modules. (I'll add back sooner lmfao)
+[=] Added Cooldowns to the Insta-Teleports (cooldown whenever you couldn't use the scythe)
 
-[-] Removed Chat Tag for standard voidware users
+[+] Added back ChatCustomizer (went back to the old rubish ChatMover cause when I lost the source code, I used an older version of the code :skull:)
 
-[=] Fixed vape private commands not working (chat tag still doesn't work but wtv :omegalol:)
+[UNIVERSAL VAPE]
 
-[+] Broke a few Universal modules (fixing tmr :troll:)
+[+] Fixed PlayerAttach and PlayerTP 
 
-[+] Added VapePrivateDetector (a better one for the new wl system :idfk:)
-
-[+] Added a Blatant Hide Legit Module (Ghost profile only, removes all modules that will make you get caught cheating)
-
-[+] Added more Kill aura Animations (also revamped some)
+[+] Added Sort Methods to PlayerTP (Distance, Health, Strongest)
