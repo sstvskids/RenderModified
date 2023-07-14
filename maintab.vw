@@ -1,1 +1,1 @@
-{"AnnouncementText":"don't mind these, just testing out the auto-update.","Announcement":true,"Disabled":false,"AnnouncementDuration":40}
+{"AnnouncementText":"alright, testing is done. rewriting voidware for sw ios + fixing assets.","Announcement":true,"Disabled":false,"AnnouncementDuration":40}
