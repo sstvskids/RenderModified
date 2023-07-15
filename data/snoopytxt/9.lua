@@ -31,7 +31,7 @@ index = {
         model = import:WaitForChild("Emerald_Sword"),
     },  
 }
-local func = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)   
+shared.SnoopyTexturePack = Workspace:WaitForChild("Camera").Viewmodel.ChildAdded:Connect(function(tool)   
     if(not tool:IsA("Accessory")) then return end
     for i,v in pairs(index) do    
         if(v.name == tool.Name) then       
