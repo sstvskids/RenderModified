@@ -40,7 +40,8 @@ for i,v in pairs(collectionService:GetTagged("Drone")) do
         entity.Player = {
             Name = "Drone",
             DisplayName = "Drone",
-            UserId = 1
+            UserId = 1,
+            Character = v
         }
         end
     end
@@ -50,14 +51,14 @@ for i, v in pairs(collectionService:GetTagged("DiamondGuardian")) do
         local distance = math.floor(((lplr.Character.PrimaryPart.Position) - (v.PrimaryPart.Position)).Magnitude)
         if distance < maxdistance then
         maxdistance = distance
-        entity.Player = v
         entity.Human = false
         entity.Humanoid = v.Humanoid
         entity.RootPart = v.PrimaryPart
         entity.Player = {
             Name = "DiamondGuardian",
             DisplayName = "DiamondGuardian",
-            UserId = 1
+            UserId = 1,
+            Character = v
         }
         end
     end
@@ -74,7 +75,8 @@ for i, v in pairs(collectionService:GetTagged("Monster")) do
             entity.Player = {
                 Name = "Monster",
                 DisplayName = "Monster",
-                UserId = 1
+                UserId = 1,
+                Character = v
             }
         end
     end
@@ -91,7 +93,8 @@ for i, v in pairs(collectionService:GetTagged("GolemBoss")) do
             entity.Player = {
                 Name = "Titan",
                 DisplayName = "Titan",
-                UserId = 1
+                UserId = 1,
+                Character = v
             }
         end
     end
