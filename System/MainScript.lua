@@ -334,6 +334,7 @@ GUI.CreateButton({
 	Function = function(callback) Profiles.SetVisible(callback) end, 
 })
 
+
 local FriendsTextListTable = {
 	Name = "FriendsList", 
 	TempText = "Username [Alias]", 
