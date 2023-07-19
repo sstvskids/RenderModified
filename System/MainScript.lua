@@ -202,7 +202,6 @@ task.spawn(function()
 		writefile("vape/assetsversion.txt", assetver)
 	end
 end)
-
 GuiLibrary = loadstring(vapeGithubRequest("GuiLibrary.lua"))()
 shared.GuiLibrary = GuiLibrary
 
@@ -238,6 +237,7 @@ task.spawn(function()
 end)
 
 local GUI = GuiLibrary.CreateMainWindow()
+shared.VapeMainGui = GUI
 local Combat = GuiLibrary.CreateWindow({
 	Name = "Combat", 
 	Icon = "vape/assets/CombatIcon.png", 
@@ -262,11 +262,6 @@ local World = GuiLibrary.CreateWindow({
 	Name = "World", 
 	Icon = "vape/assets/WorldIcon.png", 
 	IconSize = 16
-})
-local Customization = GuiLibrary.CreateWindow2({
-	Name = "Customization", 
-	Icon = "vape/assets/PencilIcon.png", 
-	IconSize = 17
 })
 local Friends = GuiLibrary.CreateWindow2({
 	Name = "Friends", 
@@ -312,12 +307,6 @@ GUI.CreateButton({
 	Name = "World", 
 	Function = function(callback) World.SetVisible(callback) end, 
 	Icon = "vape/assets/WorldIcon.png", 
-	IconSize = 16
-})
-GUI.CreateButton({
-	Name = "Customization", 
-	Function = function(callback) Customization.SetVisible(callback) end, 
-	Icon = "vape/assets/PencilIcon.png", 
 	IconSize = 16
 })
 GUI.CreateDivider("MISC")
