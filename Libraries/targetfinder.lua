@@ -39,7 +39,7 @@ for i,v in pairs(collectionService:GetTagged("Drone")) do
         entity.RootPart = v.PrimaryPart
         entity.Player = {
             Name = "Drone",
-            Username = "Drone",
+            DisplayName = "Drone",
             UserId = 1
         }
         end
@@ -56,7 +56,7 @@ for i, v in pairs(collectionService:GetTagged("DiamondGuardian")) do
         entity.RootPart = v.PrimaryPart
         entity.Player = {
             Name = "DiamondGuardian",
-            Username = "DiamondGuardian",
+            DisplayName = "DiamondGuardian",
             UserId = 1
         }
         end
@@ -73,7 +73,7 @@ for i, v in pairs(collectionService:GetTagged("Monster")) do
             entity.RootPart = v.PrimaryPart
             entity.Player = {
                 Name = "Monster",
-                Username = "Monster",
+                DisplayName = "Monster",
                 UserId = 1
             }
         end
@@ -90,7 +90,7 @@ for i, v in pairs(collectionService:GetTagged("GolemBoss")) do
             entity.RootPart = v.PrimaryPart
             entity.Player = {
                 Name = "Titan",
-                Username = "Titan",
+                DisplayName = "Titan",
                 UserId = 1
             }
         end
