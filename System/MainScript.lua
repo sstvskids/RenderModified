@@ -202,41 +202,6 @@ task.spawn(function()
 		writefile("vape/assetsversion.txt", assetver)
 	end
 end)
-if not isfile("vape/CustomModules/cachechecked.txt") then
-	local isNotCached = false
-	for i,v in pairs({"vape/Universal.lua", "vape/MainScript.lua", "vape/GuiLibrary.lua"}) do 
-		if isfile(v) and not readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
-			isNotCached = true
-		end 
-	end
-	if isfolder("vape/CustomModules") then 
-		for i,v in pairs(listfiles("vape/CustomModules")) do 
-			if isfile(v) and not readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
-				isNotCached = true
-			end 
-		end
-	end
-	if isNotCached and not shared.VapeDeveloper then
-		displayErrorPopup("Vape has detected uncached files, If you have CustomModules click no, else click yes.", {No = function() end, Yes = function()
-			for i,v in pairs({"vape/Universal.lua", "vape/MainScript.lua", "vape/GuiLibrary.lua"}) do 
-				if isfile(v) and not readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
-					delfile(v)
-				end 
-			end
-			for i,v in pairs(listfiles("vape/CustomModules")) do 
-				if isfile(v) and not readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
-					local last = v:split('\\')
-					last = last[#last]
-					local suc, publicrepo = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..readfile("vape/commithash.txt").."/CustomModules/"..last) end)
-					if suc and publicrepo and publicrepo ~= "404: Not Found" then
-						writefile("vape/CustomModules/"..last, "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..publicrepo)
-					end
-				end 
-			end
-		end})
-	end
-	writefile("vape/CustomModules/cachechecked.txt", "verified")
-end
 
 GuiLibrary = loadstring(vapeGithubRequest("GuiLibrary.lua"))()
 shared.GuiLibrary = GuiLibrary
