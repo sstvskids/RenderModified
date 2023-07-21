@@ -1329,7 +1329,7 @@ shared.VoidwareTargetObject = GuiLibrary.CreateCustomWindow({
 local VoidwareTargetInfo = shared.VoidwareTargetObject
 local VoidwareTargetInfoTheme = VoidwareTargetInfo.CreateDropdown({
 	Name = "Theme",
-	List = {"Purple", "Red", "Green"},
+	List = {"Purple", "Blood", "Green", "Ocean"},
 	Function = function() end
 })
 local VoidwareTargetInfoTween = VoidwareTargetInfo.CreateToggle({
