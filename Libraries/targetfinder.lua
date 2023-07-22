@@ -30,7 +30,7 @@ end
 end
 if otherentities and shared.VoidwareStore and shared.VoidwareStore.ModuleType == "BedwarsMain" then
 for i,v in pairs(collectionService:GetTagged("Drone")) do
-    if v.PrimaryPart and v:GetAttribute("PlayerUserId") ~= tostring(lplr.UserId) and playersService:GetPlayerByUserId(v:GetAttribute("PlayerUserId")).Team ~= lplr.Team and isAlive() and (raycastTab and workspace:Raycast(v.PrimaryPart.Position, Vector3.new(0, -2000, 0), raycastTab) or not raycastTab) then
+    if v.PrimaryPart and v:GetAttribute("PlayerUserId") ~= tostring(lplr.UserId) and playersService:GetPlayerByUserId(v:GetAttribute("PlayerUserId")).Team ~= lplr.Team and (raycastTab and workspace:Raycast(v.PrimaryPart.Position, Vector3.new(0, -2000, 0), raycastTab) or not raycastTab) then
         local distance = math.floor(((lplr.Character.PrimaryPart.Position) - (v.PrimaryPart.Position)).Magnitude)
         if distance < maxdistance then
         maxdistance = distance
