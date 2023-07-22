@@ -17,7 +17,7 @@ local GetTarget = function(dist, raycastTab, otherentities)
 local maxdistance = dist or math.huge
 local entity = {}
 for i,v in pairs(playersService:GetPlayers()) do
-if v ~= lplr and ({VoidwareFunctions:GetPlayerType(v)})[2] and ({VoidwareFunctions:GetPlayerType(v)})[2] and v.Character and v.Team ~= lplr.Team and isAlive() and isAlive(v) and (raycastTab and workspace:Raycast(v.Character.PrimaryPart.Position, Vector3.new(0, -2000, 0), raycastTab) or not raycastTab) then
+if v ~= lplr and ({VoidwareFunctions:GetPlayerType(v)})[2] and ({VoidwareFunctions:GetPlayerType(v)})[2] and v.Character and v.Team ~= lplr.Team and isAlive(v) and lplr.Character and lplr.Character.PrimaryPart and (raycastTab and workspace:Raycast(v.Character.PrimaryPart.Position, Vector3.new(0, -2000, 0), raycastTab) or not raycastTab) then
     local distance = math.floor(((lplr.Character.PrimaryPart.Position) - (v.Character.PrimaryPart.Position)).Magnitude)
     if distance < maxdistance then
         maxdistance = distance
@@ -28,7 +28,7 @@ if v ~= lplr and ({VoidwareFunctions:GetPlayerType(v)})[2] and ({VoidwareFunctio
     end
 end
 end
-if otherentities then
+if otherentities and shared.VoidwareStore and shared.VoidwareStore.ModuleType == "BedwarsMain" then
 for i,v in pairs(collectionService:GetTagged("Drone")) do
     if v.PrimaryPart and v:GetAttribute("PlayerUserId") ~= tostring(lplr.UserId) and playersService:GetPlayerByUserId(v:GetAttribute("PlayerUserId")).Team ~= lplr.Team and isAlive() and  (raycastTab and workspace:Raycast(v.PrimaryPart.Position, Vector3.new(0, -2000, 0), raycastTab) or not raycastTab) then
         local distance = math.floor(((lplr.Character.PrimaryPart.Position) - (v.PrimaryPart.Position)).Magnitude)
