@@ -2,8 +2,8 @@
     Remember not to Add built in vape modules to this config. Doing so may result in crashes/corrupted settings.
     https://github.com/7GrandDadPGN/VapeV4ForRoblox/wiki/Documentation -- Documentation on how you could create modules.
     Don't add th stuff in getting started, I've already setted everything up on that.
-    If anything goes wrong, just delete this file and everything will be okay (unless you are able to fix the issue :idfk:).
 ]]
+
 local GuiLibrary = shared.GuiLibrary
 local playersService = game:GetService("Players")
 local textService = game:GetService("TextService")
@@ -37,7 +37,7 @@ local function runcode(func) func() end
 
 local function warningNotification(title, text, delay)
 	local suc, res = pcall(function()
-		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Successfully called function", delay or 7, "assets/WarningNotification.png")
+		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Data Failure", delay or 7, "assets/WarningNotification.png")
 		frame.Frame.Frame.ImageColor3 = Color3.fromRGB(236, 129, 44)
 		return frame
 	end)
@@ -46,7 +46,7 @@ end
 
 local function InfoNotification(title, text, delay)
 	local suc, res = pcall(function()
-		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Successfully called function", delay or 7, "assets/InfoNotification.png")
+		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Data Failur", delay or 7, "assets/InfoNotification.png")
 		return frame
 	end)
 	return (suc and res)
