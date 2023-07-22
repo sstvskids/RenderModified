@@ -37,7 +37,7 @@ local function runcode(func) func() end
 
 local function warningNotification(title, text, delay)
 	local suc, res = pcall(function()
-		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Data Failure", delay or 7, "assets/WarningNotification.png")
+		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Failed to call value", delay or 7, "assets/WarningNotification.png")
 		frame.Frame.Frame.ImageColor3 = Color3.fromRGB(236, 129, 44)
 		return frame
 	end)
@@ -46,7 +46,7 @@ end
 
 local function InfoNotification(title, text, delay)
 	local suc, res = pcall(function()
-		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Data Failur", delay or 7, "assets/InfoNotification.png")
+		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Failed to call value", delay or 7, "assets/InfoNotification.png")
 		return frame
 	end)
 	return (suc and res)
