@@ -1,4 +1,3 @@
--- Voidware Custom Modules Signed File
 -- most of the variable names are from vape, cause I'm just so used to it :)
 local collectionService = game:GetService("CollectionService")
 local replicatedStorageService = game:GetService("ReplicatedStorage")
