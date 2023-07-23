@@ -1,4 +1,4 @@
-repeat task.wait() until game:IsLoaded()
+if not game:IsLoaded() then repeat task.wait() until game:IsLoaded() end
 local GuiLibrary
 local baseDirectory = (shared.VapePrivate and "vapeprivate/" or "vape/")
 local vapeInjected = true
@@ -1941,6 +1941,8 @@ GeneralSettings.CreateButton2({
 })
 
 local function loadVape()
+	if not shared.VoidwareIndependent and identifyexecutor and identifyexecutor() == "Fluxus" and inputService:GetPlatform() ~= Enum.Platform.Android then task.wait(3.80) end -- random config crashing moment
+	shared.VoidwareIndependent = true
 	if not shared.VapeIndependent then
 		loadstring(vapeGithubRequest("Universal.lua"))()
 		if isfile("vape/CustomModules/"..game.PlaceId..".lua") then
