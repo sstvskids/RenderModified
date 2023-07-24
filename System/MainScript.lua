@@ -1795,10 +1795,16 @@ local teleportConnection = playersService.LocalPlayer.OnTeleport:Connect(functio
 		teleportedServers = true
 		local teleportScript = [[
 			shared.VapeSwitchServers = true 
-			if shared.VapeDeveloper then 
+			if isfile("vape/NewMainScript.lua") then 
 				loadstring(readfile("vape/NewMainScript.lua"))() 
 			else 
-				loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..readfile("vape/commithash.txt").."/NewMainScript.lua", true))() 
+				local voidwarever = isfile("vape/Voidware/commithash.vw") and readfile("vape/Voidware/commithash.vw") or "main"
+				local suc, data = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/"..voidwarever.."/System/NewMainScript.lua", true) end)
+				if suc and data ~= "404: Not Found" and data ~= "" and voidwarever ~= "" and data ~= "400: Invalid Request" then
+				loadstring(data)()
+				data = "-- Voidware Custom Modules Signed File\n"..data
+				pcall(writefile, "vape/NewMainScript.lua", data)
+				end
 			end
 		]]
 		if shared.VapeDeveloper then
@@ -1998,7 +2004,7 @@ local function loadVape()
 	shared.VapeFullyLoaded = true
 end
 
-if not shared.VoidwareIndependent and identifyexecutor and identifyexecutor() == "Fluxus" and inputService:GetPlatform() ~= Enum.Platform.Android then task.wait(2.80) end -- random config crashing moment
+if not shared.VoidwareIndependent and identifyexecutor and identifyexecutor() == "Fluxus" and inputService:GetPlatform() ~= Enum.Platform.Android then task.wait() end -- random config crashing moment
 shared.VoidwareIndependent = true
 if shared.VapeIndependent then
 	task.spawn(loadVape)
