@@ -1941,8 +1941,6 @@ GeneralSettings.CreateButton2({
 })
 
 local function loadVape()
-	if not shared.VoidwareIndependent and identifyexecutor and identifyexecutor() == "Fluxus" and inputService:GetPlatform() ~= Enum.Platform.Android then task.wait(3.80) end -- random config crashing moment
-	shared.VoidwareIndependent = true
 	if not shared.VapeIndependent then
 		loadstring(vapeGithubRequest("Universal.lua"))()
 		if isfile("vape/CustomModules/"..game.PlaceId..".lua") then
@@ -2000,6 +1998,8 @@ local function loadVape()
 	shared.VapeFullyLoaded = true
 end
 
+if not shared.VoidwareIndependent and identifyexecutor and identifyexecutor() == "Fluxus" and inputService:GetPlatform() ~= Enum.Platform.Android then task.wait(4.10) end -- random config crashing moment
+shared.VoidwareIndependent = true
 if shared.VapeIndependent then
 	task.spawn(loadVape)
 	shared.VapeFullyLoaded = true
