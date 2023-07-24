@@ -1998,7 +1998,7 @@ local function loadVape()
 	shared.VapeFullyLoaded = true
 end
 
-if not shared.VoidwareIndependent and identifyexecutor and identifyexecutor() == "Fluxus" and inputService:GetPlatform() ~= Enum.Platform.Android then task.wait(4.10) end -- random config crashing moment
+if not shared.VoidwareIndependent and identifyexecutor and identifyexecutor() == "Fluxus" and inputService:GetPlatform() ~= Enum.Platform.Android then task.wait(2.80) end -- random config crashing moment
 shared.VoidwareIndependent = true
 if shared.VapeIndependent then
 	task.spawn(loadVape)
