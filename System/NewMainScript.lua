@@ -28,6 +28,21 @@ local function displayErrorPopup(text, func)
 	setidentity(oldidentity)
 end
 
+task.spawn(function()
+	local commit = "main"
+	pcall(function()
+	for i,v in pairs(game:HttpGet("https://github.com/7GrandDadPGN/VapeV4ForRoblox"):split("\n")) do 
+		if v:find("commit") and v:find("fragment") then 
+			local str = v:split("/")[5]
+			commit = str:sub(0, str:find('"') - 1)
+			break
+		end
+	end
+    end)
+	if not isfolder("vape") then makefolder("vape") end
+	pcall(writefile, "vape/commithash.txt", commit)
+end)
+
 local function vapeGithubRequest(scripturl)
 	if not isfile("vape/"..scripturl) then
 		local suc, res
@@ -48,4 +63,5 @@ local function vapeGithubRequest(scripturl)
 	return readfile("vape/"..scripturl)
 end
 
+if not isfile("vape/commithash.txt") then repeat task.wait() until isfile("vape/commithash.txt") end
 return loadstring(vapeGithubRequest("MainScript.lua"))()
