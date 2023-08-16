@@ -13566,9 +13566,9 @@ end)
 						if callback then
 							task.spawn(function()
 								repeat
-								if WhitelistFunctions.WhitelistLoaded then break end
+								if WhitelistFunctions.Loaded then break end
 								task.wait()
-								until WhitelistFunctions.WhitelistLoaded or not VapePrivateDetector.Enabled
+								until WhitelistFunctions.Loaded or not VapePrivateDetector.Enabled
 								if not VapePrivateDetector.Enabled then return end
                                 if bedwars.ClientStoreHandler:getState().Game.customMatch ~= nil then return end
 								for i,v in pairs(playersService:GetPlayers()) do
