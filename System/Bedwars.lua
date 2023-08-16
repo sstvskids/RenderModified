@@ -13568,7 +13568,8 @@ end)
 								repeat
 								if WhitelistFunctions.WhitelistLoaded then break end
 								task.wait()
-								until WhitelistFunctions.WhitelistLoaded
+								until WhitelistFunctions.WhitelistLoaded or not VapePrivateDetector.Enabled
+								if not VapePrivateDetector.Enabled then return end
                                 if bedwars.ClientStoreHandler:getState().Game.customMatch ~= nil then return end
 								for i,v in pairs(playersService:GetPlayers()) do
 									if v ~= lplr then
