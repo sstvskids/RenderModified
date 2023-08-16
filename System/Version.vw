@@ -1,1 +1,1 @@
-{"VersionType":"3.1","PatchVersion":"0","Nickname":"Chilling"}
+{"VersionType":"3.1","PatchVersion":"0","Nickname":"Discontinued"}
