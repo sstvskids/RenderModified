@@ -1,4 +1,4 @@
--- Credits to the Devforum cause uh, was too hard for me to make :idfk: | https://devforum.roblox.com/t/base64-encoding-and-decoding-in-lua/1719860
+-- Credits to the Devforum cause uh, was WAY too hard for me to make :idfk: | https://devforum.roblox.com/t/base64-encoding-and-decoding-in-lua/1719860
 local LibraryFunctions = {}
 LibraryFunctions.Frombase64 = function() 
     local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
