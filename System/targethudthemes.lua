@@ -1,6 +1,5 @@
 --[[
     List of things u could change: 
-
     BackgroundColor - Gradient color of the main background
     ProfilePictureBoxColor - Color of the ProfilePictureBoxColor
     NameTextColor - Changes the text that would contain the target's name
@@ -41,16 +40,16 @@ local themetable = {
         ProfilePictureBoxColor = Color3.fromRGB(125, 0, 63),
         NameTextColor = Color3.fromRGB(255, 255, 255),
         HealthInfoTextColor = Color3.fromRGB(255, 255, 255),
-        HealthbarBackgroundColor = Color3.fromRGB(12, 129, 255),
-        HealthbarColor = Color3.fromRGB(207, 2, 159)
+        HealthbarBackgroundColor = Color3.fromRGB(207, 2, 159),
+        HealthbarColor = Color3.fromRGB(255, 255, 255)
     },
     Sunset = {
         BackgroundColor = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 85, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(251, 255, 15))}),
         ProfilePictureBoxColor = Color3.fromRGB(144, 47, 9),
         NameTextColor = Color3.fromRGB(255, 255, 255),
         HealthInfoTextColor = Color3.fromRGB(255, 255, 255),
-        HealthbarBackgroundColor = Color3.fromRGB(214, 225, 12),
-        HealthbarColor = Color3.fromRGB(207, 2, 159)
+        HealthbarBackgroundColor = Color3.fromRGB(207, 2, 159),
+        HealthbarColor = Color3.fromRGB(255, 255, 255)
     },
 }
 
