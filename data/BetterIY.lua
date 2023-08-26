@@ -1927,6 +1927,7 @@ ChatService = game:GetService("Chat")
 ProximityPromptService = game:GetService("ProximityPromptService")
 StatsService = game:GetService("Stats")
 MaterialService = game:GetService("MaterialService")
+TextChatService = game:GetService("TextChatService")
 
 sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
@@ -5372,7 +5373,7 @@ Players.LocalPlayer.Chatted:Connect(function()
 	end
 end)
 
-game:GetService("TextChatService").MessageReceived:Connect(function(messagetab) -- hopefully new text chat system support gets addded to the official IY :omegalol:
+TextChatService.MessageReceived:Connect(function(messagetab) -- hopefully new text chat system support gets addded to the official IY :omegalol:
 	local plr = Players:GetPlayerByUserId(messagetab.TextSource.UserId)
 	if plr == Players.LocalPlayer then 
 		for i,v in pairs(cmds) do 
@@ -10201,9 +10202,26 @@ end)
 
 addcmd('chat',{'say'},function(args, speaker)
 	local cString = getstring(1)
-	ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(cString, "All")
+	if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then 
+		TextChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync(cString)
+	else
+		ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(cString, "All")
+	end
 end)
 
+local function sendprivatemessage(plr, message)
+	local originaltextchannel = nil
+	if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then 
+		originaltextchannel = TextChatService.ChatInputBarConfiguration.TargetTextChannel
+		local playerwhisper = game:GetService("RobloxReplicatedStorage").ExperienceChat.WhisperChat:InvokeServer(plr.UserId)
+		if playerwhisper then
+			playerwhisper:SendAsync(message) 
+		end
+		TextChatService.ChatInputBarConfiguration.TargetTextChannel = originaltextchannel
+	else
+		ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("/w "..plr.Name.." "..message, "All")
+	end
+end
 
 spamming = false
 spamspeed = 1
@@ -10211,7 +10229,11 @@ addcmd('spam',{},function(args, speaker)
 	spamming = true
 	local spamstring = getstring(1)
 	repeat wait(spamspeed)
+	if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then 
+		TextChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync(spamstring)
+	else
 		ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(spamstring, "All")
+	end
 	until spamming == false
 end)
 
@@ -10225,7 +10247,8 @@ addcmd('whisper',{'pm'},function(args, speaker)
 		task.spawn(function()
 			local plrName = Players[v].Name
 			local pmstring = getstring(2)
-			ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("/w "..plrName.." "..pmstring, "All")
+			local originalchannel = nil
+			sendprivatemessage(Players[v], pmstring)
 		end)
 	end
 end)
@@ -10233,7 +10256,7 @@ end)
 pmspamming = {}
 addcmd('pmspam',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i,v in pairs(players) do
 		task.spawn(function()
 			local plrName = Players[v].Name
 			if FindInTable(pmspamming, plrName) then return end
@@ -10242,7 +10265,7 @@ addcmd('pmspam',{},function(args, speaker)
 			repeat
 				if Players:FindFirstChild(v) then
 					wait(spamspeed)
-					ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("/w "..plrName.." "..pmspamstring, "All")
+					sendprivatemessage(Players[v], pmspamstring)
 				else
 					for a,b in pairs(pmspamming) do if b == plrName then table.remove(pmspamming, a) end end
 				end
