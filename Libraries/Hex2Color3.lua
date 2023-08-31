@@ -1,4 +1,3 @@
--- Voidware Custom Modules Signed File
 local LibraryFunctions = {}
 LibraryFunctions.GetColor3 = function(hex)
     hex = hex and string.gsub(hex, "#", "") or "FFFFFF"
