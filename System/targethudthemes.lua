@@ -1,6 +1,9 @@
+-- Voidware Custom Modules Signed File
 --[[
     List of things u could change: 
     BackgroundColor - Gradient color of the main background
+    BackgroundTransparency - Changes the transparency of the main background
+    ProfilePictureBoxTransparency - Changes the transparency of the Profile Picture Box
     ProfilePictureBoxColor - Color of the ProfilePictureBoxColor
     NameTextColor - Changes the text that would contain the target's name
     HealthInfoTextColor - Changes the color of the text that would contain the target's health
@@ -50,6 +53,15 @@ local themetable = {
         HealthInfoTextColor = Color3.fromRGB(255, 255, 255),
         HealthbarBackgroundColor = Color3.fromRGB(207, 2, 159),
         HealthbarColor = Color3.fromRGB(255, 255, 255)
+    },
+    Midnight = {
+        BackgroundColor = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 25, 112)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 128))}),
+        ProfilePictureBoxColor = Color3.fromRGB(0, 0, 128),
+        NameTextColor = Color3.fromRGB(255, 255, 255),
+        HealthInfoTextColor = Color3.fromRGB(255, 255, 255),
+        HealthbarBackgroundColor = Color3.fromRGB(0, 0, 128),
+        HealthbarColor = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 0
     },
 }
 
