@@ -1,7 +1,7 @@
 local gamesupported = false
 local gametable = {
     bedwars = {
-        placeinfo = #game:GetService("CollectionService"):GetTagged("block") > 1 or #game:GetService("CollectionService"):GetTagged("bed") > 1 or tonumber(game.PlaceId) == 8444591321 or tonumber(game.PlaceId) == 8560631822,
+        placeinfo = (#game:GetService("CollectionService"):GetTagged("block") > 1 or #game:GetService("CollectionService"):GetTagged("bed") > 1 or tonumber(game.PlaceId) == 8444591321 or tonumber(game.PlaceId) == 8560631822) and tonumber(game.PlaceId) ~= 6872265039 or false,
         module = "Bedwars"
     },
     skywars = {
@@ -18,8 +18,8 @@ end
 
 assert(gamesupported, "[Voidware Trial] - Game not supported.")
 
-local sucessful, response = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/System/Trial/Modules/"..gamesupported..".lua") end)
-if not successful or response == "400: Invalid Request" or response == "404: Not Found" then 
+local sucessful, response = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/System/Trial/Modules/"..gamesupported..".lua", true) end)
+if successful == false or response == "400: Invalid Request" or response == "404: Not Found" then 
     response = response or "Unknown Error"
     error("[Voidware Trial] - Failed to load custom modules for "..gamesupported..". | "..response)
 end
