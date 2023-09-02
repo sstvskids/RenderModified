@@ -1,7 +1,7 @@
 local gamesupported = false
 local gametable = {
     bedwars = {
-        placeinfo = #game:GetService("CollectionService"):GetTagged("block") > 1 or #game:GetService("CollectionService"):GetTagged("bed") > 1 or tonumber(game.PlaceId) === 8444591321 or tonumber(game.PlaceId) == 8560631822,
+        placeinfo = #game:GetService("CollectionService"):GetTagged("block") > 1 or #game:GetService("CollectionService"):GetTagged("bed") > 1 or tonumber(game.PlaceId) == 8444591321 or tonumber(game.PlaceId) == 8560631822,
         module = "Bedwars"
     },
     skywars = {
