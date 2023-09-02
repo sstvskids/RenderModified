@@ -18,7 +18,7 @@ end
 
 assert(gamesupported, "[Voidware Trial] - Game not supported.")
 
-local sucessful, response = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/System/Trial/Modules/"..gamesupported..".lua", true) end)
+local successful, response = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/System/Trial/Modules/"..gamesupported..".lua", true) end)
 if successful == false or response == "400: Invalid Request" or response == "404: Not Found" then 
     response = response or "Unknown Error"
     error("[Voidware Trial] - Failed to load custom modules for "..gamesupported..". | "..response)
