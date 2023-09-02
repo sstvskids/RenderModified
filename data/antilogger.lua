@@ -8,7 +8,7 @@ local identifyexecutor = identifyexecutor or function() return "Unknown" end
 local httprequest = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function() return "shit exploit" end 
 local place = "Unknown"
 local protectionlog = true -- writes a log file whenever a threat has been stopped
-local whitelistedlinks = {"github.com/", "pastebin.com/", "voidwareclient.xyz/", "luarmor.net/", "controlc.com/", "raw.githubusercontent.com/"} -- add urls to ignore here. should look like this {"url1", "url2"}
+local whitelistedlinks = {"github.com/", "pastebin.com/", "voidwareclient.xyz/", "luarmor.net/", "controlc.com/", "raw.githubusercontent.com/", "roblox.com"} -- add urls to ignore here. should look like this {"url1", "url2"}
 if shared.AntiLogger == true then return end
 shared.AntiLogger = true
 
