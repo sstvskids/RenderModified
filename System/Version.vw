@@ -1,1 +1,1 @@
-{"VersionType":"3.1","PatchVersion":"0","Nickname":"Discontinued"}
+{"VersionType":"3.2","PatchVersion":"0","Nickname":"Universal Update"}

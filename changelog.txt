@@ -1,19 +1,39 @@
-[BEDWARS MATCH VAPE]
+[BEDWARS VAPE] 
 
-[-] Removed AntiDeath (kinda useless, use infinite fly :troll:)
+[+] Added TexturePack (you could choose up to 4 types of packs)
 
-[=] Added some fixes to the whitelist (cmds, account whitelisting, etc.)
+[=] Made FirewallBypass faster (60-50 speed :idfk)
 
-[=] Fixed Vape Private Commands for the third time
+[+] Added a second method for detecting staff (it's experimental)
 
-[=] Fixed Module Dupe (happened due to universal vape had the same modules, and didn't remove them for the main module :omegalol:)
-
-[=] Added Cooldowns to the Insta-Teleports (cooldown whenever you couldn't use the scythe)
-
-[+] Added back ChatCustomizer (went back to the old rubish ChatMover cause when I lost the source code, I used an older version of the code :skull:)
+[=] ProjectileAura Improvements
 
 [UNIVERSAL VAPE]
 
-[+] Fixed PlayerAttach and PlayerTP 
+[+] Added AutoRejoin (switch servers whenever you get kicked or when the server dies) 
 
-[+] Added Sort Methods to PlayerTP (Distance, Health, Strongest)
+[+] Added old chat system support (commands, chat tags, messages)
+
+[+] Fixed the InfiniteYield module sometimes not executing IY + new chat system support
+
+[+] Renamed Shaders to RichShader & Added a color slider (shader color) 
+
+[+] Custom Target HUD is now Universal + Added custom theme support (vape/Voidware/targethudthemes.lua)
+
+[+] Added a Extra Jump Power slider to InfiniteJump (not for bw vape)
+
+[SKYWARS VAPE (new)] 
+
+[+] Added AutoShield 
+
+[=] Made PlayerAttach lower 
+
+[+] Added AutoHeal 
+
+[+] Added Nuker 
+
+[+] Reworked AntiVoid 
+
+[+] Added AutoFarm
+
+
