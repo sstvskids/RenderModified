@@ -11,6 +11,8 @@
 [+] Renamed Shaders to RichShader & Added a color slider (shader color) 
 [+] Custom Target HUD is now Universal + Added custom theme support (vape/Voidware/targethudthemes.lua)
 [+] Added a Extra Jump Power slider to InfiniteJump (not for bw vape)
+[+] Added AutoRejoin 
+[=] VapePrivateDetector & PingDetector will now switch servers instead of kicking u
 
 [SKYWARS VAPE (new)] 
 [+] Added AutoShield 
