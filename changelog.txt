@@ -13,6 +13,8 @@
 [+] Added a Extra Jump Power slider to InfiniteJump (not for bw vape)
 [+] Added AutoRejoin 
 [=] VapePrivateDetector & PingDetector will now switch servers instead of kicking u
+[+] Added AntiLogger
+[-] Removed WebhookUtility
 
 [SKYWARS VAPE (new)] 
 [+] Added AutoShield 
