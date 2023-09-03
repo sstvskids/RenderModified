@@ -3,6 +3,7 @@
 [=] Made FirewallBypass faster (60-50 speed :idfk)
 [+] Added a second method for detecting staff (it's experimental)
 [=] ProjectileAura Improvements
+[=] Renamed ActionNotifications to EventNotifications + revamp
 
 [UNIVERSAL VAPE]
 [+] Added AutoRejoin (switch servers whenever you get kicked or when the server dies) 
