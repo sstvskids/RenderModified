@@ -1,26 +1,11 @@
-[BEDWARS VAPE] 
-[+] Added TexturePack (you could choose up to 4 types of packs)
-[=] Made FirewallBypass faster (60-50 speed :idfk)
-[+] Added a second method for detecting staff (it's experimental)
-[=] ProjectileAura Improvements
-[=] Renamed ActionNotifications to EventNotifications + revamp
+[BEDWARS VAPE]
+[-] Removed the custom AutoLeave detection method (temp, until I find another fix)
+[+] Added back the Matchmaking window along with its Modules 
+[+] Added a Scythe Speed Slider to the speed module (change the extra speed when using Firewallby
+[+] Added PlayerInvite to matchmaking (Invite certain players to your party. type a certain party of their display/user (doesn't have to be a certain part, not sensitive)
+[=] InviteAll will now notify the amount of players that were invited
+[=] PlayerInvite & InviteAll will notify you if someone joined your party
+[-] Removed QuickCustoms
 
 [UNIVERSAL VAPE]
-[+] Added AutoRejoin (switch servers whenever you get kicked or when the server dies) 
-[+] Added old chat system support (commands, chat tags, messages)
-[+] Fixed the InfiniteYield module sometimes not executing IY + new chat system support
-[+] Renamed Shaders to RichShader & Added a color slider (shader color) 
-[+] Custom Target HUD is now Universal + Added custom theme support (vape/Voidware/targethudthemes.lua)
-[+] Added a Extra Jump Power slider to InfiniteJump (not for bw vape)
-[+] Added AutoRejoin 
-[=] VapePrivateDetector & PingDetector will now switch servers instead of kicking u
-[+] Added AntiLogger
-[-] Removed WebhookUtility
-
-[SKYWARS VAPE (new)] 
-[+] Added AutoShield 
-[=] Made PlayerAttach lower 
-[+] Added AutoHeal 
-[+] Added Nuker 
-[+] Reworked AntiVoid 
-[+] Added AutoFarm
+[=] Binded the Gui to M
