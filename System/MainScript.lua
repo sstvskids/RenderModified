@@ -1,3 +1,4 @@
+-- Voidware Custom Modules Signed File
 if not game:IsLoaded() then repeat task.wait() until game:IsLoaded() end
 local GuiLibrary
 local baseDirectory = (shared.VapePrivate and "vapeprivate/" or "vape/")
@@ -263,10 +264,10 @@ local World = GuiLibrary.CreateWindow({
 	Icon = "vape/assets/WorldIcon.png", 
 	IconSize = 16
 })
-local Customization = GuiLibrary.CreateWindow2({
-	Name = "Customization", 
-	Icon = "vape/assets/PencilIcon.png", 
-	IconSize = 17
+local Matchmaking = GuiLibrary.CreateWindow({
+	Name = "Matchmaking", 
+	Icon = "vape/assets/SliderArrow1.png", 
+	IconSize = 16
 })
 local Friends = GuiLibrary.CreateWindow2({
 	Name = "Friends", 
@@ -315,9 +316,9 @@ GUI.CreateButton({
 	IconSize = 16
 })
 GUI.CreateButton({
-	Name = "Customization", 
-	Function = function(callback) Customization.SetVisible(callback) end, 
-	Icon = "vape/assets/PencilIcon.png", 
+	Name = "Matchmaking", 
+	Function = function(callback) Matchmaking.SetVisible(callback) end, 
+	Icon = "vape/assets/SliderArrow1.png", 
 	IconSize = 16
 })
 GUI.CreateDivider("MISC")
@@ -1315,33 +1316,20 @@ local function newHealthColor(percent)
 	end
 	return Color3.fromRGB(255, 255, 0):lerp(Color3.fromRGB(249, 57, 55), (0.5 - percent) / 0.5)
 end
-
 local TargetInfo = GuiLibrary.CreateCustomWindow({
 	Name = "Target Info",
-	Icon = "vape/assets/TargetInfoIcon1.png",
+	Icon = "vape/assets/TargetIcon3.png",
 	IconSize = 16
 })
-shared.VoidwareTargetObject = GuiLibrary.CreateCustomWindow({
-	Name = "Voidware Target",
-	Icon = "vape/assets/TargetInfoIcon1.png",
-	IconSize = 16
+local TargetInfoToggle = GuiLibrary.ObjectsThatCanBeSaved.GUIWindow.Api.CreateCustomToggle({
+	Name = "Target Info",
+	Icon = "vape/assets/TargetInfoIcon2.png", 
+	Function = function(boolean)
+		TargetInfo.SetVisible(boolean)
+	end
 })
-local VoidwareTargetInfo = shared.VoidwareTargetObject
-local VoidwareTargetInfoTheme = VoidwareTargetInfo.CreateDropdown({
-	Name = "Theme",
-	List = {"Purple", "Blood", "Green", "Ocean", "Cupid", "Sunset", "Dark"},
-	Function = function() end
-})
-local VoidwareTargetInfoTween = VoidwareTargetInfo.CreateToggle({
-	Name = "Healthbar Tween",
-	HoverText = "Special animation for the healthbar\nwhenever the target's health changes.",
-	Function = function() end
-})
-shared.VoidwareTargetObjects = {
-	Theme = VoidwareTargetInfoTheme,
-	Tween = VoidwareTargetInfoTween
-}
 local TargetInfoBackground = {Enabled = false}
+local TargetInfoBackgroundColor = {Hue = 0, Sat = 0, Value = 0}
 local TargetInfoMainFrame = Instance.new("Frame")
 TargetInfoMainFrame.BackgroundColor3 = Color3.fromRGB(26, 25, 26)
 TargetInfoMainFrame.BorderSizePixel = 0
@@ -1489,18 +1477,7 @@ task.spawn(function()
 		task.wait()
 	until not vapeInjected
 end)
-GUI.CreateCustomToggle({
-	Name = "Target Info", 
-	Icon = "vape/assets/TargetInfoIcon2.png", 
-	Function = function(callback) TargetInfo.SetVisible(callback) end,
-	Priority = 1
-})
-GUI.CreateCustomToggle({
-	Name = "Voidware Target HUD", 
-	Icon = "vape/assets/TargetInfoIcon2.png", 
-	Function = function(callback) shared.VoidwareTargetObject.SetVisible(callback) end,
-	Priority = 1
-})
+
 local GeneralSettings = GUI.CreateDivider2("General Settings")
 local ModuleSettings = GUI.CreateDivider2("Module Settings")
 local GUISettings = GUI.CreateDivider2("GUI Settings")
@@ -2004,7 +1981,6 @@ local function loadVape()
 	shared.VapeFullyLoaded = true
 end
 
-if not shared.VoidwareIndependent and identifyexecutor and identifyexecutor() == "Fluxus" and inputService:GetPlatform() ~= Enum.Platform.Android then task.wait() end -- random config crashing moment
 shared.VoidwareIndependent = true
 if shared.VapeIndependent then
 	task.spawn(loadVape)
