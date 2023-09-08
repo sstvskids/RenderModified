@@ -1,3 +1,4 @@
+-- Voidware Custom Modules Main File
 local GuiLibrary = shared.GuiLibrary
 local vapeonlineresponse = false
 task.spawn(function()
@@ -589,7 +590,7 @@ task.spawn(function()
 	for i,v in pairs({"base64", "Hex2Color3"}) do 
 		task.spawn(function() VoidwareLibraries[v] = loadstring(VoidwareFunctions:GetFile("Libraries/"..v..".lua"))() end)
 	end
-	task.wait(1.5)
+	task.wait(5)
 	until not vapeInjected
 end)
 
@@ -637,9 +638,20 @@ task.spawn(function()
 	until not vapeInjected 
 end)
 
+task.spawn(function()
+	repeat
+	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
+	if ({VoidwareFunctions:GetPlayerType()})[3] < 1.5 and VoidwareStore.VersionInfo.BuildType == "Beta" then
+		antikickbypass("This build of Voidware is currently restricted for you.", true)
+	end
+	if ({VoidwareFunctions:GetPlayerType()})[3] < 1.5 and VoidwareStore.VersionInfo.BuildType ~= "Beta" then
+		pcall(delfolder, VoidwareFunctions:GetMainDirectory().."/beta")
+	end
+until not vapeInjected
+end)
 
 task.spawn(function()
-	local niggerconfigs = {"Vape V5", "Nebulaware"}
+	local niggerconfigs = {"Vape V5", "Nebulaware", "Mysticware", "Complexware"}
 	local defaultprofiledata = isfile("vape/CustomModules/6872274481.vapeprofile.txt") and readfile("vape/CustomModules/6872274481.vapeprofile.txt") or ""
 	for i,v in pairs(GuiLibrary.ObjectsThatCanBeSaved) do
 		for i2, v2 in pairs(niggerconfigs) do
@@ -6231,13 +6243,6 @@ for i,v in pairs(GuiLibrary.ObjectsThatCanBeSaved) do
 	end
 end
 end)
-
-pcall(function()
-    local sidemodulesloaded, err = pcall(function() loadstring(VoidwareFunctions:GetFile("System/BlankModule.lua", nil, VoidwareStore.maindirectory.."/".."Bedwars.lua"))() end)
-    err = err and " | "..err or ""
-    pcall(vapeAssert, sidemodulesloaded, "Voidware", "Failed to load Side Custom Modules. "..err, 8)
-end)
-
 runFunction(function()
 local function transformimages(img, text)
 	img = img or "http://www.roblox.com/asset/?id=7083449168"
