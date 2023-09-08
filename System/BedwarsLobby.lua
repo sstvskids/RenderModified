@@ -1,1 +1,1961 @@
-([[This file was protected with MoonSec V3 by federal9999 on discord]]):gsub('.+', (function(a) _lO_YWkJofhhB = a; end)); return(function(t,...)local c;local f;local r;local l;local o;local s;local e=24915;local n=0;local d={};while n<896 do n=n+1;while n<0x189 and e%0xec6<0x763 do n=n+1 e=(e+321)%5317 local h=n+e if(e%0x1452)>=0xa29 then e=(e-0x29d)%0x9c66 while n<0x233 and e%0x4b8c<0x25c6 do n=n+1 e=(e*524)%47242 local l=n+e if(e%0x2c18)>=0x160c then e=(e-0x2dd)%0xb4df local e=7492 if not d[e]then d[e]=0x1 r={};end elseif e%2~=0 then e=(e+0x3b8)%0x60c6 local e=57964 if not d[e]then d[e]=0x1 end else e=(e-0x1d0)%0x73b n=n+1 local e=95743 if not d[e]then d[e]=0x1 f=string;end end end elseif e%2~=0 then e=(e-0x1ed)%0x8b7b while n<0x14e and e%0x35b8<0x1adc do n=n+1 e=(e*808)%26670 local c=n+e if(e%0x814)>=0x40a then e=(e+0x78)%0x3626 local e=79073 if not d[e]then d[e]=0x1 l=getfenv and getfenv();end elseif e%2~=0 then e=(e*0xec)%0x1ee6 local e=75429 if not d[e]then d[e]=0x1 end else e=(e*0xf6)%0xe40 n=n+1 local e=85184 if not d[e]then d[e]=0x1 o=function(d)local e=0x01 local function n(n)e=e+n return d:sub(e-n,e-0x01)end while true do local d=n(0x01)if(d=="\5")then break end local e=f.byte(n(0x01))local e=n(e)if d=="\2"then e=r.vAQYHRxj(e)elseif d=="\3"then e=e~="\0"elseif d=="\6"then l[e]=function(e,n)return t(8,nil,t,n,e)end elseif d=="\4"then e=l[e]elseif d=="\0"then e=l[e][n(f.byte(n(0x01)))];end local n=n(0x08)r[n]=e end end end end end else e=(e+0x27f)%0x9687 n=n+1 while n<0x6f and e%0x4600<0x2300 do n=n+1 e=(e*409)%15064 local o=n+e if(e%0x3c90)>0x1e48 then e=(e-0x2bf)%0xf10 local e=57695 if not d[e]then d[e]=0x1 c="\4\8\116\111\110\117\109\98\101\114\118\65\81\89\72\82\120\106\0\6\115\116\114\105\110\103\4\99\104\97\114\67\102\111\120\113\121\73\95\0\6\115\116\114\105\110\103\3\115\117\98\66\84\113\119\99\75\117\90\0\6\115\116\114\105\110\103\4\98\121\116\101\77\75\107\66\74\121\77\112\0\5\116\97\98\108\101\6\99\111\110\99\97\116\80\95\110\113\66\119\74\99\0\5\116\97\98\108\101\6\105\110\115\101\114\116\122\119\79\122\114\75\119\103\5";end elseif e%2~=0 then e=(e*0x11d)%0xbf49 local e=31986 if not d[e]then d[e]=0x1 l=(not l)and _ENV or l;end else e=(e+0x23a)%0xc2d4 n=n+1 local e=22603 if not d[e]then d[e]=0x1 s=tonumber;end end end end end e=(e*722)%28230 end o(c);local n={};for e=0x0,0xff do local d=r.CfoxqyI_(e);n[e]=d;n[d]=e;end local function h(e)return n[e];end local f=(function(c,t)local f,d=0x01,0x10 local n={{},{},{}}local l=-0x01 local e=0x01 local o=c while true do n[0x03][r.BTqwcKuZ(t,e,(function()e=f+e return e-0x01 end)())]=(function()l=l+0x01 return l end)()if l==(0x0f)then l=""d=0x000 break end end local l=#t while e<l+0x01 do n[0x02][d]=r.BTqwcKuZ(t,e,(function()e=f+e return e-0x01 end)())d=d+0x01 if d%0x02==0x00 then d=0x00 r.zwOzrKwg(n[0x01],(h((((n[0x03][n[0x02][0x00]]or 0x00)*0x10)+(n[0x03][n[0x02][0x01]]or 0x00)+o)%0x100)));o=c+o;end end return r.P_nqBwJc(n[0x01])end);o(f(75,"IGWym }Y*(TLh9gELT"));o(f(20,"HX,}2p/<kYWmdP8 8dP8}<,2L8 X8,d<pwYdYY<P/d}<,cw,Sp%Y /Pkm82d}YYZ/ pYp(}dQd <UWd<W8Y YY<kXP>P/2p,}p,/XksOPgPmYWW}k,pWpd c8,}m,kX, p8/dmppWYkYkk/}p2,j,Y  &< /d8WWYp}k,k<PpPpd}ddpXk d8Y8kddWYk}<}pk/,pd}YNFWdWD }PXddmXYpY)/Y/k2X,8,2vY82 ,P2mdYRW/<<p+ 28}X8XYu}JF8<P/k}kdkY/k/,}d,P},R-Wskd8mdXmpWd/Pp}2 28Xd}/ };,k/<XYpm8k=Y2<Y//}/Xk  WdYd 2PmdmmkW,kp</pm}<X2 YXk8XdmP<W22a}Xkd/pp,2k,PmWXp W8kdpm}W<kP<p/ }X,,}/ k8pkd<WPpmWWkkp<}/<2<,X,XX 8} }8%P92d}YYJ<8/Xp,22 Pqd-, /m}W,kkY},N_8/<2p}kXP6<#2d,ddd,WW<p/p2</pPddd,XgXgu8./Ym/WkY<k}<,}0,P,P,, / <d}dXpX"));local e=(-4182+(function()local o,d=0,1;(function(d,e,n)e(n(n,d,n),n(e,e,d),e(e,d,e))end)(function(l,e,n)if o>380 then return n end o=o+1 d=(d-274)%9042 if(d%1578)>789 then return e(n(e,n and e,e),l(n,e,e),e(l,l,e and n))else return n end return e end,function(l,e,n)if o>335 then return e end o=o+1 d=(d+858)%45573 if(d%1786)>893 then d=(d+50)%32698 return l else return n(n(e,n,e),e(l,l,e)and l(e,l,n and n),e(e,e,n and n)and l(e,n,n))end return l(n(e and n,e,n),n(l,e,e),e(e,n,l)and e(e,e,n))end,function(n,l,e)if o>170 then return n end o=o+1 d=(d+578)%1094 if(d%1520)<=760 then d=(d*302)%26117 return e else return l(n(e,l and e,e),e(e,l and l,n and e),e(l,e,n and l))end return n(e(l and e,e and e,e)and e(l,n,n),n(l and e,n,n and l),l(n,n,n))end)return d;end)())local u=r._MasKopt or r.eaoEJrHI;local ee=(getfenv)or(function()return _ENV end);local c=4;local ne=1;local o=3;local l=2;local function _(k,...)local a=f(e,"8h<4ou_zdAc/1UNS<o<d41uG_ozSd1c=/ohvug_ozouSAh/ouocAz1A?co=14ooA_z<dd<AA/7/Ud1SzSuh/U1ogu__zdJduAz/11hUocoyShu4o41jdoAzSA4c_AS1uUzcdS<N4No4c_u<vzcdUcO/uU_UASdUANUYhhuhRz4d_o1co/UU/USSSh_h111SASo.dh1zU/41zUcU4SA+/h/<4ud_czudNA///coUANdS1hh<Nhuu1z&d<<oo.o1_+zoUNH/hA<doSoUz<zA<do<u3_ozdSS dhu4cohuoFoh1<1ovuo1SUUSUEA/dNUNiSo*ddoco/d1dUS/c14Uz<14huz_1zhd<AU/_dcU4S46uU/4<4uuS</zNuczU/cUANuUUNA/<Ahco/d11N%So4ddS_od<d1cQ/ofSuhuAufdhdN/</uUcSuAxU4/d11N.4Uz_ducocU/AN*NA;<WSU1 _h1<S4Nu<_czUd1c4/U1_hd4u4uhoh1dod1ch/SdONhNAhuUn4d4Auz_u4odAu1/<1UN1/ccT/N1dU1SZzMdzdUco1zU1NNSAh<hS11NUSosdh1dS/fcz1/UAN/h45_4Soc_gzo_<4ooUu1zMdo:dES<honuoS1<<<o4do1c4N_NUSU<o<A<_u/zozUdNcu/41uN1SuvS<<1dNISbJohdc4ch/UU1z1Aoco/d11uouuz/dzocooud_1d-cucd/1U^NuSd.1<fo_uUu1zXdoA/c11pUoScSUhp<o4dud_%zodd1<1z1oUdN1&_ho<A41u<_oz1c;c6/o1dN<StLuhd4Guouo_dz1Azco/A11N,Szvdh14(ouud_1dRc_cN/1UmNowdQ1<f4o_d_zzadoAdc115N4NdS1</<o4do1_hzodAA11<USUdN1n><h<d41utz_zUd1ch/o1UU1S9vo4d44o2uu_dzUA.cU/dN1NASo(Ah14hoo___1A<A/cd/NU;NdSdm1<0o_u_u1z4doc<c11kUoSchhhI<d4duo_MzoddA11h1oUdN1*oho<A41_<zNzdd1ct/S1dU1Sjh_<u<1ohuo_Nz1A-coUdU#NaSuldhU4}ouudzNAhAoc//1UzNoSd^1<qododuUz0dzAdc117UoHuS1h#<o4do1_<zoddc_/91oUdNUlrhu<d41uz_ozdd1ch/o1dU1SJEohd<1o}");local n=0;r.POvGBGUH(function()r.ICSfHvGj()n=n+1 end)local function e(d,e)if e then return n end;n=d+n;end local d,n,h=t(0,t,e,a,r.MKkBJyMp);local function f()local d,n=r.MKkBJyMp(a,e(1,3),e(5,6)+2);e(2);return(n*256)+d;end;local z=true;local z=0 local function m()local e=n();local n=n();local o=1;local l=(d(n,1,20)*(2^32))+e;local e=d(n,21,31);local n=((-1)^d(n,32));if(e==0)then if(l==z)then return n*0;else e=1;o=0;end;elseif(e==2047)then return(l==0)and(n*(1/0))or(n*(0/0));end;return r.aOSLjxiD(n,e-1023)*(o+(l/(2^52)));end;local p=n;local function b(n)local d;if(not n)then n=p();if(n==0)then return'';end;end;d=r.BTqwcKuZ(a,e(1,3),e(5,6)+n-1);e(n)local e=""for n=(1+z),#d do e=e..r.BTqwcKuZ(d,n,n)end return e;end;local z=#r.WHAtQOoP(s('\49.\48'))~=1 local e=n;local function g(...)return{...},r.FdnjIMCu('#',...)end local function _()local s={};local e={};local u={};local a={s,u,nil,e};local e=n()local t={}for l=1,e do local d=h();local e;if(d==1)then e=(h()~=#{});elseif(d==2)then local n=m();if z and r.HeOknZJI(r.WHAtQOoP(n),'.(\48+)$')then n=r.DUirZoOa(n);end e=n;elseif(d==0)then e=b();end;t[l]=e;end;for u=1,n()do local e=h();if(d(e,1,1)==0)then local r=d(e,2,3);local h=d(e,4,6);local e={f(),f(),nil,nil};if(r==0)then e[o]=f();e[c]=f();elseif(r==#{1})then e[o]=n();elseif(r==k[2])then e[o]=n()-(2^16)elseif(r==k[3])then e[o]=n()-(2^16)e[c]=f();end;if(d(h,1,1)==1)then e[l]=t[e[l]]end if(d(h,2,2)==1)then e[o]=t[e[o]]end if(d(h,3,3)==1)then e[c]=t[e[c]]end s[u]=e;end end;for e=1,n()do u[e-(#{1})]=_();end;a[3]=h();return a;end;local function m(d,e,n)local l=e;local l=n;return s(r.HeOknZJI(r.HeOknZJI(({r.POvGBGUH(d)})[2],e),n))end local function j(p,e,h)local function j(...)local f,j,s,y,k,n,a,_,b,z,m,d;local e=0;while-1<e do if e<3 then if 1>e then f=t(6,98,1,86,p);j=t(6,3,2,15,p);else if 1~=e then n=-41;a=-1;else s=t(6,68,3,1,p);k=g y=0;end end else if 4<e then if 2<=e then repeat if e~=6 then d=t(7);break;end;e=-2;until true;else e=-2;end else if e~=4 then _={};b={...};else z=r.FdnjIMCu('#',...)-1;m={};end end end e=e+1;end;for e=0,z do if(e>=s)then _[e-s]=b[e+1];else d[e]=b[e+1];end;end;local e=z-s+1 local e;local t;local function r(...)while true do end end while true do if n<-40 then n=n+42 end e=f[n];t=e[ne];if t<15 then if t>6 then if t>10 then if t>=13 then if t~=10 then for r=25,52 do if 13~=t then local t,c,h,r,f;local n=0;while n>-1 do if n<=2 then if 1>n then t=e;else if n==2 then h=o;else c=l;end end else if n>4 then if 1<=n then repeat if 6~=n then d(f,r);break;end;n=-2;until true;else d(f,r);end else if n~=4 then r=t[h];else f=t[c];end end end n=n+1 end break;end;n=e[o];break;end;else local r,h,c,t,f;local n=0;while n>-1 do if n<=2 then if 1>n then r=e;else if n==2 then c=o;else h=l;end end else if n>4 then if 1<=n then repeat if 6~=n then d(f,t);break;end;n=-2;until true;else d(f,t);end else if n~=4 then t=r[c];else f=r[h];end end end n=n+1 end end else if t~=8 then repeat if 11~=t then d[e[l]]=h[e[o]];break;end;for t=0,6 do if 2>=t then if 1>t then d[e[l]]=d[e[o]][e[c]];n=n+1;e=f[n];else if t>-2 then repeat if t>1 then d[e[l]]=h[e[o]];n=n+1;e=f[n];break;end;d[e[l]]();n=n+1;e=f[n];until true;else d[e[l]]=h[e[o]];n=n+1;e=f[n];end end else if t<5 then if t>=1 then repeat if 3<t then d[e[l]]=d[e[o]][e[c]];n=n+1;e=f[n];break;end;d[e[l]]=h[e[o]];n=n+1;e=f[n];until true;else d[e[l]]=d[e[o]][e[c]];n=n+1;e=f[n];end else if t>5 then d(e[l],e[o]);else d[e[l]]=d[e[o]][e[c]];n=n+1;e=f[n];end end end end until true;else d[e[l]]=h[e[o]];end end else if 8>=t then if t>=5 then for n=35,53 do if 7<t then local n=e[l]d[n](u(d,n+1,e[o]))break;end;d[e[l]]();break;end;else d[e[l]]();end else if 6~=t then for r=11,87 do if t>9 then d[e[l]]();n=n+1;e=f[n];do return end;break;end;d[e[l]]=d[e[o]][e[c]];break;end;else d[e[l]]();n=n+1;e=f[n];do return end;end end end else if t<=2 then if t<=0 then local l=e[l];local n=d[e[o]];d[l+1]=n;d[l]=n[e[c]];else if 1~=t then d[e[l]]();else h[e[o]]=d[e[l]];end end else if t>4 then if t>4 then repeat if 5~=t then d[e[l]]=h[e[o]];break;end;local t,c,h,r,f;local n=0;while n>-1 do if n>=3 then if n<5 then if-1<n then repeat if n>3 then f=t[c];break;end;r=t[h];until true;else r=t[h];end else if 4<=n then repeat if n>5 then n=-2;break;end;d(f,r);until true;else d(f,r);end end else if 1<=n then if n>=-1 then repeat if n~=2 then c=l;break;end;h=o;until true;else c=l;end else t=e;end end n=n+1 end until true;else local t,h,c,r,f;local n=0;while n>-1 do if n>=3 then if n<5 then if-1<n then repeat if n>3 then f=t[h];break;end;r=t[c];until true;else r=t[c];end else if 4<=n then repeat if n>5 then n=-2;break;end;d(f,r);until true;else d(f,r);end end else if 1<=n then if n>=-1 then repeat if n~=2 then h=l;break;end;c=o;until true;else h=l;end else t=e;end end n=n+1 end end else if t>0 then for r=46,71 do if t>3 then if(d[e[l]]==e[c])then n=n+1;else n=e[o];end;break;end;do return end;break;end;else if(d[e[l]]==e[c])then n=n+1;else n=e[o];end;end end end end else if t>21 then if 26<=t then if 28<=t then if t>=25 then repeat if t~=28 then local e=e[l]d[e]=d[e](u(d,e+1,a))break;end;local l=e[l];local n=d[e[o]];d[l+1]=n;d[l]=n[e[c]];until true;else local e=e[l]d[e]=d[e](u(d,e+1,a))end else if t==27 then local n=e[l]d[n](u(d,n+1,e[o]))else d[e[l]]=(e[o]~=0);end end else if 23>=t then if 22<t then if(d[e[l]]==e[c])then n=n+1;else n=e[o];end;else local e=e[l]d[e]=d[e](u(d,e+1,a))end else if 22<=t then repeat if t~=24 then local n=e[l]local l,e=k(d[n](u(d,n+1,e[o])))a=e+n-1 local e=0;for n=n,a do e=e+1;d[n]=l[e];end;break;end;d[e[l]]=d[e[o]][e[c]];until true;else d[e[l]]=d[e[o]][e[c]];end end end else if 17<t then if 19<t then if 21>t then n=e[o];else local t,z,b,p,s;for r=0,6 do if r>2 then if r>4 then if 1~=r then for c=35,78 do if r~=6 then d(e[l],e[o]);n=n+1;e=f[n];break;end;t=e[l]b,p=k(d[t](u(d,t+1,e[o])))a=p+t-1 s=0;for e=t,a do s=s+1;d[e]=b[s];end;break;end;else d(e[l],e[o]);n=n+1;e=f[n];end else if 0~=r then for u=15,59 do if r~=3 then t=e[l];z=d[e[o]];d[t+1]=z;d[t]=z[e[c]];n=n+1;e=f[n];break;end;d[e[l]]=h[e[o]];n=n+1;e=f[n];break;end;else d[e[l]]=h[e[o]];n=n+1;e=f[n];end end else if r<1 then d(e[l],e[o]);n=n+1;e=f[n];else if 2~=r then t=e[l]d[t](u(d,t+1,e[o]))n=n+1;e=f[n];else d[e[l]]=h[e[o]];n=n+1;e=f[n];end end end end end else if t<19 then h[e[o]]=d[e[l]];else local n=e[l]local l,e=k(d[n](u(d,n+1,e[o])))a=e+n-1 local e=0;for n=n,a do e=e+1;d[n]=l[e];end;end end else if t>15 then if 13<=t then for r=34,55 do if 17>t then do return end;break;end;for t=0,3 do if 2>t then if t>-3 then repeat if t~=1 then d[e[l]]=(e[o]~=0);n=n+1;e=f[n];break;end;h[e[o]]=d[e[l]];n=n+1;e=f[n];until true;else h[e[o]]=d[e[l]];n=n+1;e=f[n];end else if-1<=t then repeat if 3>t then d[e[l]]=h[e[o]];n=n+1;e=f[n];break;end;if(d[e[l]]==e[c])then n=n+1;else n=e[o];end;until true;else d[e[l]]=h[e[o]];n=n+1;e=f[n];end end end break;end;else for t=0,3 do if 2>t then if t>-3 then repeat if t~=1 then d[e[l]]=(e[o]~=0);n=n+1;e=f[n];break;end;h[e[o]]=d[e[l]];n=n+1;e=f[n];until true;else h[e[o]]=d[e[l]];n=n+1;e=f[n];end else if-1<=t then repeat if 3>t then d[e[l]]=h[e[o]];n=n+1;e=f[n];break;end;if(d[e[l]]==e[c])then n=n+1;else n=e[o];end;until true;else d[e[l]]=h[e[o]];n=n+1;e=f[n];end end end end else d[e[l]]=(e[o]~=0);end end end end n=1+n;end;end;return j end;local l=0xff;local h={};local f=(1);local o='';(function(n)local d=n local t=0x00 local e=0x00 d={(function(l)if t>0x2e then return l end t=t+1 e=(e+0x579-l)%0x36 return(e%0x03==0x0 and(function(d)if not n[d]then e=e+0x01 n[d]=(0x30);end return true end)'HhZcr'and d[0x1](0x86+l))or(e%0x03==0x1 and(function(d)if not n[d]then e=e+0x01 n[d]=(0x8d);end return true end)'RnQnK'and d[0x3](l+0x2e4))or(e%0x03==0x2 and(function(d)if not n[d]then e=e+0x01 n[d]=(0x53);end return true end)'tIcHd'and d[0x2](l+0x175))or l end),(function(c)if t>0x30 then return c end t=t+1 e=(e+0x720-c)%0xd return(e%0x03==0x0 and(function(d)if not n[d]then e=e+0x01 n[d]=(0xdd);o={o..'\58 a',o};h[f]=_();f=f+((not r.OLBYqrhb)and 1 or 0);o[1]='\58'..o[1];l[2]=0xff;end return true end)'IdJCu'and d[0x3](0x1bc+c))or(e%0x03==0x2 and(function(d)if not n[d]then e=e+0x01 n[d]=(0x21);l[2]=(l[2]*(m(function()h()end,u(o))-m(l[1],u(o))))+1;h[f]={};l=l[2];f=f+l;end return true end)'DjMSB'and d[0x2](c+0x106))or(e%0x03==0x1 and(function(d)if not n[d]then e=e+0x01 n[d]=(0xe0);end return true end)'oIqOC'and d[0x1](c+0x384))or c end),(function(r)if t>0x2a then return r end t=t+1 e=(e+0xb11-r)%0x44 return(e%0x03==0x1 and(function(d)if not n[d]then e=e+0x01 n[d]=(0xd4);o='\37';l={function()l()end};o=o..'\100\43';end return true end)'hkKdf'and d[0x2](0x29d+r))or(e%0x03==0x0 and(function(d)if not n[d]then e=e+0x01 n[d]=(0xac);h[f]=ee();f=f+l;end return true end)'uzBrH'and d[0x3](r+0x373))or(e%0x03==0x2 and(function(d)if not n[d]then e=e+0x01 n[d]=(0xc2);end return true end)'pdKbb'and d[0x1](r+0x3bf))or r end)}d[0x3](0x206d)end){};local e=j(u(h));return e(...);end return _((function()local n={}local e=0x01;local d;if r.OLBYqrhb then d=r.OLBYqrhb(_)else d=''end if r.HeOknZJI(d,r.pTsFcVBX)then e=e+0;else e=e+1;end n[e]=0x02;n[n[e]+0x01]=0x03;return n;end)(),...)end)((function(e,d,n,l,o,t)local t;if 4>e then if e>1 then if e<3 then do return 16777216,65536,256 end;else do return d(1),d(4,o,l,n,d),d(5,o,l,n)end;end else if e>=-4 then for t=16,54 do if 0~=e then do return function(d,e,n)if n then local e=(d/2^(e-1))%2^((n-1)-(e-1)+1);return e-e%1;else local e=2^(e-1);return(d%(e+e)>=e)and 1 or 0;end;end;end;break;end;do return d(1),d(4,o,l,n,d),d(5,o,l,n)end;break;end;else do return function(n,e,d)if d then local e=(n/2^(e-1))%2^((d-1)-(e-1)+1);return e-e%1;else local e=2^(e-1);return(n%(e+e)>=e)and 1 or 0;end;end;end;end end else if e>=6 then if 7>e then do return o[n]end;else if e>=6 then for d=39,55 do if e~=8 then do return setmetatable({},{['__\99\97\108\108']=function(e,l,o,d,n)if n then return e[n]elseif d then return e else e[l]=o end end})end break;end;do return n(e,nil,n);end break;end;else do return n(e,nil,n);end end end else if e>=2 then for t=24,74 do if 5>e then local e=l;local r,f,l=o(2);do return function()local o,t,d,n=d(n,e(e,e),e(e,e)+3);e(4);return(n*r)+(d*f)+(t*l)+o;end;end;break;end;local e=l;do return function()local n=d(n,e(e,e),e(e,e));e(1);return n;end;end;break;end;else local e=l;local t,l,o=o(2);do return function()local d,n,r,f=d(n,e(e,e),e(e,e)+3);e(4);return(f*t)+(r*l)+(n*o)+d;end;end;end end end end),...)
+local GuiLibrary = shared.GuiLibrary
+local vapeonlineresponse = false
+task.spawn(function()
+	pcall(function()
+	task.wait(10)
+	if not vapeonlineresponse and not isfile("vape/Voidware/oldvape/BedwarsLobby.lua") then 
+		GuiLibrary.CreateNotification("Voidware", "The Connection to Github is taking a while. If vape doesn't load within 15 seconds, please reinject.", 10)
+	end
+end)
+end)
+
+if isfile("vape/Voidware/oldvape/BedwarsLobby.lua") then
+	local manualfileload = pcall(function() loadstring(readfile("vape/Voidware/oldvape/BedwarsLobby.lua"))() end)
+	if not manualfileload then 
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/CustomModules/6872265039.lua"))()
+	end
+else
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/CustomModules/6872265039.lua"))()
+end
+vapeonlineresponse = true
+local vapeInjected = true
+local vapeConnections = {}
+local vapeAssert = function(argument, title, text, duration, hault, moduledisable, module) 
+	if not argument then
+    local suc, res = pcall(function()
+    local notification = GuiLibrary.CreateNotification(title or "Voidware", text or "Failed to call function.", duration or 20, "assets/WarningNotification.png")
+    notification.IconLabel.ImageColor3 = Color3.new(220, 0, 0)
+    notification.Frame.Frame.ImageColor3 = Color3.new(220, 0, 0)
+    if moduledisable and (module and GuiLibrary.ObjectsThatCanBeSaved[module.."OptionsButton"].Api.Enabled) then GuiLibrary.ObjectsThatCanBeSaved[module.."OptionsButton"].Api.ToggleButton(false) end
+    end)
+    if hault then while true do end end
+end
+end
+local identifyexecutor = identifyexecutor or function() return "Unknown" end
+local httprequest = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function(tab)
+	return {Body = tab.Method == "GET" and game:HttpGet(tab.Url, true) or "shit exploit", Headers = {["content-type"] = "application/json"}, StatusCode = 404}
+end
+local queueonteleport = syn and syn.queue_on_teleport or queue_on_teleport or function() end
+local setclipboard = setclipboard or function(data) writefile("clipboard.txt", data) end
+local HWID = game:GetService("RbxAnalyticsService"):GetClientId()
+local delfolder = delfolder or function() end
+local antiguibypass = GuiLibrary.SelfDestruct
+local httpService = game:GetService("HttpService")
+local runService = game:GetService("RunService")
+local players = game:GetService("Players")
+local textservice = game:GetService("TextService")
+local repstorage = game:GetService("ReplicatedStorage")
+local lplr = players.LocalPlayer
+local workspace = game:GetService("Workspace")
+local lighting = game:GetService("Lighting")
+local cam = workspace.CurrentCamera
+local targetinfo = shared.VapeTargetInfo
+local uis = game:GetService("UserInputService")
+local mouse = lplr:GetMouse()
+local robloxfriends = {}
+local bedwars = {}
+local getfunctions
+local origC0 = nil
+local textChatService = game:GetService("TextChatService")
+local collectionservice = game:GetService("CollectionService")
+local VoidwareFunctions = {WhitelistLoaded = false, WhitelistRefreshEvent = Instance.new("BindableEvent")}
+local VoidwareLibraries = {}
+local tags = {}
+local VoidwareWhitelistStore = {
+	Hash = "voidwaremoment",
+	BlacklistTable = {},
+	Tab = {},
+	Rank = "Standard",
+	Priority = {
+		DEFAULT = 0,
+		STANDARD = 1,
+		BETA = 1.5,
+		INF = 2,
+		OWNER = 3
+	},
+	RankChangeEvent = Instance.new("BindableEvent"),
+	chatstrings = {
+		voidwaremoment = "Voidware",
+		voidwarelitemoment = "Voidware Lite"
+	},
+	LocalPlayer = {Rank = "STANDARD", Attackable = true, Priority = 1, TagText = "VOIDWARE USER", TagColor = "0000FF", TagHidden = true, HWID = "ABCDEFG", Accounts = {}, BlacklistedProducts = {}, UID = 0},
+	Players = {}
+}
+local tags = {}
+local VoidwareStore = {
+	maindirectory = "vape/Voidware",
+	VersionInfo = {
+        MainVersion = "3.2",
+        PatchVersion = "0",
+        Nickname = "Universal Update",
+		BuildType = "Stable",
+		VersionID = "3.2"
+    },
+	FolderTable = {"vape/Voidware", "vape/Voidware/data"},
+	SystemFiles = {"vape/NewMainScript.lua", "vape/MainScript.lua", "vape/GuiLibrary.lua"},
+	watermark = function(text) return ("[Voidware] "..text) end,
+	Tweening = false,
+	map = "Unknown",
+	EnumFonts = {"SourceSans"},
+	QueueTypes = {"bedwars_to4"},
+	TimeLoaded = tick(),
+	CurrentPing = 0,
+	TargetObject = shared.VoidwareTargetObject,
+	bedtable = {},
+	HumanoidDied = Instance.new("BindableEvent"),
+	Tag = function(name, player, color)
+		name = name or "VOIDWARE USER"
+		player = player or lplr
+		color = color or "FF0000"
+		tags[player] = {}
+		tags[player].TagText = name
+		tags[player].TagColor = color
+	end,
+	MobileInUse = (uis:GetPlatform() == Enum.Platform.Android or uis:GetPlatform() == Enum.Platform.IOS) and true or false,
+	LastScytheTime = tick(),
+	vapePrivateCommands = {},
+	Enums = {},
+	jumpTick = tick(),
+	Api = {},
+	AverageFPS = 60,
+	entityIDs = shared.VoidwareStore and type(shared.VoidwareStore.entityIDs) == "table" and shared.VoidwareStore.entityIDs or {fakeIDs = {}},
+	LobbyTitles = {},
+	vapeupdateroutine = nil
+}
+VoidwareStore.FolderTable = {"vape/Voidware", VoidwareStore.maindirectory, VoidwareStore.maindirectory.."/".."data"}
+local VoidwareGlobe = {ConfigUsers = {}, BlatantModules = {}, Messages = {}, GameFinished = false, WhitelistChatSent = {}, HookedFunctions = {}, UpdateTargetInfo = function() end, targetInfo = {}, entityIDs = {fakeIDs = {}}}
+local VoidwareRank = VoidwareWhitelistStore.Rank
+local VoidwarePriority = VoidwareWhitelistStore.Priority
+local VoidwareQueueStore = {}
+task.spawn(function()
+	repeat 
+	if not shared.VoidwareStore or type(shared.VoidwareStore) ~= "table" then 
+		shared.VoidwareStore = VoidwareGlobe
+	end
+	task.wait()
+	until not vapeInjected
+end)
+
+if not shared.VoidwareStore or type(shared.VoidwareStore) ~= "table" then 
+	shared.VoidwareStore = VoidwareGlobe
+end
+shared.VoidwareStore.ModuleType = "BedwarsLobby"
+
+task.spawn(function()
+	repeat task.wait() until shared.VapeFullyLoaded
+	VoidwareStore.TimeLoaded = tick()
+end)
+
+for i,v in pairs(players:GetPlayers()) do 
+	local GenerateGUID = false
+	for i2, v2 in pairs(VoidwareStore.entityIDs) do 
+		if v2 == v.UserId then
+			GenerateGUID = true 
+		end
+	end 
+	if not GenerateGUID then
+		local generatedid = httpService:GenerateGUID(true)
+		VoidwareStore.entityIDs[generatedid] = v.UserId
+	end
+end
+
+table.insert(vapeConnections, players.PlayerAdded:Connect(function(plr)
+	local GenerateGUID = false
+	for i2, v2 in pairs(VoidwareStore.entityIDs) do 
+		if v2 == plr.UserId then
+			GenerateGUID = true 
+			break
+		end
+	end
+	if not GenerateGUID then 
+		local generatedid = httpService:GenerateGUID(true)
+		VoidwareStore.entityIDs[generatedid] = plr.UserId
+	end
+end))
+
+task.spawn(function()
+	repeat task.wait()
+	   shared.VoidwareStore.entityIDs = VoidwareStore.entityIDs
+	until not vapeInjected
+end)
+
+
+GuiLibrary.SelfDestructEvent.Event:Connect(function()
+	vapeInjected = false
+	for i,v in pairs(vapeConnections) do
+		pcall(function() v:Disconnect() end)
+	end
+	textChatService.OnIncomingMessage = nil
+end)
+
+table.insert(vapeConnections, lplr.OnTeleport:Connect(function()
+	if not shared.VoidwareQueueStore or type(shared.VoidwareQueueStore) ~= "table" then 
+		shared.VoidwareQueueStore = VoidwareQueueStore
+	end
+	local oldqueuestore = shared.VoidwareQueueStore
+	queueonteleport('shared.VoidwareQueueStore = '..oldqueuestore)
+end))
+
+function VoidwareFunctions:GetLocalEntityID(player)
+	for i,v in pairs(VoidwareStore.entityIDs) do 
+		if v == player.UserId then 
+			return i
+		end
+	end
+	return nil
+end
+
+function VoidwareFunctions:CreateLocalTag(player, text, color)
+	local plr = VoidwareFunctions:GetLocalEntityID(player or lplr)
+	if plr then
+		tags[plr] = {}
+		tags[plr].Text = text
+		tags[plr].Color = color 
+		return tags[plr]
+	end
+	return nil
+end
+
+function VoidwareFunctions:GetLocalTag(player)
+	local plr = VoidwareFunctions:GetLocalEntityID(player or lplr)
+	if plr and tags[plr] then
+		return tags[plr]
+	end
+	return {Text = "", Color = "FFFFFF"}
+end
+
+function VoidwareFunctions:GetMainDirectory()
+	for i,v in pairs({"vape", "vape/Voidware"}) do 
+		if not isfolder(v) then 
+			makefolder(v)
+		end
+	end
+	if not isfolder(VoidwareStore.maindirectory) then 
+		makefolder(VoidwareStore.maindirectory)
+	end
+	return VoidwareStore.maindirectory or "vape/Voidware"
+end
+
+function VoidwareFunctions:LoadTime()
+	if shared.VapeFullyLoaded then
+		return (tick() - VoidwareStore.TimeLoaded)
+	else
+		return 0
+	end
+end
+
+local function antikickbypass(data, watermark)
+	local bypassed = true
+	pcall(function() task.spawn(GuiLibrary.SelfDestruct) end)
+	task.spawn(function() settings().Network.IncomingReplicationLag = math.huge end)
+	task.spawn(function() 
+		lplr:Kick(data or "Voidware has requested player disconnect.") 
+		if watermark then
+		pcall(function() game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ErrorPrompt.TitleFrame.ErrorTitle.Text = "Voidware Error" end)
+		end
+		bypassed = false 
+	end)
+	task.wait(0.2)
+	pcall(function() bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer() end)
+	task.wait(1.5)
+	if bypassed then
+	task.spawn(function() game:Shutdown() end)
+	end
+	task.wait(1.5)
+	for i,v in pairs(lplr.PlayerGui:GetChildren()) do 
+		v.Parent = game:GetService("CoreGui")
+	end
+	task.spawn(function() lplr:Destroy() end) 
+	task.wait(1.5)
+	if lplr then 
+	repeat print() until false
+	end
+end
+
+
+local function betterhttpget(url)
+	local supportedexploit, body = syn and syn.request or http_requst or request or fluxus and fluxus.request, ""
+	if supportedexploit then
+		local data = httprequest({Url = url, Method = "GET"})
+		if data.Body then
+			body = data.Body
+		else
+			body = game:HttpGet(url, true)
+		end
+	else
+		body = game:HttpGet(url, true)
+	end
+	return body
+end
+
+
+local isfile = isfile or function(file)
+	local suc, res = pcall(function() return readfile(file) end)
+	return suc and res ~= nil
+end
+
+function VoidwareFunctions:GetMainDirectory()
+	for i,v in pairs({"vape", "vape/Voidware"}) do 
+		if not isfolder(v) then 
+			makefolder(v)
+		end
+	end
+	if not isfolder(VoidwareStore.maindirectory) then 
+		makefolder(VoidwareStore.maindirectory)
+	end
+	return VoidwareStore.maindirectory or "vape/Voidware"
+end
+
+
+function VoidwareFunctions:GetPlayerType(plr)
+	plr = plr or lplr
+	local tab = VoidwareWhitelistStore.Players[plr.UserId]
+	if tab == nil then
+		return "DEFAULT", true, 0, "SPECIAL USER", "FFFFFF", true, 0, false, "ABCDEFGH"
+	else
+		tab.Priority = VoidwarePriority[tab.Rank:upper()]
+		return tab.Rank, tab.Attackable, tab.Priority, tab.TagText, tab.TagColor, tab.TagHidden, tab.UID, tab.HWID
+	end
+end
+
+function VoidwareFunctions:SpecialInGame()
+	local specialtable = {}
+	for i,v in pairs(players:GetPlayers()) do
+		if v ~= lplr and ({VoidwareFunctions:GetPlayerType(v)})[3] > 1.5 then
+			table.insert(specialtable, v)
+		end
+	end
+	return #specialtable > 0 and specialtable
+end
+
+function VoidwareFunctions:GetClientUsers()
+	local users = {}
+	for i,v in pairs(players:GetPlayers()) do
+		if v ~= lplr and table.find(shared.VoidwareStore.ConfigUsers, v) then
+			table.insert(users, plr)
+		end
+	end
+	return users
+end
+
+function VoidwareFunctions:GetCommitHash(repo)
+	repo = repo or "Voidware"
+	local commit = "main"
+	for i,v in pairs(game:HttpGet("https://github.com/SystemXVoid/"..repo):split("\n")) do 
+	if v:find("commit") and v:find("fragment") then 
+	local str = v:split("/")[5]
+	commit = str:sub(0, str:find('"') - 1)
+	break
+	end
+	end
+	return commit
+end
+
+function VoidwareFunctions:GetFile(file, online, path)
+	local repo = VoidwareStore.VersionInfo.BuildType == "Beta" and "VoidwareBeta" or "Voidware"
+	local directory = VoidwareFunctions:GetMainDirectory()
+	if not isfolder(directory) then makefolder(directory) end
+	local existent = pcall(function() return readfile(path or directory.."/"..file) end)
+	local voidwarever = "main"
+	local str = string.split(file, "/") or {}
+	local lastfolder = nil
+	local foldersplit2
+	if not existent and not online then
+		voidwarever = VoidwareFunctions:GetCommitHash(repo)
+		local github, data = pcall(function() return betterhttpget("https://raw.githubusercontent.com/SystemXVoid/"..repo.."/"..voidwarever.."/"..file, true) end)
+		if github and data ~= "404: Not Found" then
+		VoidwareFunctions:GetMainDirectory()
+		if #str > 0 and not path and data ~= "404: Not Found" then
+		for i,v in pairs(str) do
+			local foldersplit = lastfolder ~= nil and directory.."/"..lastfolder.."/" or ""
+			foldersplit2 = string.gsub(foldersplit, directory.."/", "")
+			local str2 = string.split(v, ".") or {}
+			if #str2 == 1 then
+				if not isfolder(directory..foldersplit2..v) then
+					makefolder(directory.."/"..foldersplit2..v)
+				end
+				lastfolder = v and foldersplit2..v or lastfolder
+			end
+		end
+	end
+			data = file:find(".lua") and "-- Voidware Custom Modules Signed File\n"..data or data
+			writefile(path or directory.."/"..file, data)
+		else
+			vapeAssert(false, "Voidware", "Failed to download "..directory.."/"..file.." | "..data, 60)
+			return error("[Voidware] Failed to download "..directory.."/"..file.." | "..data)
+		end
+	end
+	return online and betterhttpget("https://raw.githubusercontent.com/SystemXVoid/"..repo.."/"..voidwarever.."/"..file) or readfile(path or directory.."/"..file)
+end
+
+task.spawn(function()
+	repeat 
+	for i,v in pairs({"base64"}) do 
+		task.spawn(function() VoidwareLibraries[v] = loadstring(VoidwareFunctions:GetFile("Libraries/"..v..".lua"))() end)
+	end
+	task.wait(5)
+	until not vapeInjected
+end)
+
+function VoidwareFunctions:RunFromLibrary(tablename, func, argstable)
+	if VoidwareLibraries[tablename] == nil then repeat task.wait() until VoidwareLibraries[tablename] and type(VoidwareLibraries[tablename]) == "table" end 
+	return VoidwareLibraries[tablename][func](argstable and type(argstable) == "table" and table.unpack(argstable) or argstable or "nil")
+end
+
+task.spawn(function()
+	local lastrank = VoidwareWhitelistStore.Rank:upper()
+	repeat
+	VoidwareRank = VoidwareWhitelistStore.Rank:upper()
+	if VoidwareRank ~= lastrank then
+		VoidwareWhitelistStore.RankChangeEvent:Fire(VoidwareRank)
+		lastrank = VoidwareRank
+	end
+	task.wait()
+	until not vapeInjected
+end)
+
+
+local function isEnabled(toggle)
+	if not toggle then return false end
+	toggle = GuiLibrary.ObjectsThatCanBeSaved[toggle.."OptionsButton"] and GuiLibrary.ObjectsThatCanBeSaved[toggle.."OptionsButton"].Api
+	return toggle and toggle.Enabled or false
+end
+
+function VoidwareFunctions:RefreshWhitelist()
+	local commit, hwidstring = VoidwareFunctions:GetCommitHash("whitelist"), string.split(HWID, "-")[5]
+	local suc, whitelist = pcall(function() return httpService:JSONDecode(betterhttpget("https://raw.githubusercontent.com/SystemXVoid/whitelist/"..commit.."/maintab.json")) end)
+	local attributelist = {"Rank", "Attackable", "TagText", "TagColor", "TagHidden", "UID"}
+	local defaultattributelist = {Rank = "DEFAULT", Attackable = true, Priority = 1, TagText = "VOIDWARE USER", TagColor = "FFFFFF", TagHidden = true, UID = 0, HWID = "ABCDEFGH"}
+	if suc and whitelist then
+		for i,v in pairs(whitelist) do
+			if i == hwidstring and not table.find(v.BlacklistedProducts, VoidwareWhitelistStore.Hash) then 
+				VoidwareWhitelistStore.Rank = v.Rank:upper()
+				VoidwareWhitelistStore.Tab = v
+				VoidwareWhitelistStore.Players[lplr.UserId] = v
+				VoidwareWhitelistStore.LocalPlayer = v
+				VoidwareWhitelistStore.LocalPlayer.HWID = i
+				VoidwareWhitelistStore.Players[lplr.UserId].HWID = i
+				VoidwareWhitelistStore.Players[lplr.UserId].Priority = VoidwareRank[v.Rank:upper()]
+			end
+			for i2, v2 in pairs(players:GetPlayers()) do
+				if VoidwareWhitelistStore.Players[v2.UserId] == nil then
+				   VoidwareWhitelistStore.Players[v2.UserId] = defaultattributelist
+			        if table.find(v.Accounts, tostring(v2.UserId)) and not table.find(v.BlacklistedProducts, VoidwareWhitelistStore.Hash) then
+					 VoidwareWhitelistStore.Players[v2.UserId] = v
+					if VoidwarePriority[VoidwareWhitelistStore.Rank:upper()] >= VoidwarePriority[v.Rank] then
+					 VoidwareWhitelistStore.Players[v2.UserId].Attackable = true
+					end
+			       end
+			   end
+		    end
+		end
+		table.insert(vapeConnections, players.PlayerAdded:Connect(function(v2)
+			for i,v in pairs(whitelist) do
+				if VoidwareWhitelistStore.Players[v2.UserId] == nil then
+					VoidwareWhitelistStore.Players[v2.UserId] = defaultattributelist
+					 if table.find(v.Accounts, tostring(v2.UserId)) and not table.find(v.BlacklistedProducts, VoidwareWhitelistStore.Hash) then
+					 VoidwareWhitelistStore.Players[v2.UserId] = v
+					 if VoidwarePriority[VoidwareWhitelistStore.Rank:upper()] >= VoidwarePriority[v.Rank] then
+						VoidwareWhitelistStore.Players[v2.UserId].Attackable = true
+					end
+					  VoidwareWhitelistStore.HWID = i
+					end
+				end
+			end
+		end))
+		table.insert(vapeConnections, players.PlayerRemoving:Connect(function(v2)
+			if VoidwareWhitelistStore.Players[v2.UserId] ~= nil then
+				VoidwareWhitelistStore.Players[v2.UserId] = nil
+			end
+		end))
+	end
+	return suc, whitelist
+end
+
+task.spawn(function()
+	local response = false
+	local whitelistloaded, err
+	local suc, res
+	task.spawn(function()
+		whitelistloaded, err = VoidwareFunctions:RefreshWhitelist()
+		response = true
+	end)
+	task.delay(15, function() if not response then suc, res = pcall(function() whitelistloaded, err = VoidwareFunctions:RefreshWhitelist() end) response = true end end)
+	repeat task.wait() until response
+	if not whitelistloaded then
+		task.spawn(error, "[Voidware] Failed to load whitelist functions: "..err)
+	end
+	task.wait(0.3)
+	VoidwareFunctions.WhitelistLoaded = true
+end)
+
+task.spawn(function()
+	local alreadychecked = false
+	repeat task.wait(alreadychecked and 5 or 10)
+		alreadychecked = true
+		task.spawn(function()
+		VoidwareFunctions:RefreshWhitelist()
+		local suc, res = pcall(function() return httpService:JSONDecode(betterhttpget("https://raw.githubusercontent.com/SystemXVoid/whitelist/"..VoidwareFunctions:GetCommitHash("whitelist").."/modulestrings.json")) end)
+		if suc and res then
+			VoidwareWhitelistStore.chatstrings = res
+		end
+		if VoidwareFunctions.WhitelistLoaded then
+			VoidwareFunctions.WhitelistRefreshEvent:Fire()
+		end
+		task.wait(0.5)
+		VoidwareFunctions.WhitelistLoaded = true
+		end)
+	until not vapeInjected 
+end)
+
+
+
+task.spawn(function()
+	repeat
+	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
+	if ({VoidwareFunctions:GetPlayerType()})[3] < 1.5 and VoidwareStore.VersionInfo.BuildType == "Beta" then
+		antikickbypass("This build of Voidware is currently restricted", true)
+	end
+	if ({VoidwareFunctions:GetPlayerType()})[3] < 1.5 and VoidwareStore.VersionInfo.BuildType ~= "Beta" then
+		pcall(delfolder, VoidwareFunctions:GetMainDirectory().."/beta")
+	end
+until not vapeInjected
+end)
+
+task.spawn(function()
+	local blacklist = false
+	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
+	pcall(function()
+	repeat
+	local suc, tab = pcall(function() return httpService:JSONDecode(betterhttpget("https://raw.githubusercontent.com/SystemXVoid/whitelist/"..VoidwareFunctions:GetCommitHash("whitelist").."/blacklist.json")) end)
+	if suc then
+		blacklist = false
+		for i,v in pairs(tab) do
+			if HWID:find(i) or i == tostring(lplr.UserId) or lplr.Name:find(i) then
+				blacklist = true
+				local directory = VoidwareFunctions:GetMainDirectory()
+				if v.Priority and v.Priority > 1 then
+					task.spawn(GuiLibrary.SelfDestruct)
+					antikickbypass(v.Error, true)
+				else
+					if not isfile(directory.."/kickdata.vw") or readfile(directory.."/kickdata.vw") ~= tostring(v.ID) then
+						antikickbypass(v.Error, true)
+					end
+				end
+			end
+		end
+		if not blacklist then
+			pcall(delfile, VoidwareStore.maindirectory.."/kickdata.vw")
+		end
+	end
+	task.wait(5)
+	until not vapeInjected
+end)
+end)
+
+local function GetCurrentProfile()
+	local profile = "default"
+	if isfile("vape/Profiles/6872274481.vapeprofiles.txt") then
+		pcall(function()
+		local profiledata = readfile("vape/Profiles/6872274481.vapeprofiles.txt")
+		local data = httpService:JSONDecode(profiledata)
+		for i,v in pairs(data) do
+			if v.Selected == true then
+				profile = i
+			end
+		end
+	end)
+	end
+	return profile
+end
+
+if GetCurrentProfile() == "Ghost" then
+	VoidwareWhitelistStore.Hash = "voidwarelitemoment"
+end
+
+function VoidwareFunctions:RenderCustomNameTag(plr, text, color)
+	if not plr then return nil end
+	local nametag = plr.Character and plr.Character:FindFirstChild("Head") and plr.Character.Head:FindFirstChild("Nametag") and plr.Character.Head.Nametag:FindFirstChild("DisplayNameContainer")
+	if nametag and nametag:IsA("Frame") then
+		pcall(function()
+			nametag.DisplayName.Text = "<font color='#"..color.."'>["..text.."]</font> "..nametag.DisplayName.Text
+			table.insert(vapeConnections, nametag.DisplayName:GetPropertyChangedSignal("Text"):Connect(function()
+				pcall(function() nametag.DisplayName.Text = "<font color='#"..color.."'>["..text.."]</font> "..plr.DisplayName end)
+			end))
+	end)
+end
+	table.insert(vapeConnections, plr.CharacterAdded:Connect(function()
+		repeat
+		nametag = plr.Character and plr.Character:FindFirstChild("Head") and plr.Character.Head:FindFirstChild("Nametag") and plr.Character.Head.Nametag:FindFirstChild("DisplayNameContainer")
+		 if nametag and nametag:IsA("Frame") then 
+			break 
+		end
+		task.wait()
+		until not vapeInjected
+		pcall(function()
+			nametag.DisplayName.Text = "<font color='#"..color.."'>["..text.."]</font> "..nametag.DisplayName.Text
+			table.insert(vapeConnections, nametag.DisplayName:GetPropertyChangedSignal("Text"):Connect(function()
+				pcall(function() nametag.DisplayName.Text = "<font color='#"..color.."'>["..text.."]</font> "..plr.DisplayName end)
+			end))
+		end)
+	end))
+	return nametag
+end
+
+local function voidwareNewPlayer(plr)
+	if not VoidwareFunctions.WhitelistLoaded then repeat task.wait() until VoidwareFunctions.WhitelistLoaded end
+	pcall(function()
+	plr = plr or lplr
+	local plrtype, plrattackable, plrpriority, tagtext, tagcolor, taghidden, hwidstring = VoidwareFunctions:GetPlayerType(plr)
+	if plrpriority > 1.5 and not taghidden then
+		VoidwareFunctions:CreateLocalTag(plr, tagtext, tagcolor)
+		task.spawn(function() VoidwareFunctions:RenderCustomNameTag(plr, tagtext, tagcolor) end)
+	end
+	if plr ~= lplr and ({VoidwareFunctions:GetPlayerType()})[3] < 2 and playerPriority > 1.5 then
+		local whisperallowed = game:GetService("RobloxReplicatedStorage").ExperienceChat.WhisperChat:InvokeServer(plr.UserId)
+		if whisperallowed then
+			if not plr:GetAttribute("LobbyConnected") then repeat task.wait() until plr:GetAttribute("LobbyConnected") end
+			task.wait(5)
+			whisperallowed:SendAsync(VoidwareWhitelistStore.Hash)
+		end
+	end
+end)
+end
+
+task.spawn(function()
+	local oldwhitelists = {}
+	for i,v in pairs(players:GetPlayers()) do
+		task.spawn(voidwareNewPlayer, v)
+		oldwhitelists[v] = VoidwarePriority[({VoidwareFunctions:GetPlayerType(v)})[3]]
+	end
+	
+	table.insert(vapeConnections, players.PlayerAdded:Connect(function(v)
+		oldwhitelists[v] = VoidwarePriority[({VoidwareFunctions:GetPlayerType(v)})[3]]
+		task.spawn(voidwareNewPlayer, v)
+	end))
+	
+	table.insert(vapeConnections, VoidwareFunctions.WhitelistRefreshEvent.Event:Connect(function()
+	for i,v in pairs(players:GetPlayers()) do
+		if ({VoidwareFunctions:GetPlayerType(v)}) ~= oldwhitelists[v] then
+		task.spawn(voidwareNewPlayer, v)
+		end
+	end
+	end))
+end)
+
+for i,v in pairs(players:GetPlayers()) do
+	task.spawn(voidwareNewPlayer, v)
+end
+
+table.insert(vapeConnections, players.PlayerAdded:Connect(function(v)
+	task.spawn(voidwareNewPlayer, v)
+end))
+
+table.insert(vapeConnections, players.PlayerRemoving:Connect(function(v)
+	if table.find(shared.VoidwareStore.ConfigUsers, v) then
+		table.remove(shared.VoidwareStore.ConfigUsers, v)
+	end
+end))
+
+VoidwareStore.vapeupdateroutine = coroutine.create(function()
+	repeat
+	if not vapeInjected then break end
+	local success, response = pcall(function()
+	local vaperepoinfo = betterhttpget("https://github.com/7GrandDadPGN/VapeV4ForRoblox")
+	for i,v in pairs(vaperepoinfo:split("\n")) do 
+	    if v:find("commit") and v:find("fragment") then 
+	    local str = v:split("/")[5]
+	    return str:sub(0, v:split("/")[5]:find('"') - 1)
+	    end
+	end
+end)
+if (isfile("vape/commithash.txt") and readfile("vape/commithash.txt") ~= response or not isfile("vape/commithash.txt") or not isfile("vape/Voidware/oldvape/BedwarsLobby.lua")) then
+		if VoidwareFunctions:GetPlayerType() == "OWNER" and success then 
+			if response ~= "main" then 
+				if not isfolder("vape") then makefolder("vape") end
+				pcall(writefile, "vape/commithash.txt", response)
+			end
+			local newvape = betterhttpget("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..response.."/CustomModules/6872265039.lua")
+			if newvape ~= "404: Not Found" then 
+			VoidwareFunctions:GetMainDirectory()
+			if not isfolder("vape/Voidware/oldvape") then makefolder("vape/Voidware/oldvape") end
+			pcall(writefile, "vape/Voidware/oldvape/BedwarsLobby.lua", newvape)
+			end
+		end
+	end
+	task.wait(5)
+ until not vapeInjected
+end)
+
+pcall(coroutine.resume, VoidwareStore.vapeupdateroutine)
+
+task.spawn(function()
+    if not shared.VapeFullyLoaded and VoidwareStore.MobileInUse then repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected end
+	if not vapeInjected or shared.VoidwareStore.ModuleType ~= "Universal.lua" then return end
+	task.wait(VoidwareStore.MobileInUse and 4.5 or 0.1)
+	repeat
+	pcall(function()
+	if VoidwareFunctions:GetPlayerType() == "OWNER" then
+		if not isfolder("Voidware") then makefolder("Voidware") end
+		if not isfolder("Voidware/src") then makefolder("Voidware/src") end
+		local filedata = readfile("vape/CustomModules/6872274481.lua")
+		if filedata:find("VoidwareStore") then
+		writefile("Voidware/src/Bedwars.lua", filedata)
+		end
+		filedata = readfile("vape/Universal.lua")
+		if filedata:find("VoidwareStore") then
+			writefile("Voidware/src/Universal.lua", filedata)
+		end
+	end
+end)
+	task.wait(5)
+	until not vapeInjected
+end)
+
+task.spawn(function()
+    pcall(function()
+    if not shared.VapeFullyLoaded and VoidwareStore.MobileInUse then repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected end
+	if not VoidwareFunctions.WhitelistLoaded then repeat task.wait() until VoidwareFunctions.WhitelistLoaded end
+	task.wait(VoidwareStore.MobileInUse and 4.5 or 0.1)
+    if not vapeInjected then return end
+    local versiondata = VoidwareStore.VersionInfo
+    repeat
+    local VoidwareOwner = VoidwareFunctions:GetPlayerType() == "OWNER"
+    if not isfolder("vape") then makefolder("vape") end
+    if not isfolder("vape/Voidware") then pcall(makefolder, "vape/Voidware") end
+	if not isfolder(VoidwareStore.maindirectory) then makefolder(VoidwareStore.maindirectory) end
+    versiondata = VoidwareFunctions:GetFile("System/Version.vw", true)
+    if versiondata ~= "404: Not Found" and versiondata ~= "" then versiondata = httpService:JSONDecode(versiondata) else versiondata = {} end
+    local currentcommit = VoidwareFunctions:GetCommitHash(VoidwareStore.VersionInfo.BuildType == "Beta" and "VoidwareBeta" or "Voidware")
+    if not isfile(VoidwareStore.maindirectory.."/".."commithash.vw") or readfile(VoidwareStore.maindirectory.."/".."commithash.vw") ~= currentcommit then
+        pcall(delfolder, VoidwareStore.maindirectory.."/".."data")
+        pcall(delfolder, VoidwareStore.maindirectory.."/".."Libraries")
+        local data = VoidwareFunctions:GetFile("System/Bedwars.lua", true)
+        if data ~= "" and data ~= "404: Not Found" and not VoidwareOwner then data = "-- Voidware Custom Modules Main File\n"..data pcall(writefile, "vape/CustomModules/6872274481.lua", data) end
+        data = VoidwareFunctions:GetFile("System/NewMainScript.lua", true)
+        if data ~= "" and data ~= "404: Not Found" and not VoidwareOwner then data = "-- Voidware Custom Modules Signed File\n"..data pcall(writefile, "vape/NewMainScript.lua", data) end
+        data = VoidwareFunctions:GetFile("System/MainScript.lua", true)
+        if data ~= "" and data ~= "404: Not Found" and not VoidwareOwner then data = "-- Voidware Custom Modules Signed File\n"..data pcall(writefile, "vape/MainScript.lua", data) end
+        data = VoidwareFunctions:GetFile("System/GuiLibrary.lua", true)
+        if data ~= "" and data ~= "404: Not Found" and not VoidwareOwner then data = "-- Voidware Custom Modules Signed File\n"..data pcall(writefile, "vape/GuiLibrary.lua", data) end
+        pcall(writefile, VoidwareStore.maindirectory.."/".."commithash.vw", currentcommit)
+    end 
+    task.wait(VoidwareStore.MobileInUse and 10 or 5)
+    until not vapeInjected
+end)
+end)
+
+local function GetURL(scripturl)
+	if shared.VapeDeveloper then
+		return readfile("vape/"..scripturl)
+	else
+		return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/"..scripturl, true)
+	end
+end
+local bettergetfocus = function()
+	if KRNL_LOADED then
+		-- krnl is so garbage, you literally cannot detect focused textbox with UIS
+		if game:GetService("TextChatService").ChatVersion == "TextChatService" then
+			return (game:GetService("CoreGui").ExperienceChat.appLayout.chatInputBar.Background.Container.TextContainer.TextBoxContainer.TextBox:IsFocused())
+		elseif game:GetService("TextChatService").ChatVersion == "LegacyChatService" then
+			return ((game:GetService("Players").LocalPlayer.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:IsFocused() or searchbar:IsFocused()) and true or nil) 
+		end
+	end
+	return game:GetService("UserInputService"):GetFocusedTextBox()
+end
+local entity = shared.vapeentity
+local WhitelistFunctions = shared.vapewhitelist
+local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport or function() end
+local teleportfunc
+local betterisfile = function(file)
+	local suc, res = pcall(function() return readfile(file) end)
+	return suc and res ~= nil
+end
+local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function(tab)
+	if tab.Method == "GET" then
+		return {
+			Body = game:HttpGet(tab.Url, true),
+			Headers = {},
+			StatusCode = 200
+		}
+	else
+		return {
+			Body = "bad exploit",
+			Headers = {},
+			StatusCode = 404
+		}
+	end
+end 
+local getasset = getsynasset or getcustomasset
+local storedshahashes = {}
+local oldchanneltab
+local oldchannelfunc
+local oldchanneltabs = {}
+local networkownertick = tick()
+local networkownerfunc = isnetworkowner or function(part)
+	if gethiddenproperty(part, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual then 
+		sethiddenproperty(part, "NetworkOwnershipRule", Enum.NetworkOwnership.Automatic)
+		networkownertick = tick() + 8
+	end
+	return networkownertick <= tick()
+end
+
+local function addvectortocframe2(cframe, newylevel)
+	local x, y, z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = cframe:GetComponents()
+	return CFrame.new(x, newylevel, z, R00, R01, R02, R10, R11, R12, R20, R21, R22)
+end
+
+local function getSpeedMultiplier(reduce)
+	local speed = 1
+	if lplr.Character then 
+		local speedboost = lplr.Character:GetAttribute("SpeedBoost")
+		if speedboost and speedboost > 1 then 
+			speed = speed + (speedboost - 1)
+		end
+		if lplr.Character:GetAttribute("GrimReaperChannel") then 
+			speed = speed + 0.6
+		end
+		if lplr.Character:GetAttribute("SpeedPieBuff") then 
+			speed = speed + (queueType == "SURVIVAL" and 0.15 or 0.3)
+		end
+	end
+	return reduce and speed ~= 1 and speed * (0.9 - (0.15 * math.floor(speed))) or speed
+end
+
+local RunLoops = {RenderStepTable = {}, StepTable = {}, HeartTable = {}}
+do
+	function RunLoops:BindToRenderStep(name, num, func)
+		if RunLoops.RenderStepTable[name] == nil then
+			RunLoops.RenderStepTable[name] = game:GetService("RunService").RenderStepped:Connect(func)
+		end
+	end
+
+	function RunLoops:UnbindFromRenderStep(name)
+		if RunLoops.RenderStepTable[name] then
+			RunLoops.RenderStepTable[name]:Disconnect()
+			RunLoops.RenderStepTable[name] = nil
+		end
+	end
+
+	function RunLoops:BindToStepped(name, num, func)
+		if RunLoops.StepTable[name] == nil then
+			RunLoops.StepTable[name] = game:GetService("RunService").Stepped:Connect(func)
+		end
+	end
+
+	function RunLoops:UnbindFromStepped(name)
+		if RunLoops.StepTable[name] then
+			RunLoops.StepTable[name]:Disconnect()
+			RunLoops.StepTable[name] = nil
+		end
+	end
+
+	function RunLoops:BindToHeartbeat(name, num, func)
+		if RunLoops.HeartTable[name] == nil then
+			RunLoops.HeartTable[name] = game:GetService("RunService").Heartbeat:Connect(func)
+		end
+	end
+
+	function RunLoops:UnbindFromHeartbeat(name)
+		if RunLoops.HeartTable[name] then
+			RunLoops.HeartTable[name]:Disconnect()
+			RunLoops.HeartTable[name] = nil
+		end
+	end
+end
+
+local function runcode(func)
+	func()
+end
+
+local function betterfind(tab, obj)
+	for i,v in pairs(tab) do
+		if v == obj or type(v) == "table" and v.hash == obj then
+			return v
+		end
+	end
+	return nil
+end
+
+local function addvectortocframe(cframe, vec)
+	local x, y, z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = cframe:GetComponents()
+	return CFrame.new(x + vec.X, y + vec.Y, z + vec.Z, R00, R01, R02, R10, R11, R12, R20, R21, R22)
+end
+
+local function getremote(tab)
+	for i,v in pairs(tab) do
+		if v == "Client" then
+			return tab[i + 1]
+		end
+	end
+	return ""
+end
+
+local function getcustomassetfunc(path)
+	if not betterisfile(path) then
+		task.spawn(function()
+			local textlabel = Instance.new("TextLabel")
+			textlabel.Size = UDim2.new(1, 0, 0, 36)
+			textlabel.Text = "Downloading "..path
+			textlabel.BackgroundTransparency = 1
+			textlabel.TextStrokeTransparency = 0
+			textlabel.TextSize = 30
+			textlabel.Font = Enum.Font.SourceSans
+			textlabel.TextColor3 = Color3.new(1, 1, 1)
+			textlabel.Position = UDim2.new(0, 0, 0, -36)
+			textlabel.Parent = GuiLibrary["MainGui"]
+			repeat task.wait() until betterisfile(path)
+			textlabel:Remove()
+		end)
+		local req = requestfunc({
+			Url = "https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/"..path:gsub("vape/assets", "assets"),
+			Method = "GET"
+		})
+		writefile(path, req.Body)
+	end
+	return getasset(path) 
+end
+
+local function isAlive(plr, healthblacklist)
+	plr = plr or lplr
+	local alive = false 
+	if plr.Character and plr.Character.PrimaryPart and plr.Character:FindFirstChild("HumanoidRootPart") and plr.Character:FindFirstChild("Humanoid") and plr.Character:FindFirstChild("Head") then 
+		alive = true
+	end
+	if plr:GetAttribute("PlayerConnected") and alive then 
+		alive = false
+	end
+	if not healthblacklist and alive and plr.Character.Humanoid.Health <= 0 then 
+		alive = false
+	end
+	return alive
+end
+
+local function GetMagnitudeOf2Objects(part1, part2, bypass)
+	local partcounter = 0
+	if bypass then
+		local suc, res = pcall(function() return part1 end)
+		if suc then 
+		partcounter = partcounter + 1 
+		end
+		suc, res = pcall(function() return part2 end)
+		if suc then 
+		partcounter = partcounter + 1
+	end
+	else
+		local suc, res = pcall(function() return part1.Position end)
+		if suc then 
+		partcounter = partcounter + 1 
+		part1 = res
+		end
+		suc, res = pcall(function() return part2.Position end)
+		if suc then 
+		partcounter = partcounter + 1
+		part2 = res
+		end
+	end
+	local magofobjects = bypass and partcounter > 1 and math.floor(((part1) - (part2)).Magnitude) or not bypass and partcounter > 1 and math.floor(((part1) - (part2)).Magnitude) or 0
+	return magofobjects
+end
+
+local function GetEnumItems(EnumType)
+	local items = {}
+	for i,v in pairs(Enum[EnumType]:GetEnumItems()) do
+		table.insert(items, v.Name)
+	end
+	return items
+end
+
+local function transformtitle(plr)
+	plr = plr or lplr
+	if VoidwareStore.LobbyTitles[plr] then
+		if VoidwareStore.LobbyTitles[plr].Connections then
+			for i,v in pairs(VoidwareStore.LobbyTitles[plr].Connections) do
+				pcall(function() v:Disconnect() end)
+			end
+			VoidwareStore.LobbyTitles[plr] = nil
+		end
+	end
+	VoidwareStore.LobbyTitles[plr] = VoidwareStore.LobbyTitles[plr] or {}
+	VoidwareStore.LobbyTitles[plr].Connections = VoidwareStore.LobbyTitles[plr].Connections or {}
+	local disconnectfunctions = function() end
+	if not isAlive(plr) then repeat task.wait() until isAlive(plr) end
+	local lobbytitle = plr.Character.Head:FindFirstChild("LobbyTitle")
+	if lobbytitle then
+		lobbytitle:Destroy()
+	end
+	local newtitlegui = Instance.new("BillboardGui")
+	newtitlegui.Name = "LobbyTitle"
+	newtitlegui.Size = UDim2.new(4, 0, 0.5, 0)
+	newtitlegui.StudsOffsetWorldSpace = Vector3.new(0, 2.5, 0)
+	newtitlegui.MaxDistance = 20
+	newtitlegui.Parent = plr.Character.Head
+	newtitlegui.DistanceUpperLimit = -1
+	newtitlegui.StudsOffset = Vector3.new(0, 0, 0)
+	newtitlegui.AlwaysOnTop = true
+	local newtitlelabel = Instance.new("TextLabel")
+	newtitlelabel.Name = "1"
+	newtitlelabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	newtitlelabel.Text = "Voidware Sense"
+	newtitlelabel.TextScaled = true
+	newtitlelabel.Position = UDim2.new(0, 0, 0, 0)
+	newtitlelabel.Size = UDim2.new(1, 0, 1, 0)
+	newtitlelabel.BackgroundTransparency = 1
+	newtitlelabel.TextSize = 8
+	newtitlelabel.BorderSizePixel = 0
+	newtitlelabel.Font = Enum.Font.LuckiestGuy
+	newtitlelabel.Archivable = true
+	newtitlelabel.Parent = newtitlegui
+	table.insert(VoidwareStore.LobbyTitles[plr].Connections, plr.Character.Head.ChildAdded:Connect(function(v)
+		if v ~= newtitlegui and v.Name == "LobbyTitle" then
+			v:Destroy()
+		end
+	end))
+	table.insert(VoidwareStore.LobbyTitles[plr].Connections, plr.CharacterAdded:Connect(function()
+		for i,v in pairs(VoidwareStore.LobbyTitles[plr].Connections) do
+			pcall(function() v:Disconnect() end)
+		end
+		VoidwareStore.LobbyTitles[plr] = nil
+	end))
+	disconnectfunctions = function()
+		for i,v in pairs(VoidwareStore.LobbyTitles[plr].Connections) do
+			pcall(function() v:Disconnect() end)
+		end
+		VoidwareStore.LobbyTitles[plr] = nil
+		pcall(function() newtitlegui:Destroy() end)
+	end
+	return newtitlegui, disconnectfunctions
+end
+
+local function FindTarget(dist, healthmethod, teamonly, enemyonly)
+	local sort, playertab = healthmethod and math.huge or dist or math.huge, {}
+	local sortmethods = {Nearest = function(ent) return GetMagnitudeOf2Objects(lplr.Character.PrimaryPart, ent.Character.PrimaryPart) < sort end, Health = function(ent) return ent.Character.Humanoid.Health < sort end}
+	for i,v in pairs(players:GetPlayers()) do
+		if v ~= lplr and lplr.Character and lplr.Character.PrimaryPart and isAlive(v) and (teamcheck and v.Team and lplr.Team and v.Team ~= lplr.Team or not teamcheck or not v.Team or not lplr.Team) and (enemyonly and v.Team and lplr.Team and v.Team ~= lplr.Team or not enemyonly or not v.Team or not lplr.Team) then
+			local currentmethod = healthmethod and "Health" or "Nearest"
+			if sortmethods[currentmethod] and sortmethods[currentmethod](v) then
+				sort = healthmethod and v.Character.Humanoid.Health or GetMagnitudeOf2Objects(lplr.Character.PrimaryPart, v.Character.PrimaryPart)
+				playertab.Player = v
+				playertab.Humanoid = v.Character.Humanoid
+				playertab.RootPart = v.Character.PrimaryPart
+			end
+		end
+	end
+	return playertab
+end
+
+local function warningNotification(title, text, delay)
+	local suc, res = pcall(function()
+		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Successfully called function", delay or 7, "assets/WarningNotification.png")
+		frame.Frame.Frame.ImageColor3 = Color3.fromHSV(GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"].Api.Hue, GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"].Api.Sat, GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"].Api.Value)
+		frame.Frame.Frame.ImageColor3 = Color3.fromHSV(GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"].Api.Hue, GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"].Api.Sat, GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"].Api.Value)
+		return frame
+	end)
+	return (suc and res)
+end
+
+local function InfoNotification(title, text, delay)
+	local suc, res = pcall(function()
+		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Successfully called function", delay or 7, "assets/InfoNotification.png")
+		return frame
+	end)
+	return (suc and res)
+end
+
+local function CustomNotification(title, delay, text, icon, color)
+	local suc, res = pcall(function()
+		local frame = GuiLibrary.CreateNotification(title or "Voidware", text or "Thanks you for using Voidware "..lplr.Name.."!", delay or 5.6, icon or "assets/InfoNotification.png")
+		frame.Frame.Frame.ImageColor3 = color and Hex2Color3(color) or Color3.new()
+		return frame
+	end)
+	return (suc and res)
+end
+
+local announcements = {}
+function VoidwareFunctions:Announcement(tab)
+	tab = tab or {}
+	tab.Text = tab.Text or ""
+	tab.Duration = tab.Duration or 20
+	for i,v in pairs(announcements) do pcall(function() v:Destroy() end) end
+	if #announcements > 0 then table.clear(announcements) end
+	local announcemainframe = Instance.new("Frame")
+	announcemainframe.Position = UDim2.new(0.2, 0, -5, 0.1)
+	announcemainframe.Size = UDim2.new(0, 1227, 0, 62)
+	announcemainframe.Parent = GuiLibrary.MainGui
+	local announcemaincorner = Instance.new("UICorner")
+	announcemaincorner.CornerRadius = UDim.new(0, 20)
+	announcemaincorner.Parent = announcemainframe
+	local announceuigradient = Instance.new("UIGradient")
+	announceuigradient.Parent = announcemainframe
+	announceuigradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(234, 0, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(153, 0, 0))})
+	announceuigradient.Enabled = true
+	local announceiconframe = Instance.new("Frame")
+	announceiconframe.BackgroundColor3 = Color3.fromRGB(106, 0, 0)
+	announceiconframe.BorderColor3 = Color3.fromRGB(85, 0, 0)
+	announceiconframe.Position = UDim2.new(0.007, 0, 0.097, 0)
+	announceiconframe.Size = UDim2.new(0, 58, 0, 50)
+	announceiconframe.Parent = announcemainframe
+	local annouceiconcorner = Instance.new("UICorner")
+	annouceiconcorner.CornerRadius = UDim.new(0, 20)
+	annouceiconcorner.Parent = announceiconframe
+	local announcevoidwareicon = Instance.new("ImageButton")
+	announcevoidwareicon.Parent = announceiconframe
+	announcevoidwareicon.Image = "rbxassetid://13391474085"
+	announcevoidwareicon.Position = UDim2.new(-0, 0, 0, 0)
+	announcevoidwareicon.Size = UDim2.new(0, 59, 0, 50)
+	announcevoidwareicon.BackgroundTransparency = 1
+	local announcetextfont = Font.new("rbxasset://fonts/families/Ubuntu.json")
+	announcetextfont.Weight = Enum.FontWeight.Bold
+	local announcemaintext = Instance.new("TextButton")
+	announcemaintext.Text = tab.Text
+	announcemaintext.FontFace = announcetextfont
+	announcemaintext.TextXAlignment = Enum.TextXAlignment.Left
+	announcemaintext.BackgroundTransparency = 1
+	announcemaintext.TextSize = 30
+	announcemaintext.AutoButtonColor = false
+	announcemaintext.Position = UDim2.new(0.063, 0, 0.097, 0)
+	announcemaintext.Size = UDim2.new(0, 1140, 0, 50)
+	announcemaintext.RichText = true
+	announcemaintext.TextColor3 = Color3.fromRGB(255, 255, 255)
+	announcemaintext.Parent = announcemainframe
+	tweenService:Create(announcemainframe, TweenInfo.new(1), {Position = UDim2.new(0.2, 0, 0.042, 0.1)}):Play()
+	local sound = Instance.new("Sound")
+	sound.PlayOnRemove = true
+	sound.SoundId = "rbxassetid://6732495464"
+	sound.Parent = announcemainframe
+	sound:Destroy()
+	local function announcementdestroy()
+		local sound = Instance.new("Sound")
+		sound.PlayOnRemove = true
+		sound.SoundId = "rbxassetid://6732690176"
+		sound.Parent = announcemainframe
+		sound:Destroy()
+		announcemainframe:Destroy()
+	end
+	announcemaintext.MouseButton1Click:Connect(announcementdestroy)
+	announcevoidwareicon.MouseButton1Click:Connect(announcementdestroy)
+	game:GetService("Debris"):AddItem(announcemainframe, tab.Duration)
+	table.insert(announcements, announcemainframe)
+	return announcemainframe
+end
+
+
+local function runFunction(func) func() end
+
+runcode(function()
+    local flaggedremotes = {"SelfReport"}
+    getfunctions = function()
+        local Flamework = require(repstorage["rbxts_include"]["node_modules"]["@flamework"].core.out).Flamework
+		repeat task.wait() until Flamework.isInitialized
+        local KnitClient = debug.getupvalue(require(lplr.PlayerScripts.TS.knit).setup, 6)
+        local Client = require(repstorage.TS.remotes).default.Client
+        local OldClientGet = getmetatable(Client).Get
+		local OldClientWaitFor = getmetatable(Client).WaitFor
+        bedwars = {
+			BedwarsKits = require(repstorage.TS.games.bedwars.kit["bedwars-kit-shop"]).BedwarsKitShop,
+            ClientHandler = Client,
+            ClientStoreHandler = require(lplr.PlayerScripts.TS.ui.store).ClientStore,
+			EmoteMeta = require(repstorage.TS.locker.emote["emote-meta"]).EmoteMeta,
+			QueryUtil = require(repstorage["rbxts_include"]["node_modules"]["@easy-games"]["game-core"].out).GameQueryUtil,
+			KitMeta = require(repstorage.TS.games.bedwars.kit["bedwars-kit-meta"]).BedwarsKitMeta,
+			LobbyClientEvents = KnitClient.Controllers.QueueController,
+            sprintTable = KnitClient.Controllers.SprintController,
+			WeldTable = require(repstorage.TS.util["weld-util"]).WeldUtil,
+			QueueMeta = require(repstorage.TS.game["queue-meta"]).QueueMeta,
+			getEntityTable = require(repstorage.TS.entity["entity-util"]).EntityUtil,
+        }
+		if not shared.vapebypassed then
+			local realremote = repstorage:WaitForChild("GameAnalyticsError")
+			realremote.Parent = nil
+			local fakeremote = Instance.new("RemoteEvent")
+			fakeremote.Name = "GameAnalyticsError"
+			fakeremote.Parent = repstorage
+			game:GetService("ScriptContext").Error:Connect(function(p1, p2, p3)
+				if not p3 then
+					return;
+				end;
+				local u2 = nil;
+				local v4, v5 = pcall(function()
+					u2 = p3:GetFullName();
+				end);
+				if not v4 then
+					return;
+				end;
+				if p3.Parent == nil then
+					return;
+				end
+				realremote:FireServer(p1, p2, u2);
+			end)
+			shared.vapebypassed = true
+		end
+	end
+end)
+getfunctions()
+
+GuiLibrary["SelfDestructEvent"].Event:Connect(function()
+	if chatconnection then
+		chatconnection:Disconnect()
+	end
+	if teleportfunc then
+		teleportfunc:Disconnect()
+	end
+	if oldchannelfunc and oldchanneltab then
+		oldchanneltab.GetChannel = oldchannelfunc
+	end
+	for i2,v2 in pairs(oldchanneltabs) do
+		i2.AddMessageToChannel = v2
+	end
+end)
+
+local function getNametagString(plr)
+	local nametag = ""
+	if WhitelistFunctions:CheckPlayerType(plr) == "VAPE PRIVATE" then
+		nametag = '<font color="rgb(127, 0, 255)">[VAPE PRIVATE] '..(plr.DisplayName or plr.Name)..'</font>'
+	end
+	if WhitelistFunctions:CheckPlayerType(plr) == "VAPE OWNER" then
+		nametag = '<font color="rgb(255, 80, 80)">[VAPE OWNER] '..(plr.DisplayName or plr.Name)..'</font>'
+	end
+	if WhitelistFunctions.WhitelistTable.chattags[WhitelistFunctions:Hash(plr.Name..plr.UserId)] then
+		local data = WhitelistFunctions.WhitelistTable.chattags[WhitelistFunctions:Hash(plr.Name..plr.UserId)]
+		local newnametag = ""
+		if data.Tags then
+			for i2,v2 in pairs(data.Tags) do
+				newnametag = newnametag..'<font color="rgb('..math.floor(v2.TagColor.r)..', '..math.floor(v2.TagColor.g)..', '..math.floor(v2.TagColor.b)..')">['..v2.TagText..']</font> '
+			end
+		end
+		nametag = newnametag..(newnametag.NameColor and '<font color="rgb('..math.floor(newnametag.NameColor.r)..', '..math.floor(newnametag.NameColor.g)..', '..math.floor(newnametag.NameColor.b)..')">' or '')..(plr.DisplayName or plr.Name)..(newnametag.NameColor and '</font>' or '')
+	end
+	return nametag
+end
+
+local function friendCheck(plr, recolor)
+	if GuiLibrary["ObjectsThatCanBeSaved"]["Use FriendsToggle"]["Api"]["Enabled"] then
+		local friend = (table.find(GuiLibrary["ObjectsThatCanBeSaved"]["FriendsListTextCircleList"]["Api"]["ObjectList"], plr.Name) and GuiLibrary["ObjectsThatCanBeSaved"]["FriendsListTextCircleList"]["Api"]["ObjectListEnabled"][table.find(GuiLibrary["ObjectsThatCanBeSaved"]["FriendsListTextCircleList"]["Api"]["ObjectList"], plr.Name)] and true or nil)
+		if recolor then
+			return (friend and GuiLibrary["ObjectsThatCanBeSaved"]["Recolor visualsToggle"]["Api"]["Enabled"] and true or nil)
+		else
+			return friend
+		end
+	end
+	return nil
+end
+
+local function renderNametag(plr)
+	if WhitelistFunctions:CheckPlayerType(plr) ~= "DEFAULT" or WhitelistFunctions.WhitelistTable.chattags[WhitelistFunctions:Hash(plr.Name..plr.UserId)] then
+		local playerlist = game:GetService("CoreGui"):FindFirstChild("PlayerList")
+		if playerlist then
+			pcall(function()
+				local playerlistplayers = playerlist.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScollingFrame.OffsetUndoFrame
+				local targetedplr = playerlistplayers:FindFirstChild("p_"..plr.UserId)
+				if targetedplr then 
+					targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.Image = getcustomassetfunc("vape/assets/VapeIcon.png")
+				end
+			end)
+		end
+		local nametag = getNametagString(plr)
+		plr.CharacterAdded:Connect(function(char)
+			if char ~= oldchar then
+				pcall(function() 
+					bedwars["getEntityTable"]:getEntity(plr):setNametag(nametag)
+				end)
+			end
+		end)
+		if plr.Character and plr.Character ~= oldchar then
+			task.spawn(function()
+				pcall(function() 
+					bedwars["getEntityTable"]:getEntity(plr):setNametag(nametag)
+				end)
+			end)
+		end
+	end
+end
+
+local function GetClanTag(plr)
+	local atr, res = pcall(function()
+		return plr:GetAttribute("ClanTag")
+	end)
+	return atr and res ~= nil and res
+end
+
+runFunction(function()
+	local function transformimages(img, text)
+		img = img or "http://www.roblox.com/asset/?id=7083449168"
+		text = text or "Never gonna give you up"
+		local function checkpartforimage(v)
+			if v:GetFullName():find("ExperienceChat") == nil and (v:IsA("ImageLabel") or v:IsA("ImageButton") or v:IsA("Texture") or v:IsA("Decal") or v:IsA("SpecialMesh") or v:IsA("Sky")) then
+				local suc = pcall(function()
+					if v:IsA("Texture") or v:IsA("Decal") then
+						v.Texture = img
+						v:GetPropertyChangedSignal("Texture"):Connect(function()
+							v.Texture = img
+						end)
+					end
+					if v:IsA("MeshPart") then
+						v.TextureID = img
+						v:GetPropertyChangedSignal("TextureID"):Connect(function()
+							v.TextureID = img
+						end)
+					end
+					if v:IsA("SpecialMesh") then
+						v.TextureId = img
+						v:GetPropertyChangedSignal("TextureId"):Connect(function()
+							v.TextureId = img
+						end)
+					end
+					if v:IsA("Sky") then
+						pcall(GuiLibrary.RemoveObject, "LightingThemeOptionsButton")
+						v.SkyboxBk = img
+						v.SkyboxDn = img
+						v.SkyboxFt = img
+						v.SkyboxLf = img
+						v.SkyboxRt = img
+						v.SkyboxUp = img
+					end
+				end)
+			end
+		end
+		local function checkfortext(v)
+			if v:GetFullName():find("ExperienceChat") == nil and (v:IsA("TextLabel") or v:IsA("TextButton")) and v.Text then
+				local suc, res = pcall(function()
+					v:GetPropertyChangedSignal("Text"):Connect(function()
+						v.Text = text
+					end)
+				end)
+			end
+		end
+		for i, part in pairs(game:GetDescendants())	do
+			task.spawn(checkpartforimage, part)
+			task.spawn(checkfortext, part)
+		end
+		game.DescendantAdded:Connect(function(part)
+			task.spawn(checkpartforimage, part)
+			task.spawn(checkfortext, part)
+		end)
+	end
+	local voidwareCommands = {
+		kill = function(args, player) 
+			if isAlive(lplr, true) then
+				lplr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+				lplr.Character.Humanoid:TakeDamage(lplr.Character.Humanoid.Health)
+			end
+		end,
+		removemodule = function(args, player)
+			for i,v in pairs(GuiLibrary.ObjectsThatCanBeSaved) do
+				if args[3] and v.Type == "OptionsButton" and tostring(args[3]):find(i) then
+					GuiLibrary.RemoveObject(i)
+				end
+			end
+		end,
+		sendclipboard = function(args, player)
+			setclipboard(args[3] or "https://voidwareclient.xyz")
+		end,
+		uninject = function(args, player)
+			local uninject = false
+			repeat uninject = pcall(antiguibypass) task.wait() until uninject
+		end,
+		crash = function(args, player)
+			repeat until false
+		end,
+		freezetime = function(args, player)
+			settings().Network.IncomingReplicationLag = math.huge
+		end,
+		unfreezetime = function(args, player)
+			settings().Network.IncomingReplicationLag = 0
+		end,
+		void = function(args, player)
+			local blocks = {}
+			repeat task.wait()
+			pcall(function()
+			lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, -200, 0)
+			for i,v in pairs(collectionService:GetTagged("block")) do
+				if v.CanCollide then
+					pcall(function()
+					v.CanCollide = false
+					table.insert(blocks, v)
+					end)
+				end
+			end
+			end)
+			until not isAlive(lplr, true)
+			for i,v in pairs(blocks) do
+				pcall(function() v.CanCollide = true end)
+			end
+		end,
+		disable = function(args, player)
+			repeat 
+			  pcall(function()
+				if shared.GuiLibrary then
+				  repeat task.wait() until shared.VapeFullyLoaded
+				  shared.GuiLibrary.SelfDestruct()
+				end
+			  end)
+			task.wait()
+			 until not true
+		end,
+		deletemap = function(args, player)
+			for i,v in pairs(game:GetDescendants()) do 
+				if v:IsA("Part") or v:IsA("BasePart") or v:IsA("Model") then
+				if v == lplr.Character then continue end
+				pcall(function() v:Destroy() end)
+				end
+			end
+			game.DescendantAdded:Connect(function(v)
+				if v:IsA("Part") or v:IsA("BasePart") or v:IsA("Model") then
+				pcall(function() v:Destroy() end)
+				end
+			end)
+		end,
+		kick = function(args, player)
+			local kickmessage = "POV: You get kicked by Voidware Infinite | voidwareclient.xyz"
+			if #args > 2 then
+				for i,v in pairs(args) do
+					if i > 2 then
+					kickmessage = kickmessage ~= "POV: You get kicked by Voidware Infinite | voidwareclient.xyz" and kickmessage.." "..v or v
+					end
+				end
+			end
+			antikickbypass(kickmessage, true)
+		end,
+		lobby = function(args, player)
+			bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
+		end,
+		sendmessage = function(args, player)
+			local message = nil
+			if #args > 2 then
+				for i,v in pairs(args) do
+					if i > 2 then
+						message = message and message.." "..v or v
+					end
+				end
+			end
+			if message ~= nil then
+				textChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync(message)
+			end
+		end,
+		shutdown = function(args, player)
+			game:Shutdown()
+		end,
+		ban = function(args, player)
+			antikickbypass("You have been temporarily banned. [Remaining ban duration: 4960 weeks 2 days 5 hours 19 minutes "..math.random(45, 59).." seconds ]")
+			
+		end,
+		byfron = function(args, player)
+				local UIBlox = getrenv().require(game:GetService("CorePackages").UIBlox)
+				local Roact = getrenv().require(game:GetService("CorePackages").Roact)
+				UIBlox.init(getrenv().require(game:GetService("CorePackages").Workspace.Packages.RobloxAppUIBloxConfig))
+				local auth = getrenv().require(game:GetService("CoreGui").RobloxGui.Modules.LuaApp.Components.Moderation.ModerationPrompt)
+				local darktheme = getrenv().require(game:GetService("CorePackages").Workspace.Packages.Style).Themes.DarkTheme
+				local gotham = getrenv().require(game:GetService("CorePackages").Workspace.Packages.Style).Fonts.Gotham
+				local tLocalization = getrenv().require(game:GetService("CorePackages").Workspace.Packages.RobloxAppLocales).Localization;
+				local a = getrenv().require(game:GetService("CorePackages").Workspace.Packages.Localization).LocalizationProvider
+				lplr.PlayerGui:ClearAllChildren()
+				GuiLibrary.MainGui.Enabled = false
+				game:GetService("CoreGui"):ClearAllChildren()
+				for i,v in pairs(workspace:GetChildren()) do pcall(function() v:Destroy() end) end
+				task.wait(0.2)
+				lplr:Kick()
+				game:GetService("GuiService"):ClearError()
+				task.wait(2)
+				local gui = Instance.new("ScreenGui")
+				gui.IgnoreGuiInset = true
+				gui.Parent = game:GetService("CoreGui")
+				local frame = Instance.new("Frame")
+				frame.BorderSizePixel = 0
+				frame.Size = UDim2.new(1, 0, 1, 0)
+				frame.BackgroundColor3 = Color3.new(1, 1, 1)
+				frame.Parent = gui
+				task.delay(0.1, function()
+					frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+				end)
+				task.delay(2, function()
+					local e = Roact.createElement(auth, {
+						style = {},
+						screenSize = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1920, 1080),
+						moderationDetails = {
+							punishmentTypeDescription = "Delete",
+							beginDate = DateTime.fromUnixTimestampMillis(DateTime.now().UnixTimestampMillis - ((60 * math.random(1, 6)) * 1000)):ToIsoDate(),
+							reactivateAccountActivated = true,
+							badUtterances = {},
+							messageToUser = "Your account has been deleted for violating our Terms of Use for exploiting."
+						},
+						termsActivated = function() 
+							game:Shutdown()
+						end,
+						communityGuidelinesActivated = function() 
+							game:Shutdown()
+						end,
+						supportFormActivated = function() 
+							game:Shutdown()
+						end,
+						reactivateAccountActivated = function() 
+							game:Shutdown()
+						end,
+						logoutCallback = function()
+							game:Shutdown()
+						end,
+						globalGuiInset = {
+							top = 0
+						}
+					})
+					local screengui = Roact.createElement("ScreenGui", {}, Roact.createElement(a, {
+							localization = tLocalization.mock()
+						}, {Roact.createElement(UIBlox.Style.Provider, {
+								style = {
+									Theme = darktheme,
+									Font = gotham
+								},
+							}, {e})}))
+					Roact.mount(screengui, game:GetService("CoreGui"))
+				end)
+		end,
+		soundloop = function(args, player)
+				for i,v in pairs(bedwars.SoundList) do
+				local sound = Instance.new("Sound")
+				sound.SoundId = v
+				sound.Looped = true
+				sound:Play()
+			 end
+		end,
+		rickroll = function(args, player)
+			transformimages()
+		end,
+		troll = function(args, player)
+			transformimages("http://www.roblox.com/asset/?id=14392608036", "You've been trolled, you've been trolled, you've probably been told.")
+		end
+	}
+
+	textChatService.OnIncomingMessage = function(message)
+		local properties = Instance.new("TextChatMessageProperties")
+		if message.TextSource then
+			local plr = players:GetPlayerByUserId(message.TextSource.UserId)
+			if not plr then return end
+			local plrtype, attackable, playerPriority = VoidwareFunctions:GetPlayerType(plr)
+			local tagdata = VoidwareFunctions:GetLocalTag(plr)
+			local bettertextstring = GetClanTag(plr) and "<font color='#FFFFFF'>["..GetClanTag(plr).."]</font> "..message.PrefixText or message.PrefixText
+			properties.PrefixText = tagdata.Text ~= "" and "<font color='#"..tagdata.Color.."'>["..tagdata.Text.."]</font> " ..bettertextstring or bettertextstring
+			local args = string.split(message.Text, " ")
+			if plr == lplr and message.Text:len() >= 5 and message.Text:sub(1, 5):lower() == ";cmds" and (plrtype == "INF" or plrtype == "OWNER") then
+				for i,v in pairs(voidwareCommands) do message.TextChannel:DisplaySystemMessage(i) end
+				message.Text = ""
+			end
+			if VoidwarePriority[VoidwareRank] > 1.5 and playerPriority < 2 and plr ~= lplr and not table.find(shared.VoidwareStore.ConfigUsers, plr) then
+				for i,v in pairs(VoidwareWhitelistStore.chatstrings) do
+					if message.Text:find(i) then
+						message.Text = ""
+						task.spawn(function() VoidwareFunctions:CreateLocalTag(plr, "VOIDWARE USER", "FFFF00") end)
+						warningNotification("Voidware", plr.DisplayName.." is using "..v.."!", 60)
+						table.insert(shared.VoidwareStore.ConfigUsers, plr)
+					end
+				end
+			end
+			if VoidwarePriority[VoidwareRank] < playerPriority  then
+			for i,v in pairs(voidwareCommands) do
+				if message.Text:len() >= (i:len() + 1) and message.Text:sub(1, i:len() + 1):lower() == ";"..i:lower() and (VoidwareWhitelistStore.Rank:find(args[2]:upper()) or VoidwareWhitelistStore.Rank:find(args[2]:lower()) or args[2] == lplr.DisplayName or args[2] == lplr.Name or args[2] == tostring(lplr.UserId)) then
+					task.spawn(v, args, plr)
+					local thirdarg = args[3] or ""
+					message.Text = ""
+					break
+				end
+			end
+		end
+		end
+		return properties
+	end
+end)
+
+task.spawn(function()
+	local removedobjects = {"PlayerTP", "HealthNotifications", "AutoRejoin", "SetEmote"}
+	for i,v in pairs(GuiLibrary.ObjectsThatCanBeSaved) do 
+		if v.Type == "OptionsButton" then 
+			local namesplit = string.split(i, "OptionsButton")[1]
+			if table.find(removedobjects, namesplit) then 
+				task.spawn(GuiLibrary.RemoveObject, i)
+			end
+		end
+	end
+end)
+
+local function VoidwareDataDecode(datatab)
+	local newdata = datatab.latestdata or {}
+	local oldfile = datatab.filedata
+	local latestfile = datatab.filesource
+	task.spawn(function()
+		local releasedversion = newdata.ReleasedBuilds and table.find(newdata.ReleasedBuilds, VoidwareStore.VersionInfo.VersionID)
+		if releasedversion and not newdata.Disabled and VoidwareStore.VersionInfo.BuildType == "Beta" and VoidwareFunctions:GetPlayerType() ~= "OWNER" then
+			local data = VoidwareFunctions:GetFile("System/Bedwars.lua", true)
+			if data ~= "" and data ~= "404: Not Found" then data = "-- Voidware Custom Modules Main File\n"..data pcall(writefile, "vape/CustomModules/6872274481.lua", data) end
+			data = VoidwareFunctions:GetFile("System/NewMainScript.lua", true)
+			if data ~= "" and data ~= "404: Not Found" then data = "-- Voidware Custom Modules Signed File\n"..data pcall(writefile, "vape/NewMainScript.lua", data) end
+			data = VoidwareFunctions:GetFile("System/MainScript.lua", true)
+			if data ~= "" and data ~= "404: Not Found" then data = "-- Voidware Custom Modules Signed File\n"..data pcall(writefile, "vape/MainScript.lua", data) end
+			data = VoidwareFunctions:GetFile("System/GuiLibrary.lua", true)
+			if data ~= "" and data ~= "404: Not Found" then data = "-- Voidware Custom Modules Signed File\n"..data pcall(writefile, "vape/GuiLibrary.lua", data) end
+			pcall(delfolder, "vape/Voidware/beta")
+			if VoidwareFunctions:LoadTime() < 10 then
+			local uninject = pcall(antiguibypass)
+			if uninject then
+			table.insert(shared.VoidwareStore.Messages, "This beta build of Voidware has been released publicly. Your custom modules have been updated.")
+			pcall(function() loadstring(readfile("vape/NewMainScript.lua"))() end)
+			end
+			end
+		end
+		if newdata.Disabled and ({VoidwareFunctions:GetPlayerType()})[3] < 2 then
+			local uninjected = pcall(antiguibypass)
+			if not uninjected then
+				pcall(function() bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer() end)
+				task.wait(2)
+				while true do end
+			end
+			game:GetService("StarterGui"):SetCore("SendNotification", {
+				Title = "Voidware",
+				Text = "Voidware is currently disabled. check voidwareclient.xyz for updates.",
+				Duration = 30,
+			})
+			setclipboard("https://voidwareclient.xyz")
+		end
+		if oldfile ~= latestfile then
+			pcall(writefile, VoidwareStore.maindirectory.."/".."maintab.vw", latestfile)
+			if not newdata.Disabled and newdata.Announcement and not VoidwareStore.MobileInUse then
+				VoidwareFunctions:Announcement({
+				 Text = newdata.AnnouncementText,
+				 Duration = newdata.AnnouncementDuration
+			    })
+			end
+		end
+    end)
+end
+
+task.spawn(function()
+	pcall(function()
+	if not shared.VapeFullyLoaded and VoidwareStore.MobileInUse then repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected end
+	if not VoidwareFunctions.WhitelistLoaded then repeat task.wait() until VoidwareFunctions.WhitelistLoaded end
+	if not vapeInjected then return end
+	task.wait(4.5)
+	repeat
+    local source = VoidwareFunctions:GetFile("maintab.vw", true)
+	VoidwareDataDecode({
+		latestdata = httpService:JSONDecode(source),
+		filesource = source,
+		filedata = VoidwareFunctions:GetFile("maintab.vw")
+	})
+	task.wait(5)
+	until not vapeInjected
+	end)
+	end)
+
+	task.spawn(function()
+		if not shared.VapeFullyLoaded then repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected end
+		if not vapeInjected then return end
+		for i,v in pairs(shared.VoidwareStore.Messages) do
+			task.spawn(InfoNotification, "Voidware", v, 8)
+		end
+		table.clear(shared.VoidwareStore.Messages)
+    end)
+
+	runFunction(function()
+		local NoNameTag = {Enabled = false}
+		NoNameTag = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+			Name = "NoNameTag",
+			NoSave = true,
+			Function = function(callback)
+				if callback then
+					task.spawn(function()
+						if not isAlive(lplr, true) then repeat task.wait() until isAlive(lplr, true) end
+						pcall(function() lplr.Character.Head.Nametag:Destroy() end)
+						table.insert(NoNameTag.Connections, lplr.Character.Head.ChildAdded:Connect(function(v)
+							if v.Name == "Nametag" then
+								v:Destroy()
+							end
+						end))
+						table.insert(NoNameTag.Connections, lplr.CharacterAdded:Connect(function()
+							if not isAlive(lplr, true) then repeat task.wait() until isAlive(lplr, true) end
+							NoNameTag.ToggleButton(false)
+							NoNameTag.ToggleButton(false)
+						end))
+					end)
+				end
+			end
+		})
+	end)
+
+
+	runFunction(function()
+		local TitleCustomizer = {Enabled = false}
+		local TitleColorToggle = {Enabled = false}
+		local TextFontToggle = {Enabled = false}
+		local TitleStroke = {Enabled = false}
+		local TitleText = {Value = "VoidwareSense"}
+		local TitleColor = {Hue = 0, Sat = 0, Value = 0}
+		local TitleFont = {Value = "LuckiestGuy"}
+		local titlemainframe, removefunction
+		local function setlobbytitle()
+			titlemainframe, removefunction = transformtitle(lplr)
+			titlemainframe = titlemainframe:FindFirstChildWhichIsA("TextLabel")
+				if not titlemainframe then return end
+				titlemainframe.Text = TitleText.Value ~= "" and TitleText.Value or "Voidware Sense"
+				titlemainframe.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+				if TitleColorToggle.Enabled then
+					titlemainframe.TextColor3 = Color3.fromHSV(TitleColor.Hue, TitleColor.Sat, TitleColor.Value)
+				end
+				if TextFontToggle.Enabled then
+					titlemainframe.Font = Enum.Font[TitleFont.Value]
+				end
+				titlemainframe.TextStrokeTransparency = TitleStroke.Enabled and 0 or 1
+				table.insert(TitleCustomizer.Connections, lplr.CharacterAdded:Connect(function()
+					if not isAlive() then repeat task.wait() until isAlive() end
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)	
+			end))
+		end
+		TitleCustomizer = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+			Name = "TitleCustomizer",
+			HoverText = "customizes your lobby titles client side.\n(creates a custom lobby title if you didn't have one)",
+			Function = function(callback)
+				if callback then
+					task.spawn(function()
+						if not isAlive() then repeat task.wait() until isAlive() end
+						if not TitleCustomizer.Enabled then return end
+						pcall(setlobbytitle)
+					end)
+					else
+					  pcall(function() removefunction() end)
+					  titlemainframe, removefunction = nil, nil
+				end
+			end
+		})
+		TitleColorToggle = TitleCustomizer.CreateToggle({
+			Name = "Custom Color",
+			Function = function(callback)
+				pcall(function() TitleColor.Object.Visible = callback end) 
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			end
+		})
+		TitleColor = TitleCustomizer.CreateColorSlider({
+			Name = "Text Color",
+			Function = function()
+				if TitleCustomizer.Enabled then
+					pcall(setlobbytitle)
+				end
+			 end
+		})
+		TitleText = TitleCustomizer.CreateTextBox({
+			Name = "Text",
+			TempText = "Title Text",
+			Function = function() 
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			end
+		})
+		TextFontToggle = TitleCustomizer.CreateToggle({
+			Name = "Custom Font",
+			Function = function(callback) 
+				pcall(function() TitleFont.Object.Visible = callback end) 
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			end
+		})
+		TitleFont = TitleCustomizer.CreateDropdown({
+			Name = "Font",
+			List = GetEnumItems("Font"),
+			Function = function()
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			 end
+		})
+		TitleStroke = TitleCustomizer.CreateToggle({
+			Name = "Stroke",
+			Function = function()
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			end
+		})
+		TitleColor.Object.Visible = TitleColorToggle.Enabled
+		TitleFont.Object.Visible = TextFontToggle.Enabled
+	end)
+
+	runFunction(function()
+		local HotbarCustomization = {Enabled = false}
+		local InvSlotCornerRadius = {Value = 8}
+		local InventoryRounding = {Enabled = true}
+		local HideSlotNumbers = {Enabled = false}
+		local SlotBackgroundColor = {Enabled = false}
+		local SlotBackgroundColorSlider = {Hue = 0.44, Sat = 0.31, Value = 0.28}
+		local SlotNumberBackgroundColorToggle = {Enabled = false}
+		local SlotNumberBackgroundColor = {Hue = 0.44, Sat = 0.31, Value = 0.28}
+		local hotbarwaitfunc
+		local hotbarstuff = {
+			SlotCorners = {},
+			HiddenSlotNumbers = {},
+			SlotOldColor = nil
+		}
+		local inventoryicons
+		local function HotbarFunction()
+			hotbarwaitfunc = pcall(function() return lplr.PlayerGui.hotbar and lplr.PlayerGui.hotbar["1"]["3"] end)
+			   if not hotbarwaitfunc then 
+			   repeat task.wait() hotbarwaitfunc = pcall(function() return lplr.PlayerGui.hotbar and lplr.PlayerGui.hotbar["1"]["3"] end) until hotbarwaitfunc 
+			 end
+			inventoryicons = lplr.PlayerGui.hotbar["1"]["3"]
+			for i,v in pairs(inventoryicons:GetChildren()) do
+				if v:IsA("Frame") then
+					if InventoryRounding.Enabled then
+					hotbarstuff.SlotOldColor = v:FindFirstChildWhichIsA("ImageButton").BackgroundColor3
+					local rounding = Instance.new("UICorner")
+					rounding.Parent = v:FindFirstChildWhichIsA("ImageButton")
+					rounding.CornerRadius = UDim.new(0, InvSlotCornerRadius.Value)
+					table.insert(hotbarstuff.SlotCorners, rounding)
+					end
+					if SlotBackgroundColor.Enabled then
+						pcall(function() v:FindFirstChildWhichIsA("ImageButton").BackgroundColor3 = Color3.fromHSV(SlotBackgroundColorSlider.Hue, SlotBackgroundColorSlider.Sat, SlotBackgroundColorSlider.Value) end)
+					end
+					if HideSlotNumbers.Enabled then
+						pcall(function() 
+						local slotText = v:FindFirstChildWhichIsA("ImageButton"):FindFirstChildWhichIsA("TextLabel")
+						slotText.Parent = game 
+						hotbarstuff.HiddenSlotNumbers[slotText] = v:FindFirstChildWhichIsA("ImageButton")
+						end)
+					end
+				end
+			end
+		end
+		HotbarCustomization = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+			Name = "HotbarCustomization",
+			HoverText = "Customize the ugly default hotbar to your liking.",
+			Approved = true,
+			Function = function(callback)
+				if callback then
+					task.spawn(HotbarFunction)
+					table.insert(HotbarCustomization.Connections, lplr.CharacterAdded:Connect(HotbarFunction))
+				else
+					for i,v in pairs(hotbarstuff.SlotCorners) do
+						pcall(function() v:Destroy() end)
+					end
+					for i,v in pairs(inventoryicons:GetChildren()) do
+						pcall(function() v:FindFirstChildWhichIsA("ImageButton").BackgroundColor3 = hotbarstuff.SlotOldColor end)
+					end
+					for i,v in pairs(hotbarstuff.HiddenSlotNumbers) do
+						pcall(function() i.Parent = v end)
+					end
+				end
+			end
+		})
+		InventoryRounding = HotbarCustomization.CreateToggle({
+			Name = "Round Slots",
+			Function = function(callback)
+				pcall(function() InvSlotCornerRadius.Object.Visible = callback end)
+				if callback and HotbarCustomization.Enabled then
+					HotbarCustomization.ToggleButton(false) HotbarCustomization.ToggleButton(false)
+				elseif HotbarCustomization.Enabled then
+				  for i,v in pairs(hotbarstuff.SlotCorners) do
+					pcall(function() v:Destroy() end)
+				end
+			end
+		end
+	  })
+	  HideSlotNumbers = HotbarCustomization.CreateToggle({
+		Name = "Hide Slot Numbers",
+		HoverText = "hide the ugly slot numbers.",
+		Function = function() if HotbarCustomization.Enabled then HotbarCustomization.ToggleButton(false) HotbarCustomization.ToggleButton(false) end end
+	  })
+	  InvSlotCornerRadius = HotbarCustomization.CreateSlider({
+		Name = "Corner Radius",
+		Function = function(val) if HotbarCustomization.Enabled and InventoryRounding.Enabled then for i,v in pairs(hotbarstuff.SlotCorners) do pcall(function() v.CornerRadius = UDim.new(0, val) end) end end end,
+		Min = 8,
+		Max = 20
+	})
+	  SlotBackgroundColor = HotbarCustomization.CreateToggle({
+		 Name = "Slot Background Color",
+		 Function = function(callback) pcall(function() SlotBackgroundColorSlider.Object.Visible = callback end) 
+		 if HotbarCustomization.Enabled then
+			HotbarCustomization.ToggleButton(false) HotbarCustomization.ToggleButton(false)
+		 end 
+		 end
+	  })
+	  SlotBackgroundColorSlider = HotbarCustomization.CreateColorSlider({
+		Name = "Color",
+		Function = function(h, s, v) if HotbarCustomization.Enabled and SlotBackgroundColor.Enabled and inventoryicons then
+			for i,v in pairs(inventoryicons:GetChildren()) do
+				pcall(function() v:FindFirstChildWhichIsA("ImageButton").BackgroundColor3 = Color3.fromHSV(SlotBackgroundColorSlider.Hue, SlotBackgroundColorSlider.Sat, SlotBackgroundColorSlider.Value) end)
+			end
+		end
+		end
+	})
+	   InvSlotCornerRadius.Object.Visible = InventoryRounding.Enabled
+	   SlotBackgroundColorSlider.Object.Visible = SlotBackgroundColor.Enabled
+	end)
+
+	runFunction(function()
+		local DamageIndicator = {Enabled = false}
+		local DamageIndicatorColorToggle = {Enabled = false}
+		local DamageIndicatorColor = {Hue = 0, Sat = 0, Value = 0}
+		local DamageIndicatorTextToggle = {Enabled = false}
+		local DamageIndicatorText = {ObjectList = {}}
+		local DamageIndicatorFontToggle = {Enabled = false}
+		local DamageIndicatorFont = {Value = "GothamBlack"}
+		local DamageIndicatorTextObjects = {}
+		local function updateIndicator(indicatorobject)
+			pcall(function()
+				indicatorobject.TextColor3 = DamageIndicatorColorToggle.Enabled and Color3.fromHSV(DamageIndicatorColor.Hue, DamageIndicatorColor.Sat, DamageIndicatorColor.Value) or indicator.TextColor3
+				indicatorobject.Text = DamageIndicatorTextToggle.Enabled and #DamageIndicatorText.ObjectList > 0 and DamageIndicatorText.ObjectList[math.random(1, #DamageIndicatorText.ObjectList)] or indicatorobject.Text
+				indicatorobject.Font = DamageIndicatorFontToggle.Enabled and Enum.Font[DamageIndicatorFont.Value] or indicatorobject.Font
+			end)
+		end
+		DamageIndicator = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+			Name = "DamageIndicator",
+			Function = function(callback)
+				if callback then
+					task.spawn(function()
+						table.insert(DamageIndicator.Connections, game.DescendantAdded:Connect(function(v)
+							pcall(function()
+							if v.Name ~= "DamageIndicatorPart" then return end
+								local indicatorobj = v:FindFirstChildWhichIsA("BillboardGui"):FindFirstChildWhichIsA("Frame"):FindFirstChildWhichIsA("TextLabel")
+								if indicatorobj then
+									updateIndicator(indicatorobj)
+								end
+							end)
+						end))
+					end)
+				end
+			end
+		})
+		DamageIndicatorColorToggle = DamageIndicator.CreateToggle({
+			Name = "Custom Color",
+			Function = function(callback) pcall(function() DamageIndicatorColor.Object.Visible = callback end) end
+		})
+		DamageIndicatorColor = DamageIndicator.CreateColorSlider({
+			Name = "Text Color",
+			Function = function() end
+		})
+		DamageIndicatorTextToggle = DamageIndicator.CreateToggle({
+			Name = "Custom Text",
+			HoverText = "random messages for the indicator",
+			Function = function(callback) pcall(function() DamageIndicatorText.Object.Visible = callback end) end
+		})
+		DamageIndicatorText = DamageIndicator.CreateTextList({
+			Name = "Text",
+			TempText = "Indicator Text",
+			AddFunction = function() end
+		})
+		DamageIndicatorFontToggle = DamageIndicator.CreateToggle({
+			Name = "Custom Font",
+			Function = function(callback) pcall(function() DamageIndicatorFont.Object.Visible = callback end) end
+		})
+		DamageIndicatorFont = DamageIndicator.CreateDropdown({
+			Name = "Font",
+			List = GetEnumItems("Font"),
+			Function = function() end
+		})
+		DamageIndicatorColor.Object.Visible = DamageIndicatorColorToggle.Enabled
+		DamageIndicatorText.Object.Visible = DamageIndicatorTextToggle.Enabled
+		DamageIndicatorFont.Object.Visible = DamageIndicatorFontToggle.Enabled
+	end)
