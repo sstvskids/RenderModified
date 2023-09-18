@@ -15,11 +15,11 @@ local function GetVoidwareFile(path, online)
     if not isfile("vape/CustomModules/"..path) and not online then 
         local success, bodydata = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/"..path) end)
         if success and bodydata ~= "404: Not Found" and bodydata ~= "400: Invalid Request" then 
-            writefile("vape/CustomModules/"..file, bodydata)
+            writefile("vape/CustomModules/"..path, bodydata)
         else
             bodydata = bodydata and " | "..bodydata or ""
-            vapeAssert(false, "Voidware", "Failed to load vape/CustomModules/"..file..""..bodydata)
-            return 'warn("[Voidware] Failed to load vape/CustomModules/'..file..''..bodydata.."'
+            vapeAssert(false, "Voidware", "Failed to load vape/CustomModules/"..path..""..bodydata)
+            return 'warn("[Voidware] Failed to load vape/CustomModules/'..path..''..bodydata.."'
         end
     end
     return online and ({pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/"..path) end)})[2] or readfile("vape/CustomModules/"..path)
