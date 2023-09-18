@@ -1,4 +1,3 @@
--- Voidware Custom Modules Signed File
 --[[
     List of things u could change: 
     BackgroundColor - Gradient color of the main background
