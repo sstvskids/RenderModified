@@ -19,7 +19,7 @@ local function GetVoidwareFile(path, online)
         else
             bodydata = bodydata and " | "..bodydata or ""
             vapeAssert(false, "Voidware", "Failed to load vape/CustomModules/"..path..""..bodydata)
-            return 'warn("[Voidware] Failed to load vape/CustomModules/'..path..''..bodydata.."'
+            return 'error("[Voidware] Failed to load vape/CustomModules/'..path..''..bodydata..'"'
         end
     end
     return online and ({pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/"..path) end)})[2] or readfile("vape/CustomModules/"..path)
