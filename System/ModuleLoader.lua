@@ -25,12 +25,20 @@ local function GetVoidwareFile(path, online)
     return online and ({pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/"..path) end)})[2] or readfile("vape/CustomModules/"..path)
 end
 
-return function(file) 
-    file = file or game.PlaceId 
-    if pcall(function() loadstring(GetVoidwareFile(tostring(file).."lua"))() end) then
+if not shared.VapeFullyLoaded then 
+    if pcall(function() loadstring(GetVoidwareFile("gameplace.lua"))() end) then
         shared.CustomSaveVape = file 
         else
         shared.CustomSaveVape = nil
-        vapeAssert(false, "Voidware", "Failed to initiate vape/CustomModules/"..tostring(file)..".lua")
+        vapeAssert(false, "Voidware", "Failed to initiate vape/CustomModules/gameplace.lua")
     end
 end
+
+return function(file) 
+    file = file or game.PlaceId 
+    local filepath = "vape/CustomModules/"..tostring(file)..".lua"
+    if not isfile(filepath) then 
+        return pcall(writefile, "vape/CustomModules/"..tostring(file)..".lua", GetVoidwareFile(tostring(file)..".lua"))
+    end
+    return true
+end 
