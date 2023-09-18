@@ -30,7 +30,7 @@ if not shared.VapeFullyLoaded then
         shared.CustomSaveVape = file 
         else
         shared.CustomSaveVape = nil
-        vapeAssert(false, "Voidware", "Failed to initiate vape/CustomModules/gameplace.lua")
+        vapeAssert(false, "Voidware", "Failed to initiate vape/CustomModules/gameplace.lua", 10)
     end
 end
 
@@ -38,7 +38,7 @@ return function(file)
     file = file or game.PlaceId 
     local filepath = "vape/CustomModules/"..tostring(file)..".lua"
     if not isfile(filepath) then 
-        return pcall(writefile, "vape/CustomModules/"..tostring(file)..".lua", GetVoidwareFile(tostring(file)..".lua"))
+        return pcall(writefile, filepath, GetVoidwareFile("System/placename.lua"))
     end
     return true
 end 
