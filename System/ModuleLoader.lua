@@ -27,7 +27,7 @@ end
 
 if not shared.VapeFullyLoaded then 
     if pcall(function() loadstring(GetVoidwareFile("gameplace.lua"))() end) then
-        shared.CustomSaveVape = file 
+        shared.CustomSaveVape = "gameplace" 
         else
         shared.CustomSaveVape = nil
         vapeAssert(false, "Voidware", "Failed to initiate vape/CustomModules/gameplace.lua", 10)
