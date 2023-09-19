@@ -38,7 +38,6 @@ return function(file)
     file = file or game.PlaceId 
     local filepath = "vape/CustomModules/"..tostring(file)..".lua"
     if not isfile(filepath) then 
-        print("writing placename")
         return pcall(writefile, filepath, GetVoidwareFile("System/placename.lua"))
     end
     return true
