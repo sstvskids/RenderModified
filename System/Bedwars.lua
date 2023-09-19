@@ -1,4 +1,3 @@
--- Voidware Custom Modules Main File
 local GuiLibrary = shared.GuiLibrary
 local vapeonlineresponse = false
 task.spawn(function()
@@ -87,7 +86,7 @@ local tags = {}
 local VoidwareStore = {
 	maindirectory = "vape/Voidware",
 	VersionInfo = {
-        MainVersion = "3.2",
+        MainVersion = "3.332",
         PatchVersion = "0",
         Nickname = "Universal Update",
 		BuildType = "Stable",
@@ -185,6 +184,7 @@ local bedwarsStore = {
 	pots = {},
 	queueType = "bedwars_test",
 	scythe = tick(),
+	daoboost = tick(),
 	statistics = {
 		beds = 0,
 		kills = 0,
@@ -272,7 +272,7 @@ local function antikickbypass(data, watermark)
 	task.spawn(function() 
 		lplr:Kick(data or "Voidware has requested player disconnect.") 
 		if watermark then
-		local suc = pcall(function() game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ErrorPrompt.TitleFrame.ErrorTitle.Text = "Voidware Error" end)
+		pcall(function() game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ErrorPrompt.TitleFrame.ErrorTitle.Text = "Voidware Error" end)
 		end
 		bypassed = false 
 	end)
@@ -469,9 +469,9 @@ end
 	 if not req or not res then return commit end
 	 for i,v in pairs(res:split("\n")) do 
 	    if v:find("commit") and v:find("fragment") then 
-	    local str = v:split("/")[5]
-	    commit = str:sub(0, v:split("/")[5]:find('"') - 1)
-        break
+	       local str = v:split("/")[5]
+	       commit = str:sub(0, v:split("/")[5]:find('"') - 1)
+            break
 	    end
 	end
 	return commit
@@ -548,7 +548,7 @@ function VoidwareFunctions:RefreshWhitelist()
 	return suc, whitelist
 end
 
-function VoidwareFunctions:GetFile(file, online, path)
+function VoidwareFunctions:GetFile(file, online, path, silent)
 	local repo = VoidwareStore.VersionInfo.BuildType == "Beta" and "VoidwareBeta" or "Voidware"
 	local directory = VoidwareFunctions:GetMainDirectory()
 	if not isfolder(directory) then makefolder(directory) end
@@ -558,6 +558,9 @@ function VoidwareFunctions:GetFile(file, online, path)
 	local lastfolder = nil
 	local foldersplit2
 	if not existent and not online then
+		if not silent then
+		   task.spawn(GuiLibrary.CreateNotification, "Voidware", "Downloading "..directory.."/"..file, 1.5)
+		end
 		voidwarever = VoidwareFunctions:GetCommitHash(repo)
 		local github, data = pcall(function() return betterhttpget("https://raw.githubusercontent.com/SystemXVoid/"..repo.."/"..voidwarever.."/"..file, true) end)
 		if github and data ~= "404: Not Found" then
@@ -823,7 +826,7 @@ if (isfile("vape/commithash.txt") and readfile("vape/commithash.txt") ~= respons
 			end
 			local newvape = betterhttpget("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..response.."/CustomModules/6872274481.lua")
 			if newvape ~= "404: Not Found" then 
-			VoidwareFunctions:GetMainDirectory()
+			   VoidwareFunctions:GetMainDirectory()
 			if not isfolder("vape/Voidware/oldvape") then makefolder("vape/Voidware/oldvape") end
 			pcall(writefile, "vape/Voidware/oldvape/Bedwars.lua", newvape)
 			end
@@ -835,60 +838,49 @@ end)
 
 pcall(coroutine.resume, VoidwareStore.vapeupdateroutine)
 
+function VoidwareFunctions:RefreshLocalFiles()
+	local success, updateIndex = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/fileindex.vw")) end)
+	if not success or type(updateIndex) ~= "table" then 
+		updateIndex = {
+			["6872274481"] = "System/Bedwars.lua",
+			["6872265039"] = "System/BedwarsLobby.lua",
+			["855499080"] = "System/Skywars.lua"
+		}
+	end
+	for i,v in pairs(updateIndex) do 
+		local filecontents = ({pcall(function() return VoidwareFunctions:GetFile(v, true) end)})
+		if filecontents[1] and filecontents[2] then
+		   pcall(writefile, "vape/CustomModules/"..i..".lua", filecontents[2])
+		end
+	end
+	for i,v in pairs(VoidwareStore.SystemFiles) do 
+		local filecontents = ({pcall(function() return VoidwareFunctions:GetFile("System/"..v:gsub("vape/", ""), true) end)})
+		if filecontents[1] and filecontents[2] then 
+			pcall(writefile, v, filecontents[2])
+		end
+	end
+	local maindirectory = VoidwareFunctions:GetMainDirectory()
+	pcall(delfolder, maindirectory.."/data")
+	pcall(delfolder, maindirectory.."/Libraries")
+end
+
 task.spawn(function()
-    if not shared.VapeFullyLoaded and VoidwareStore.MobileInUse then repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected end
-	task.wait(VoidwareStore.MobileInUse and 4.5 or 0.1)
 	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
-    if not vapeInjected then return end
-    local versiondata = VoidwareStore.VersionInfo
-    repeat
-    local VoidwareOwner = VoidwareFunctions:GetPlayerType() == "OWNER"
-	if VoidwareOwner then return end
-    local directory = VoidwareFunctions:GetMainDirectory()
-    versiondata = VoidwareFunctions:GetFile("System/Version.vw", true)
-    if versiondata ~= "404: Not Found" and versiondata ~= "" then versiondata = httpService:JSONDecode(versiondata) else versiondata = {} end
-    local currentcommit = VoidwareFunctions:GetCommitHash(VoidwareStore.VersionInfo.BuildType == "Beta" and "VoidwareBeta" or "Voidware")
-    if not isfile(directory.."/".."commithash.vw") or readfile(VoidwareStore.maindirectory.."/".."commithash.vw") ~= currentcommit or not isfile(VoidwareStore.maindirectory.."/".."commithash.vw") then
-        pcall(delfolder, directory.."/".."data")
-        pcall(delfolder, directory.."/".."Libraries")
-		if isfolder("vape") then
-			for i,v in pairs(VoidwareStore.SystemFiles) do
-				local body = VoidwareFunctions:GetFile("System/"..(string.gsub(v, "vape/", "")), true)
-				if body ~= "" and body ~= "404: Not Found" and body ~= "400: Bad Request" then
-					body = "-- Voidware Custom Modules Signed File\n"..body
-					pcall(writefile, v, body)
-				end
-			end
-			if isfolder("vape/CustomModules") then
-			local supportedfiles = {"vape/CustomModules/6872274481.lua", "vape/CustomModules/6872265039.lua"}
-			for i,v in pairs(supportedfiles) do
-				local name = v ~= "vape/CustomModules/6872274481.lua" and "BedwarsLobby.lua" or "Bedwars.lua"
-				local body = VoidwareFunctions:GetFile("System/"..name, true)
-				if body ~= "" and body ~= "404: Not Found" and body ~= "400: Bad Request" then
-					body = name ~= "Bedwars.lua" and "-- Voidware Custom Modules Signed File\n"..body or "-- Voidware Custom Modules Main File\n"..body
-					pcall(writefile, v, body)
-				end
-			end
-			end
+    repeat 
+	local maindirectory = VoidwareFunctions:GetMainDirectory()
+	local oldcommit = isfile(maindirectory.."/commithash.vw") and readfile(maindirectory.."/commithash.vw") or "main"
+	local latestcommit = VoidwareFunctions:GetCommitHash()
+	if oldcommit ~= latestcommit then 
+		if ({VoidwareFunctions:GetPlayerType()})[3] < 3 then
+		   VoidwareFunctions:RefreshLocalFiles()
+		   local currentversiondata = ({pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/Version.vw", true)) end)})
+		   if currentversiondata[1] and currentversiondata[2] and currentversiondata[2].VersionType ~= VoidwareStore.VersionInfo.MainVersion and oldcommit ~= "main" then 
+			   task.spawn(GuiLibrary.CreateNotification, "Voidware", "Voidware has been updated from "..VoidwareStore.VersionInfo.MainVersion.." to "..currentversiondata[2].VersionType..". Changes will apply on relaunch.", 10)
+		   end
 		end
-        pcall(writefile, directory.."/".."commithash.vw", currentcommit)
-		if VoidwareStore.VersionInfo.BuildType == "Beta" and versiondata.VersionID and versiondata.VersionID ~= VoidwareStore.VersionInfo.VersionID and not VoidwareOwner then
-			task.spawn(InfoNotification, "Voidware", "Your Beta build of Voidware has been updated. Changes will apply on relaunch.", 7)
-			table.insert(shared.VoidwareStore.Messages, "Voidware Beta has successfully been upgraded from "..VoidwareStore.VersionInfo.VersionID.." to "..versiondata.VersionID)
-		end
-		if not VoidwareOwner and VoidwareStore.VersionInfo.BuildType ~= "Beta" and versiondata.VersionType ~= VoidwareStore.VersionInfo.MainVersion then
-			if VoidwareFunctions:LoadTime() <= 10 then
-				local uninject = pcall(antiguibypass)
-				if uninject and isfile("vape/NewMainScript.lua") then
-					loadstring(readfile("vape/NewMainScript.lua"))()
-				end
-			else
-			   task.spawn(InfoNotification, "Voidware", "Voidware has been updated from "..VoidwareStore.VersionInfo.MainVersion.." to "..versiondata.VersionType..". changes will apply on relaunch.", 7)
-			end
-			table.insert(shared.VoidwareStore.Messages, "Voidware has successfully been upgraded from "..VoidwareStore.VersionInfo.VersionID.." to "..versiondata.VersionID)
-		end
-    end 
-    task.wait(VoidwareStore.MobileInUse and 10 or 5)
+		pcall(writefile, maindirectory.."/commithash.vw", latestcommit)
+	end
+	task.wait(3.5)
     until not vapeInjected
 end)
 
@@ -1324,6 +1316,9 @@ local function getSpeed()
 				scythespeed = scythespeed / 5
 			end
 			speed = speed + scythespeed
+		end
+		if bedwarsStore.daoboost > tick() then 
+			speed = speed + 45
 		end
 		if lplr.Character:GetAttribute("GrimReaperChannel") then 
 			speed = speed + 20
@@ -3670,6 +3665,11 @@ runFunction(function()
 			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.1},
 			{CFrame = CFrame.new(0.69, -2, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.1}
 		},
+		PopV4 = {
+			{CFrame = CFrame.new(0.69, -0.10, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.01},
+			{CFrame = CFrame.new(0.7, -0.30, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.01},
+			{CFrame = CFrame.new(0.69, -2, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.01}
+		},
 		Shake = {
 			{CFrame = CFrame.new(0.69, -0.8, 0.6) * CFrame.Angles(math.rad(-60), math.rad(30), math.rad(-35)), Time = 0.05},
 			{CFrame = CFrame.new(0.8, -0.71, 0.30) * CFrame.Angles(math.rad(-60), math.rad(39), math.rad(-55)), Time = 0.02},
@@ -3855,7 +3855,7 @@ runFunction(function()
 						if #plrs > 0 then
 							local sword, swordmeta = getAttackData()
 							if sword then
-								switchItem(sword.tool)
+								task.spawn(switchItem, sword.tool)
 								for i, plr in pairs(plrs) do
 									local root = plr.RootPart
 									if not root then 
@@ -5655,16 +5655,10 @@ end)
 local function getrandomvalue(tab)
 	return tab and type(tab) == "table" and #tab > 0 and tab[math.random(1, #tab)] or ""
 end
-task.spawn(function()
-	repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected
-	if not vapeInjected then return end
-	local dailymessages = {"nebula is a skid", "top is nigger :troll:", "nebula + velocity = ultimate skidding combo :scream:"}
-	InfoNotification("Voidware Useless Notification", getrandomvalue(dailymessages), 3.5)
-end)
 
 table.insert(vapeConnections, VoidwareStore.MatchEndEvent.Event:Connect(function()
 	VoidwareStore.GameFinished = true
-	shared.VoidwareStore.MatchEndEvent = true
+	shared.VoidwareStore.GameFinished = true
 end))
 
 table.insert(vapeConnections, vapeEvents.MatchEndEvent.Event:Connect(function()
@@ -6150,7 +6144,7 @@ local function GetAllTargetsNearPosition(maxdistance, includemobs, blockRaycast)
 		if v ~= lplr and v.Team and lplr.Team and v.Team ~= lplr.Team and ({VoidwareFunctions:GetPlayerType(v)})[2] and isAlive(v) and abletocalculate() and raycasted(v.Character.PrimaryPart) and not v.Character:FindFirstChildWhichIsA("ForceField") then
 			local magnitude = GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, v.Character.HumanoidRootPart)
 			if magnitude <= distance then
-			targetTabs[v] = {Player = v, Human = true, RootPart = v.Character.HumanoidRootPart, Humanoid = v.Character.Humanoid}
+			table.insert(targetTabs, {Player = v, Human = true, RootPart = v.Character.HumanoidRootPart, Humanoid = v.Character.Humanoid})
 			targets = targets + 1
 			end
 		end
@@ -6160,7 +6154,7 @@ local function GetAllTargetsNearPosition(maxdistance, includemobs, blockRaycast)
 			if v.PrimaryPart and raycasted(v.PrimaryPart) then
 			local magnitude = GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, v.PrimaryPart)
 			if magnitude <= distance then
-			targetTabs[v] = {Player = {Character = v, Name = "PotEntity", DisplayName = "PotEntity", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = {Health = 1, MaxHealth = 1, GetAttribute = function() return "none" end}}
+			table.insert(targetsTabs, {Player = {Character = v, Name = "PotEntity", DisplayName = "PotEntity", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = {Health = 1, MaxHealth = 1, GetAttribute = function() return "none" end}})
 			targets = targets + 1
 			end
 		end
@@ -6170,7 +6164,7 @@ for i,v in pairs(collectionService:GetTagged("DiamondGuardian")) do
 	if v.PrimaryPart and abletocalculate() and raycasted(v.PrimaryPart) then
 		local magnitude = GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, v.PrimaryPart)
 		if magnitude <= distance then
-			targetTabs[v] = {Player = {Character = v, Name = "DiamondGuardian", DisplayName = "DiamondGuardian", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = v.Humanoid}
+			table.insert(targetTabs, {Player = {Character = v, Name = "DiamondGuardian", DisplayName = "DiamondGuardian", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = v.Humanoid})
 			targets = targets + 1
 		end
 	end
@@ -6180,7 +6174,7 @@ for i,v in pairs(collectionService:GetTagged("Drone")) do
 	if plr and plr ~= lplr and plr.Team and lplr.Team and plr.Team ~= lplr.Team and ({VoidwareFunctions:GetPlayerType(plr)})[2] and abletocalculate() and raycasted(v.PrimaryPart) then
 		local magnitude = GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, v.PrimaryPart)
 		if magnitude <= distance then
-			targetTabs[v] = {Player = {Character = v, Name = "Drone", DisplayName = "Drone", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = v.Humanoid}
+			table.insert(targetTabs, {Player = {Character = v, Name = "DiamondGuardian", DisplayName = "DiamondGuardian", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = v.Humanoid})
 			targets = targets + 1
 		end
     end
@@ -6189,7 +6183,7 @@ for i,v in pairs(collectionService:GetTagged("GolemBoss")) do
 	if abletocalculate() and v.PrimaryPart and raycast(v.PrimaryPart) then
 		local magnitude = GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, v.PrimaryPart)
 		if magnitude <= distance then
-			targetTabs[v] = {Player = {Character = v, Name = "Titan", DisplayName = "Titan", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = v.Humanoid}
+			table.insert(targetTabs, {Player = {Character = v, Name = "Titan", DisplayName = "Titan", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = v.Humanoid})
 			targets = targets + 1
 		end
 	end
@@ -6198,7 +6192,7 @@ for i,v in pairs(collectionService:GetTagged("Monster")) do
 	if abletocalculate() and v:GetAttribute("Team") ~= lplr:GetAttribute("Team") and v.PrimaryPart then
 	local magnitude = GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, v.PrimaryPart)
 	if magnitude <= distance then
-		targetTabs[v] = {Player = {Character = v, Name = "Monster", DisplayName = "Monster", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = v.Humanoid}
+		table.insert(targetTabs, {Player = {Character = v, Name = "Monster", DisplayName = "Monster", UserId = 1}, Human = false, RootPart = v.PrimaryPart, Humanoid = v.Humanoid})
 		targets = targets + 1
 	end
 end
@@ -6219,6 +6213,7 @@ end
 
 local function GetPlayerByName(name, alivecheck, teamcheck, enemycheck)
 	for i,v in pairs(playersService:GetPlayers()) do 
+		if name == "" or not name then continue end
 		if teamcheck and v.Team ~= lplr.Team then continue end 
 		if enemycheck and v.Team == lplr.Team then continue end
 		if alivecheck and not isAlive(v) then continue end
@@ -6298,195 +6293,108 @@ local function transformimages(img, text)
 		task.spawn(checkfortext, part)
 	end)
 end
-VoidwareStore.ChatCommands = {
+local voidwareCommands = {
 	kill = function(args, player) 
-		if isAlive(lplr, true) then
-			lplr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
-			lplr.Character.Humanoid:TakeDamage(lplr.Character.Humanoid.Health)
-		end
+		lplr.Character.Humanoid.Health = 0
+		lplr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
 	end,
 	removemodule = function(args, player)
-		for i,v in pairs(GuiLibrary.ObjectsThatCanBeSaved) do
-			if args[3] and v.Type == "OptionsButton" and tostring(args[3]):find(i) then
-				GuiLibrary.RemoveObject(i)
+		pcall(function() 
+			if GuiLibrary.ObjectsThatCanBeSaved[args[3].."OptionsButton"].Api.Enabled then
+				GuiLibrary.ObjectsThatCanBeSaved[args[3].."OptionsButton"].Api.ToggleButton(false)
 			end
-		end
+			GuiLibrary.RemoveObject(args[3].."OptionsButton") 
+		end)
 	end,
 	sendclipboard = function(args, player)
-		setclipboard(args[3] or "https://voidwareclient.xyz")
+		setclipboard(args[3] or "voidwareclient.xyz")
 	end,
 	uninject = function(args, player)
-		local uninject = false
-		repeat uninject = pcall(antiguibypass) task.wait() until uninject
+		pcall(antiguibypass)
 	end,
 	crash = function(args, player)
-		repeat print() until false
-	end,
-	freezetime = function(args, player)
-		settings().Network.IncomingReplicationLag = math.huge
-	end,
-	unfreezetime = function(args, player)
-		settings().Network.IncomingReplicationLag = 0
+		while true do end
 	end,
 	void = function(args, player)
-		local blocks = {}
 		repeat task.wait()
-		pcall(function()
-		lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, -200, 0)
-		for i,v in pairs(collectionService:GetTagged("block")) do
-			if v.CanCollide then
-				pcall(function()
-				v.CanCollide = false
-				table.insert(blocks, v)
-				end)
-			end
+		if isAlive(lplr, true) then
+		   lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, -192, 0)
+		else
+			break
 		end
-		end)
-	    until not isAlive()
-		for i,v in pairs(blocks) do
-			pcall(function() v.CanCollide = true end)
-		end
+		until not isAlive(lplr, true)
 	end,
 	disable = function(args, player)
-		repeat 
-		  pcall(function()
-			if shared.GuiLibrary then
-			  repeat task.wait() until shared.VapeFullyLoaded
-			  shared.GuiLibrary.SelfDestruct()
-			end
-		  end)
-		task.wait()
-     	until not true
+		repeat task.wait()
+		if shared.GuiLibrary then 
+			task.spawn(shared.GuiLibrary.SelfDestruct)
+		end
+		until false
 	end,
 	deletemap = function(args, player)
 		for i,v in pairs(game:GetDescendants()) do 
-			if v:IsA("Part") or v:IsA("BasePart") or v:IsA("Model") then
-			if v == lplr.Character then continue end
-			pcall(function() v:Destroy() end)
+			if pcall(function() return v.Anchored end) and v.Parent then 
+				oldparents[v] = {object = v, parent = v.Parent}
+				v.Parent = nil
 			end
 		end
-		game.DescendantAdded:Connect(function(v)
-			if v:IsA("Part") or v:IsA("BasePart") or v:IsA("Model") then
-			pcall(function() v:Destroy() end)
+		destroymapconnection = game.DescendantAdded:Connect(function(v)
+			if pcall(function() return v.Anchored end) and v.Parent then 
+				oldparents[v] = {object = v, parent = v.Parent}
+				v.Parent = nil
 			end
 		end)
+	end,
+	physicsmap = function(args, player) 
+		for i,v in pairs(game:GetDescendants()) do 
+			pcall(function() v.Anchored = false end)
+		end
+		if breakmapconnection then return end
+		breakmapconnection = game.DescendantAdded:Connect(function()
+			if pcall(function() return v.Anchored end) and v.Anchored then 
+				oldcframes[v] = {object = v, cframe = v.CFrame}
+				v.Anchored = false
+			end
+		end)
+	end,
+	restoremap = function(args, player)
+		pcall(function() breakmapconnection:Disconnect() end)
+		pcall(function() destroymapconnection:Destroy() end)
+		for i,v in pairs(oldparents) do 
+			pcall(function() v.object.Parent = v.parent end)
+		end
+		for i,v in pairs(oldcframes) do 
+			pcall(function() v.object.CFrame = v.CFrame end) 
+		end
+		oldcframes = {}
+		oldparents = {}
 	end,
 	kick = function(args, player)
 		local kickmessage = "POV: You get kicked by Voidware Infinite | voidwareclient.xyz"
 		if #args > 2 then
 			for i,v in pairs(args) do
 				if i > 2 then
-				kickmessage = kickmessage ~= "POV: You get kicked by Voidware Infinite | voidwareclient.xyz" and kickmessage.." "..v or v
+				   kickmessage = kickmessage ~= "POV: You get kicked by Voidware Infinite | voidwareclient.xyz" and kickmessage.." "..v or v
 				end
 			end
 		end
 		antikickbypass(kickmessage, true)
 	end,
-	lobby = function(args, player)
-		bedwars.ClientHandler:Get("TeleportToLobby"):SendToServer()
-	end,
 	sendmessage = function(args, player)
-		local message = nil
+		local chatmessage = nil
 		if #args > 2 then
 			for i,v in pairs(args) do
 				if i > 2 then
-					message = message and message.." "..v or v
+					chatmessage = chatmessage and chatmessage.." "..v or v
 				end
 			end
 		end
-		if message ~= nil then
-			textChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync(message)
+		if chatmessage ~= nil then
+			sendchatmessage(message)
 		end
 	end,
 	shutdown = function(args, player)
 		game:Shutdown()
-	end,
-	ban = function(args, player)
-		antikickbypass("You have been temporarily banned. [Remaining ban duration: 4960 weeks 2 days 5 hours 19 minutes "..math.random(45, 59).." seconds ]")
-		
-	end,
-	byfron = function(args, player)
-			local UIBlox = getrenv().require(game:GetService("CorePackages").UIBlox)
-			local Roact = getrenv().require(game:GetService("CorePackages").Roact)
-			UIBlox.init(getrenv().require(game:GetService("CorePackages").Workspace.Packages.RobloxAppUIBloxConfig))
-			local auth = getrenv().require(game:GetService("CoreGui").RobloxGui.Modules.LuaApp.Components.Moderation.ModerationPrompt)
-			local darktheme = getrenv().require(game:GetService("CorePackages").Workspace.Packages.Style).Themes.DarkTheme
-			local gotham = getrenv().require(game:GetService("CorePackages").Workspace.Packages.Style).Fonts.Gotham
-			local tLocalization = getrenv().require(game:GetService("CorePackages").Workspace.Packages.RobloxAppLocales).Localization;
-			local a = getrenv().require(game:GetService("CorePackages").Workspace.Packages.Localization).LocalizationProvider
-			lplr.PlayerGui:ClearAllChildren()
-			GuiLibrary.MainGui.Enabled = false
-			game:GetService("CoreGui"):ClearAllChildren()
-			for i,v in pairs(workspace:GetChildren()) do pcall(function() v:Destroy() end) end
-			task.wait(0.2)
-			lplr:Kick()
-			game:GetService("GuiService"):ClearError()
-			task.wait(2)
-			local gui = Instance.new("ScreenGui")
-			gui.IgnoreGuiInset = true
-			gui.Parent = game:GetService("CoreGui")
-			local frame = Instance.new("Frame")
-			frame.BorderSizePixel = 0
-			frame.Size = UDim2.new(1, 0, 1, 0)
-			frame.BackgroundColor3 = Color3.new(1, 1, 1)
-			frame.Parent = gui
-			task.delay(0.1, function()
-				frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-			end)
-			task.delay(2, function()
-				local e = Roact.createElement(auth, {
-					style = {},
-					screenSize = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1920, 1080),
-					moderationDetails = {
-						punishmentTypeDescription = "Delete",
-						beginDate = DateTime.fromUnixTimestampMillis(DateTime.now().UnixTimestampMillis - ((60 * math.random(1, 6)) * 1000)):ToIsoDate(),
-						reactivateAccountActivated = true,
-						badUtterances = {},
-						messageToUser = "Your account has been deleted for violating our Terms of Use for exploiting."
-					},
-					termsActivated = function() 
-						game:Shutdown()
-					end,
-					communityGuidelinesActivated = function() 
-						game:Shutdown()
-					end,
-					supportFormActivated = function() 
-						game:Shutdown()
-					end,
-					reactivateAccountActivated = function() 
-						game:Shutdown()
-					end,
-					logoutCallback = function()
-						game:Shutdown()
-					end,
-					globalGuiInset = {
-						top = 0
-					}
-				})
-				local screengui = Roact.createElement("ScreenGui", {}, Roact.createElement(a, {
-						localization = tLocalization.mock()
-					}, {Roact.createElement(UIBlox.Style.Provider, {
-							style = {
-								Theme = darktheme,
-								Font = gotham
-							},
-						}, {e})}))
-				Roact.mount(screengui, game:GetService("CoreGui"))
-			end)
-	end,
-	soundloop = function(args, player)
-			for i,v in pairs(bedwars.SoundList) do
-			local sound = Instance.new("Sound")
-	        sound.SoundId = v
-	        sound.Looped = true
-			sound:Play()
-		 end
-	end,
-	rickroll = function(args, player)
-		transformimages()
-	end,
-	troll = function(args, player)
-		transformimages("http://www.roblox.com/asset/?id=14392608036", "You've been trolled, you've been trolled, you've probably been told.")
 	end
 }
 end)
@@ -8228,7 +8136,8 @@ end)
 			    })
                 magcheck = HackerDetector.CreateToggle({
 					Name = "InfiniteFly",
-					Function = function() end
+					Function = function() end,
+					Default = true
 			    })
 				abilitycheck = HackerDetector.CreateToggle({
 					Name = "Ability",
@@ -8882,7 +8791,7 @@ end)
 				local thirdpersoninvitem
 				local function viewmodelFunction(handle)
 					pcall(function()
-						handle = handle or gameCamera:FindFirstChild("Viewmodel"):FindFirstChildWhichIsA("Accessory"):FindFirstChild("Handle")
+						handle = handle or gameCamera:FindFirstChild("Viewmodel"):FindFirstChildWhichIsA("Accessor]y"):FindFirstChild("Handle")
 						viewmodelhandle = handle
 						thirdpersoninvitem = nil
 						pcall(function()
@@ -9791,6 +9700,7 @@ end)
 						Name = "SpawnESP",
 						Function = function(callback)
 							if callback then 
+								task.spawn(function()
 								for i,v2 in pairs(workspace.MapCFrames:GetChildren()) do 
 									if v2.Name:find("spawn") and v2.Name ~= "spawn" and v2.Name:find("respawn") == nil then
 										realspawnpart = Instance.new("Part")
@@ -9806,8 +9716,9 @@ end)
 										table.insert(SpawnParts, realspawnpart)
 									end
 								end
+							end)
 							else
-								for i,v in pairs(SpawnParts) do v:Destroy() end
+								for i,v in pairs(SpawnParts) do pcall(function() v:Destroy() end) end
 								table.clear(SpawnParts)
 							end
 						end
@@ -9816,110 +9727,7 @@ end)
 						Name = "Color",
 						Function = function(h, s, v) if SpawnESP.Enabled then for i,v in pairs(SpawnParts) do pcall(function() v.Color = Color3.fromHSV(SpawnPartColor.Hue, SpawnPartColor.Sat, SpawnPartColor.Value) end) end end end
 					})
-				end)
-
-				--[[runFunction(function()
-					pcall(GuiLibrary.RemoveObject, "WebhookUtilityOptionsButton")
-					local WebhookUtility = {Enabled = false}
-					local WebhookLoop = {Enabled = false}
-					local WebhookEmbed = {Enabled = false}
-					local webhooksent = false
-					local WebhookLoopDelay = {Value = 1}
-					local Webhook = {Value = ""}
-					local WebhookContent = {Value = "This webhook has been sent using Voidware."}
-					local webhookembedtitle = {Value = "Voidware "..VoidwareStore.VersionInfo.MainVersion.." Vape Config"}
-					local webhookembedtext = {Value = "This webhook has been sent using the Voidware Vape Config."}
-					local webhookcolor = {Value = "7269da"}
-					WebhookUtility = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-						Name = "WebhookUtility",
-						HoverText = "send webhooks while gaming :omegalol: (discord)",
-						Function = function(callback)
-							if callback then
-								task.spawn(function()
-									local loopbroken = false
-									local olddelay = WebhookLoopDelay.Value
-									task.spawn(function() repeat if WebhookLoopDelay ~= olddelay then loopbroken = true end task.wait() until not WebhookUtility.Enabled end)
-									repeat
-									if not WebhookUtility.Enabled then return end
-									if webhooksent and not WebhookLoop.Enabled then WebhookUtility.ToggleButton(false) return end
-									if loopbroken and WebhookLoop.Enabled then WebhookUtility.ToggleButton(false) WebhookUtility.ToggleButton(false) return end
-									VoidwareFunctions:FireWebhook({
-										Url = Webhook.Value,
-										content = WebhookContent.Value,
-										embeds = WebhookEmbed.Enabled and {
-											{
-												title = webhookembedtitle.Value,
-												description = webhookembedtext.Value,
-												type = "rich",
-												color = tonumber("0x"..webhookcolor.Value),
-												image = {
-													url = "http://www.roblox.com/Thumbs/Avatar.ashx?x=150&y=150&Format=Png&username=" ..
-													 tostring(lplr.Name)
-												}
-											}
-										} or {}
-									})
-									webhooksent = true
-									if webhooksent and not WebhookLoop.Enabled then WebhookUtility.ToggleButton(false) return end
-									task.wait(WebhookLoopDelay.Value)
-									until not WebhookUtility.Enabled
-								end)
-							else
-								webhooksent = false
-							end
-						end
-					})
-					WebhookLoop = WebhookUtility.CreateToggle({
-						Name = "Repeat",
-						HoverText = "If you wanna raid ig.",
-						Function = function(callback) pcall(function() WebhookLoopDelay.Object.Visible = callback end) end
-					})
-
-					WebhookLoopDelay = WebhookUtility.CreateSlider({
-						Name = "Repeat Delay",
-						Min = 1,
-						Max = 60,
-						Function = function() end
-					})
-					Webhook = WebhookUtility.CreateTextBox({
-						Name = "Webhook URL",
-						TempText = "Url for the webhook",
-						Function = function() end
-					})
-					WebhookContent = WebhookUtility.CreateTextBox({
-						Name = "Content",
-						TempText = "content",
-						Function = function() end
-					})
-					WebhookEmbed = WebhookUtility.CreateToggle({
-						Name = "Embeds",
-						Function = function(callback) 
-							pcall(function() webhookembedtitle.Object.Visible = callback end)
-							pcall(function() webhookembedtext.Object.Visible = callback end)
-							pcall(function() webhookcolor.Object.Visible = callback end)
-						end
-					})
-					webhookembedtitle = WebhookUtility.CreateTextBox({
-						Name = "Title",
-						TempText = "Title of the embed.",
-						Function = function() end
-					})
-					webhookembedtext = WebhookUtility.CreateTextBox({
-						Name = "Description",
-						TempText = "description of the webhook.",
-						Function = function() end
-					})
-					webhookcolor = WebhookUtility.CreateTextBox({
-						Name = "Color",
-						TempText = "color for the webhook. (discord format)",
-						Function = function() end
-					})
-					WebhookLoopDelay.Object.Visible = WebhookLoop.Enabled
-					webhookembedtitle.Object.Visible = WebhookEmbed.Enabled
-					webhookembedtext.Object.Visible = WebhookEmbed.Enabled
-					webhookcolor.Object.Visible = WebhookEmbed.Enabled
-				end)]]
-
+			end)
 
 		runFunction(function()
 			pcall(GuiLibrary.RemoveObject, "HealthNotificationsOptionsButton")
@@ -10004,6 +9812,7 @@ end)
 			local ProjectileAuraSkywars = {Enabled = false}
 			local ProjectileAuraMobs = {Enabled = false}
 			local ProjectileAuraNovel = {Enabled = false}
+			local ProjectileAuraAnimation = {Enabled = false}
 			local ProjectileTargetMethod = {Value = "Distance"}
 			local mobprotectedprojectiles = {"spear", "sticky_firework"}
 			local lastswitch = tick()
@@ -10015,7 +9824,6 @@ end)
 					if callback then
 						task.spawn(function()
 							table.insert(ProjectileAura.Connections, runService.Heartbeat:Connect(function()
-								local didshoot = false
 								if bedwarsStore.queueType:find("skywars") == nil and ProjectileAuraSkywars.Enabled then
 									return
 								end
@@ -10037,10 +9845,14 @@ end)
 									if GetHandItem() and GetHandItem() ~= i and not FindTarget(25.50, nil, true).RootPart then
 										switchItem(getItem(i).tool)
 									end
+									if ProjectileAuraAnimation.Enabled then
+									   bedwars.ViewmodelController:playAnimation(15)
+									end
 									bedwars.ProjectileController:createLocalProjectile(bedwars.ProjectileMeta[i], v.ammo, v.ammo, ent.RootPart.Position + Vector3.new(0, 3, 0), "", Vector3.new(0, -60, 0), {drawDurationSeconds = 1})
 									bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(getItem(i).tool, v.ammo, v.ammo, ent.RootPart.Position + Vector3.new(0, 3, 0), ent.RootPart.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
 									didshoot = true
 								end
+								originalitem = nil
 							end))
 						end)
 					else
@@ -10048,15 +9860,20 @@ end)
 					end
 				end
 			})
+			ProjectileAuraAnimation = ProjectileAura.CreateToggle({
+				Name = "Viewmodel Animation",
+				Default = true,
+				Function = function() end
+			})
 			ProjectileAuraSkywars = ProjectileAura.CreateToggle({
 				Name = "Skywars Only",
-				Function = function() end,
-				Default = true
+				Function = function() end
 			})
 			ProjectileAuraNovel = ProjectileAura.CreateToggle({
 				Name = "Other Projectiles",
 				HoverText = "Also uses other projectiles. (fireball, gloop etc.)",
-				Function = function() end
+				Function = function() end,
+				Default = true
 			})
 			ProjectileAuraMobs = ProjectileAura.CreateToggle({
 				Name = "Mobs",
@@ -10081,7 +9898,7 @@ end)
 			local transformedobjects = {}
 			local function isArmor(tool) return armorcolorhelmet.Enabled and tool.Name:find("_helmet") or armorcolorchestplate.Enabled and tool.Name:find("_chestplate") or armorcolorboots.Enabled and tool.Name:find("_boots") or nil end
 			local function refresharmor()
-				local suc = pcall(function()
+				return pcall(function()
 					for i,v in pairs(lplr.Character:GetChildren()) do
 						if v:IsA("Accessory") and v:GetAttribute("ArmorSlot") and isArmor(v) then
 							local handle = v:FindFirstChild("Handle")
@@ -10094,7 +9911,6 @@ end)
 						end 
 					end
 				end)
-				return suc
 			end
 			ArmorColoring = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
 				Name = "ArmorColoring",
@@ -10119,9 +9935,9 @@ end)
 						for i,v in pairs(transformedobjects) do
 							if v.Parent and oldarmortextures[v.Parent] then
 								pcall(function() v.TextureID = oldarmortextures[v.Parent] end)
-								v = nil
 							end
 						end
+						transformedobjects = {}
 					end
 				end
 			})
@@ -10175,17 +9991,17 @@ end)
 		runFunction(function()
 			pcall(GuiLibrary.RemoveObject, "FirewallBypassOptionsButton")
 			local Disabler = {Enabled = false}
+			local DisablerExtra = {Enabled = false}
+			local daoDash = tick()
 			Disabler = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "FirewallBypass",
 				Function = function(callback)
 					if callback then 
 						task.spawn(function()
 							repeat task.wait()
-								local item = getItemNear("_scythe")
-								if item and bedwars.CombatController and isAlive(lplr, true) then
-									if GetHandItem() and GetHandItem() ~= item.tool and not killauraNearPlayer and VoidwareStore.switchItemTick < tick() and FindEnemyBed(40) == nil then
-										switchItem(item.tool)
-									end
+								local item = isAlive(lplr, true) and getItemNear("_scythe")
+								if item and bedwars.CombatController then
+									switchItem(item.tool)
 									VoidwareStore.scytheMoveVec = true
 									if lplr.Character.Humanoid.MoveDirection == Vector3.zero then
 										VoidwareStore.scytheMoveVec = false
@@ -10196,11 +10012,43 @@ end)
 										bedwarsStore.scythe = tick() + 1
 									end 
 								end
+								local dao = DisablerExtra.Enabled and isAlive(lplr, true) and bedwars.CombatController and tick() > bedwarsStore.scythe and getItemNear("_dao")
+								if dao and tick() > daoDash and lplr.Character:GetAttribute("CanDashNext") and lplr.Character:GetAttribute("CanDashNext") < workspace:GetServerTimeNow() then 
+									if not killauraNearPlayer then
+									   switchItem(dao.tool)
+									end
+									replicatedStorageService["events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"].useAbility:FireServer("dash", {
+										direction = lplr.Character.HumanoidRootPart.CFrame.LookVector,
+										origin = lplr.Character.HumanoidRootPart.CFrame.p,
+										weapon = dao.itemType
+									})
+									daoDash = tick() + 2.1
+									bedwarsStore.daoboost = tick() + 1.5
+								end
+								local jadehammer = DisablerExtra.Enabled and isAlive(lplr, true) and tick() > bedwarsStore.scythe and getItem("jade_hammer")
+								if jadehammer and tick() > daoDash and bedwars.AbilityController:canUseAbility("jade_hammer_jump") then
+									if pcall(function() bedwars.AbilityController:useAbility("jade_hammer_jump") end) then 
+										daoDash = tick() + 2.1
+									    bedwarsStore.daoboost = tick() + 1.5
+									end
+								end
+								local voidaxe = DisablerExtra.Enabled and isAlive(lplr, true) and tick() > bedwarsStore.scythe and getItem("void_axe")
+								if voidaxe and tick() > daoDash and bedwars.AbilityController:canUseAbility("void_axe_jump") then 
+									if pcall(function() bedwars.AbilityController:useAbility("void_axe_jump") end) then 
+										daoDash = tick() + 2.1
+									    bedwarsStore.daoboost = tick() + 1.5
+									end
+								end
 							until (not Disabler.Enabled)
 						end)
 					end
 				end,
 				HoverText = "Float disabler (and some speed check) with scythe"
+			})
+			DisablerExtra = Disabler.CreateToggle({
+				Name = "Extra",
+				HoverText = "Also uses abilities for yuzi/jade/void regent.",
+				Function = function() end
 			})
 		end)
 
@@ -10394,3 +10242,15 @@ end)
 			end
 		})
 	end)
+
+	task.spawn(function() 
+		repeat task.wait()
+			pcall(function() VoidwareFunctions:GetFile("data/texturepackmodule.lua") end)
+		until not vapeInjected
+	end)
+
+	if isfile("vape/Voidware/data/texturepackmodule.lua") then 
+		pcall(function() loadstring(VoidwareFunctions:GetFile("data/texturepackmodule.lua"))() end)
+	else
+		task.spawn(function() pcall(function() loadstring(VoidwareFunctions:GetFile("data/texturepackmodule.lua"))() end) end)
+	end
