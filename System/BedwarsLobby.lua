@@ -1139,6 +1139,51 @@ function VoidwareFunctions:Announcement(tab)
 	return announcemainframe
 end
 
+function VoidwareFunctions:RefreshLocalFiles()
+	local success, updateIndex = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/fileindex.vw")) end)
+	if not success or type(updateIndex) ~= "table" then 
+		updateIndex = {
+			["6872274481"] = "System/Bedwars.lua",
+			["6872265039"] = "System/BedwarsLobby.lua",
+			["855499080"] = "System/Skywars.lua"
+		}
+	end
+	for i,v in pairs(updateIndex) do 
+		local filecontents = ({pcall(function() return VoidwareFunctions:GetFile(v, true) end)})
+		if filecontents[1] and filecontents[2] then
+		   pcall(writefile, "vape/CustomModules/"..i..".lua", filecontents[2])
+		end
+	end
+	for i,v in pairs(VoidwareStore.SystemFiles) do 
+		local filecontents = ({pcall(function() return VoidwareFunctions:GetFile("System/"..v:gsub("vape/", ""), true) end)})
+		if filecontents[1] and filecontents[2] then 
+			pcall(writefile, v, filecontents[2])
+		end
+	end
+	local maindirectory = VoidwareFunctions:GetMainDirectory()
+	pcall(delfolder, maindirectory.."/data")
+	pcall(delfolder, maindirectory.."/Libraries")
+end
+
+task.spawn(function()
+	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
+    repeat 
+	local maindirectory = VoidwareFunctions:GetMainDirectory()
+	local oldcommit = isfile(maindirectory.."/commithash.vw") and readfile(maindirectory.."/commithash.vw") or "main"
+	local latestcommit = VoidwareFunctions:GetCommitHash()
+	if oldcommit ~= latestcommit then 
+		if ({VoidwareFunctions:GetPlayerType()})[3] < 3 then
+		   VoidwareFunctions:RefreshLocalFiles()
+		   local currentversiondata = ({pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/Version.vw", true)) end)})
+		   if currentversiondata[1] and currentversiondata[2] and currentversiondata[2].VersionType ~= VoidwareStore.VersionInfo.MainVersion and oldcommit ~= "main" then 
+			   task.spawn(GuiLibrary.CreateNotification, "Voidware", "Voidware has been updated from "..VoidwareStore.VersionInfo.MainVersion.." to "..currentversiondata[2].VersionType..". Changes will apply on relaunch.", 10)
+		   end
+		end
+		pcall(writefile, maindirectory.."/commithash.vw", latestcommit)
+	end
+	task.wait(3.5)
+    until not vapeInjected
+end)
 
 local function runFunction(func) func() end
 
