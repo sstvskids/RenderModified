@@ -16,13 +16,13 @@ local function GetVoidwareFile(path, online)
         local success, bodydata = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/"..path) end)
         if success and bodydata ~= "404: Not Found" and bodydata ~= "400: Invalid Request" then 
             writefile("vape/CustomModules/"..path, bodydata)
+            return "-- Voidware Custom Modules Signed File \n"..bodydata
         else
             bodydata = bodydata and " | "..bodydata or ""
-            vapeAssert(false, "Voidware", "Failed to load vape/CustomModules/"..path..""..bodydata)
-            return 'error("[Voidware] Failed to load vape/CustomModules/'..path..''..bodydata..'"'
+            return 'error("[Voidware] Failed to load vape/CustomModules/gameplace.lua'..bodydata..'"'
         end
     end
-    return online and ({pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/"..path) end)})[2] or readfile("vape/CustomModules/"..path)
+    return online and ({pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/"..path) end)})[2] or readfile("vape/CustomModules/gameplace.lua")
 end
 
 if not shared.VapeFullyLoaded then 
@@ -38,6 +38,7 @@ return function(file)
     file = file or game.PlaceId 
     local filepath = "vape/CustomModules/"..tostring(file)..".lua"
     if not isfile(filepath) then 
+        print("writing placename")
         return pcall(writefile, filepath, GetVoidwareFile("System/placename.lua"))
     end
     return true
