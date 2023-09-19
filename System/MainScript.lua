@@ -1,4 +1,3 @@
--- Voidware Custom Modules Signed File
 if not game:IsLoaded() then repeat task.wait() until game:IsLoaded() end
 local GuiLibrary
 local baseDirectory = (shared.VapePrivate and "vapeprivate/" or "vape/")
@@ -185,6 +184,9 @@ end
 
 assert(not shared.VapeExecuted, "Vape Already Injected")
 shared.VapeExecuted = true
+
+local exploitfullyloaded = false 
+repeat exploitfullyloaded = pcall(function() return game.HttpGet end) task.wait() until exploitfullyloaded -- we love electron
 
 for i,v in pairs({baseDirectory:gsub("/", ""), "vape", "vape/Libraries", "vape/CustomModules", "vape/Profiles", baseDirectory.."Profiles", "vape/assets"}) do 
 	if not isfolder(v) then makefolder(v) end
