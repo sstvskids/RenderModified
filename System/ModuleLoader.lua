@@ -19,7 +19,7 @@ local function GetVoidwareFile(path, online)
             return "-- Voidware Custom Modules Signed File \n"..bodydata
         else
             bodydata = bodydata and " | "..bodydata or ""
-            return 'error("[Voidware] Failed to load vape/CustomModules/gameplace.lua'..bodydata..'"'
+            return 'warn("[Voidware] Failed to load vape/CustomModules/gameplace.lua'..bodydata..'"'
         end
     end
     return online and ({pcall(function() return game:HttpGet("https://raw.githubusercontent.com/SystemXVoid/Voidware/main/"..path) end)})[2] or readfile("vape/CustomModules/gameplace.lua")
