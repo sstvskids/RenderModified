@@ -1,12 +1,11 @@
 local GuiLibrary = shared.GuiLibrary
 local vapeonlineresponse = false
+
 task.spawn(function()
-	pcall(function()
 	task.wait(10)
 	if not vapeonlineresponse and not isfile("vape/Voidware/oldvape/Bedwars.lua") then 
 		GuiLibrary.CreateNotification("Voidware", "The Connection to Github is taking a while. If vape doesn't load within 15 seconds, please reinject.", 10)
 	end
-end)
 end)
 
 if isfile("vape/Voidware/oldvape/Bedwars.lua") then
@@ -258,6 +257,7 @@ GuiLibrary.SelfDestructEvent.Event:Connect(function()
 	end
 	shared.VoidwareStore.ManualTargetUpdate = nil
 	shared.VoidwareQueued = nil
+	pcall(function() getgenv().VoidwareFunctions = nil end)
 end)
 
 local isfile = isfile or function(file)
@@ -351,6 +351,26 @@ function VoidwareFunctions:GetMainDirectory()
 		makefolder(VoidwareStore.maindirectory)
 	end
 	return VoidwareStore.maindirectory or "vape/Voidware"
+end
+
+function VoidwareFunctions:SpecialNearPosition(distance)
+	distance = distance or 100
+	local specialplayers = VoidwareFunctions:SpecialInGame() or {}
+	for i,v in pairs(specialplayers) do 
+		if lplr.Character and lplr.Character.PrimaryPart and v.Character and v.Character.PrimaryPart then 
+			if ({VoidwareFunctions:GetPlayerType(v)})[2] then 
+				continue
+			end
+			if ({VoidwareFunctions:GetPlayerType()})[3] >= ({VoidwareFunctions:GetPlayerType(v)})[3] then
+				continue 
+			end
+			local magnitude = (lplr.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).Magnitude
+			if magnitude < distance and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then 
+				return true
+			end
+		end
+	end
+	return nil
 end
 
 local function isEnabled(toggle)
@@ -806,37 +826,15 @@ end)
 	until not vapeInjected
 end)
 
-VoidwareStore.vapeupdateroutine = coroutine.create(function()
-	repeat
-	if not vapeInjected then break end
-	local success, response = pcall(function()
-	local vaperepoinfo = game:HttpGet("https://github.com/7GrandDadPGN/VapeV4ForRoblox", true)
-	for i,v in pairs(vaperepoinfo:split("\n")) do 
-	    if v:find("commit") and v:find("fragment") then 
-	    local str = v:split("/")[5]
-	    return str:sub(0, v:split("/")[5]:find('"') - 1)
-	    end
-	end
-end)
-if (isfile("vape/commithash.txt") and readfile("vape/commithash.txt") ~= response or not isfile("vape/commithash.txt") or not isfile("vape/Voidware/oldvape/Bedwars.lua")) then
-		if VoidwareFunctions:GetPlayerType() == "OWNER" and success then 
-			if response ~= "main" then 
-				if not isfolder("vape") then makefolder("vape") end
-				pcall(writefile, "vape/commithash.txt", response)
-			end
-			local newvape = betterhttpget("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..response.."/CustomModules/6872274481.lua")
-			if newvape ~= "404: Not Found" then 
-			   VoidwareFunctions:GetMainDirectory()
-			if not isfolder("vape/Voidware/oldvape") then makefolder("vape/Voidware/oldvape") end
-			pcall(writefile, "vape/Voidware/oldvape/Bedwars.lua", newvape)
-			end
+local function getvapecommithash()
+	for i,v in pairs(betterhttpget("https://github.com/7GrandDadPGN/VapeV4ForRoblox"):split("\n")) do 
+		if v:find("commit") and v:find("fragment") then 
+			local str = v:split("/")[5]
+			return str:sub(0, v:split("/")[5]:find('"') - 1)
 		end
 	end
-	task.wait(5)
- until not vapeInjected
-end)
-
-pcall(coroutine.resume, VoidwareStore.vapeupdateroutine)
+	return "main"
+end
 
 function VoidwareFunctions:RefreshLocalFiles()
 	local success, updateIndex = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/fileindex.vw")) end)
@@ -5469,77 +5467,45 @@ task.spawn(function()
 	end
 end)
 
+pcall(function() getgenv().VoidwareFunctions = VoidwareFunctions end)
+
 pcall(function()
 	GuiLibrary.ObjectsThatCanBeSaved.FlyOptionsButton.Api.NoSave = true
 	GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.NoSave = true
 end)
 
-local updatedtostable = false
-local function VoidwareDataDecode(datatab)
-	local newdata = datatab.latestdata or {}
-	local oldfile = datatab.filedata
-	local latestfile = datatab.filesource
-	task.spawn(function()
-		local releasedversion = newdata.ReleasedBuilds and table.find(newdata.ReleasedBuilds, VoidwareStore.VersionInfo.VersionID)
-		local directory = VoidwareFunctions:GetMainDirectory()
-		if releasedversion and not newdata.Disabled and VoidwareStore.VersionInfo.BuildType == "Beta" and VoidwareFunctions:GetPlayerType() ~= "OWNER" then
-			if isfolder("vape") and not updatedtostable then
-				for i,v in pairs(VoidwareStore.SystemFiles) do
-					local req, body = pcall(function() return betterhttpget("https://raw.githubusercontent.com/SystemXVoid/Voidware/"..VoidwareFunctions:GetCommitHash("Voidware").."/System/"..(string.gsub(v, "vape/", ""))) end)
-					if req and body and body ~= "" and body ~= "404: Not Found" and body ~= "400: Bad Request" then
-						body = "-- Voidware Custom Modules Signed File\n"..body
-						pcall(writefile, v, body)
-					end
-				end
-				if isfolder("vape/CustomModules") then
-				local supportedfiles = {"vape/CustomModules/6872274481.lua", "vape/CustomModules/6872265039.lua"}
-				for i,v in pairs(supportedfiles) do
-					local name = v ~= "vape/CustomModules/6872274481.lua" and "BedwarsLobby.lua" or "Bedwars.lua"
-					local req, body = pcall(function() return betterhttpget("https://raw.githubusercontent.com/SystemXVoid/Voidware/"..VoidwareFunctions:GetCommitHash("Voidware").."/System/"..(string.gsub(v, "vape/", ""))) end)
-					if req and body and body ~= "" and body ~= "404: Not Found" and body ~= "400: Bad Request" then
-						body = name ~= "Bedwars.lua" and "-- Voidware Custom Modules Signed File\n"..body or "-- Voidware Custom Modules Main File\n"..body
-						pcall(writefile, v, body)
-					end
-				end
-				end
-			end
-			if isfile("vape/Voidware/beta/Bedwars.lua") then
-				pcall(writefile, "vape/Voidware/Bedwars.lua", readfile("vape/Voidware/beta/Bedwars.lua"))
-			end
-			pcall(delfolder, "vape/Voidware/beta")
-			if VoidwareFunctions:LoadTime() < 10 then
-			local uninject = pcall(antiguibypass)
-			if uninject then
-			table.insert(shared.VoidwareStore.Messages, "This beta build of Voidware has been released publicly. Your custom modules have been updated.")
-			pcall(function() loadstring(readfile("vape/NewMainScript.lua"))() end)
-			end
-			end
-			updatedtostable = true
+local oldannounce = {}
+local function runvoidwaredata()
+	local datatable = ({pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("maintab.vw", true)) end)})[2]
+	if datatable and type(datatable) == "table" then 
+		if datatable.Announcement and datatable.AnnouncementText ~= oldannounce.AnnouncementText and vapeInjected then 
+			task.spawn(function() VoidwareFunctions:Announcement({Text = datatable.AnnouncementText, Duration = datatable.AnnouncementDuration}) end)
 		end
-		if newdata.Disabled and ({VoidwareFunctions:GetPlayerType()})[3] < 2 then
-			local uninjected = pcall(antiguibypass)
-			if not uninjected then
-				while true do end
-			end
+		if datatable.Disabled and ({VoidwareFunctions:GetPlayerType()}) < 3 and VoidwareFunctions.WhitelistLoaded then 
+			task.spawn(antiguibypass)
 			game:GetService("StarterGui"):SetCore("SendNotification", {
 				Title = "Voidware",
-				Text = "Voidware is currently disabled. check voidwareclient.xyz for updates.",
-				Duration = 30,
+				Text = "Voidware is currently disabled. Check for updates at voidwareclient.xyz",
+				Duration = 10,
 			})
-			setclipboard("https://voidwareclient.xyz")
 		end
-		if oldfile ~= latestfile then
-			VoidwareFunctions:GetMainDirectory()
-			pcall(writefile, directory.."/".."maintab.vw", latestfile)
-			if not newdata.Disabled and newdata.Announcement and not VoidwareStore.MobileInUse then
-				VoidwareFunctions:Announcement({
-				 Text = newdata.AnnouncementText,
-				 Duration = newdata.AnnouncementDuration
-			    })
-			end
-		end
-    end)
+		oldannounce = datatable
+		writefile(VoidwareFunctions:GetMainDirectory().."/maintab.vw", httpService:JSONEncode(datatable))
+	end
+	task.wait(5)
 end
+
+task.spawn(function() 
+	repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected
+	if not vapeInjected then 
+		return 
+	end
+	local oldtab = ({pcall(function() return httpService:JSONDecode(readfile(VoidwareFunctions:GetMainDirectory().."/maintab.vw")) end)})[2] 
+	if oldtab and type(oldtab) == "table" then 
+		oldannounce = oldtab
+	end
+	repeat runvoidwaredata() until not vapeInjected
+end)
 
 task.spawn(function()
 	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
@@ -5552,14 +5518,13 @@ end)
 
 task.spawn(function()
 	pcall(function()
-	local selfDestruct = antiguibypass
-	selfDestruct = hookfunction(GuiLibrary.SelfDestruct, function() 
-		if VoidwareFunctions:SpecialInGame() and ({VoidwareFunctions:GetPlayerType()})[3] < 2 then
-			task.spawn(warningNotification, "Voidware", "Nope, that won't work unfortunately. :troll:", 20)
-			return nil
+	GuiLibrary.SelfDestruct = function()
+		if VoidwareFunctions:SpecialInGame() and ({VoidwareFunctions:GetPlayerType()})[3] < 2 then 
+			warningNotification("Voidware", "nice try :omegalol:", 10)
+			return
 		end
-		return selfDestruct()
-	end)
+		pcall(antiguibypass)
+	end
 	if shared.VoidwareStore.HookedFunctions.PrintFunctions == nil then
 		local oldwarnfunc, olderrorfunc = warn, error
 		oldwarnfunc = hookfunction(warn, function(self, ...) 
@@ -5577,7 +5542,7 @@ task.spawn(function()
 		end)
 		shared.VoidwareStore.HookedFunctions.PrintFunctions = true
 	end
-	local orignalhannahremote = function(tab) return pcall(function() bedwars.NetManaged.HannahPromptTrigger:InvokeServer(tab) end) end 
+	local orignalhannahremote = function(tab) return pcall(function() bedwars.ClientHandler:Get("HannahPromptTrigger"):CallServer(tab) end) end 
 	if shared.VoidwareStore.HookedFunctions.HannahRemote == nil then
 	orignalhannahremote = hookmetamethod(bedwars.NetManaged.HannahPromptTrigger, "__namecall", function(self, ...)
 		if type(self) == "table" then 
@@ -5595,23 +5560,6 @@ end
 end)
 end)
 
-task.spawn(function()
-	pcall(function()
-	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
-	if not shared.VapeFullyLoaded and VoidwareStore.MobileInUse then repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected end
-	if not vapeInjected then return end
-	task.wait(VoidwareStore.MobileInUse and 4.5 or 0.1)
-	repeat
-    local source = VoidwareFunctions:GetFile("maintab.vw", true)
-	VoidwareDataDecode({
-		latestdata = httpService:JSONDecode(source),
-		filesource = source,
-		filedata = VoidwareFunctions:GetFile("maintab.vw")
-	})
-	task.wait(5)
-	until not vapeInjected
-	end)
-	end)
 
 pcall(function()
 	table.insert(vapeConnections, replicatedStorageService["events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"].abilityUsed.OnClientEvent:Connect(function(ability, char)
@@ -6399,581 +6347,6 @@ local voidwareCommands = {
 }
 end)
 
-runFunction(function()
-	pcall(GuiLibrary.RemoveObject, "LightingThemeOptionsButton")
-	local themeobjects = {}
-	local oldsky = lightingService:FindFirstChild("Sky") or lightingService:FindFirstChildWhichIsA("Sky")
-	local oldthemesettings = {
-		["Ambient"] = lightingService.Ambient,
-		["OutdoorAmbient"] = lightingService.OutdoorAmbient,
-		["FogStart"] = lightingService.FogStart,
-		["FogEnd"] = lightingService.FogEnd,
-		["FogColor"] = lightingService.FogColor,
-		["Back"] = oldsky and oldsky.SkyboxBk,
-		["Down"] = oldsky and oldsky.SkyboxDn,
-		["Front"] = oldsky and oldsky.SkyboxFt,
-		["Left"] = oldsky and oldsky.SkyboxLf,
-		["Right"] = oldsky and oldsky.SkyboxRt,
-		["Up"] = oldsky and oldsky.SkyboxUp,
-		["SunSize"] = oldsky and oldsky.SunAngularSize,
-		["MoonSize"] = oldsky and oldsky.MoonAngularSize,
-		["StarCount"] = oldsky and oldsky.StarCount,
-		["MoonTextureId"] = oldsky and oldsky.MoonTextureId,
-		["SunTextureId"] = oldsky and oldsky.SunTextureId,
-		["Time"] = lightingService.TimeOfDay,
-		["Tint"] = lightingService:FindFirstChild("ColorCorrection") ~= nil and lightingService:FindFirstChild("ColorCorrection").TintColor or Color3.fromRGB(255, 255, 255)
-	}
-	local AmbientUnload = function()
-		lightingService.Ambient = oldthemesettings["Ambient"]
-		lightingService.FogStart = oldthemesettings["FogStart"]
-		lightingService.FogEnd = oldthemesettings["FogEnd"]
-		lightingService.FogStart = oldthemesettings["FogStart"]
-		lightingService.FogColor = oldthemesettings["FogColor"]
-		lightingService.TimeOfDay = oldthemesettings["Time"]
-		lightingService.OutdoorAmbient = oldthemesettings["OutdoorAmbient"]
-		oldsky.SkyboxBk = oldthemesettings["Back"]
-		oldsky.SkyboxDn = oldthemesettings["Down"]
-		oldsky.SkyboxFt = oldthemesettings["Front"]
-		oldsky.SkyboxLf = oldthemesettings["Left"]
-		oldsky.SkyboxRt = oldthemesettings["Right"]
-		oldsky.SkyboxUp = oldthemesettings["Up"]
-		oldsky.SunAngularSize = oldthemesettings["SunSize"]
-		oldsky.MoonAngularSize = oldthemesettings["MoonSize"]
-		oldsky.StarCount = oldthemesettings["StarCount"]
-		for i,v in pairs(lightingService:GetChildren()) do
-			if v:IsA("ColorCorrection") then
-				pcall(function() v.TintColor = oldthemesettings["Tint"] end)
-			end
-		end
-	for i,v in pairs(themeobjects) do pcall(function() v:Destroy() end) end
-	end
-	local ambientfunctions = {
-		Purple = function()
-			if oldsky then
-                oldsky.SkyboxBk = "rbxassetid://8539982183"
-                oldsky.SkyboxDn = "rbxassetid://8539981943"
-                oldsky.SkyboxFt = "rbxassetid://8539981721"
-                oldsky.SkyboxLf = "rbxassetid://8539981424"
-                oldsky.SkyboxRt = "rbxassetid://8539980766"
-                oldsky.SkyboxUp = "rbxassetid://8539981085"
-				lightingService.Ambient = Color3.fromRGB(170, 0, 255)
-				oldsky.MoonAngularSize = 0
-                oldsky.SunAngularSize = 0
-                oldsky.StarCount = 3e3
-			end
-		end,
-		Galaxy = function()
-			if oldsky then
-                oldsky.SkyboxBk = "rbxassetid://159454299"
-                oldsky.SkyboxDn = "rbxassetid://159454296"
-                oldsky.SkyboxFt = "rbxassetid://159454293"
-                oldsky.SkyboxLf = "rbxassetid://159454293"
-                oldsky.SkyboxRt = "rbxassetid://159454293"
-                oldsky.SkyboxUp = "rbxassetid://159454288"
-				lightingService.FogColor = Color3.new(236, 88, 241)
-                lightingService.FogEnd = 200
-                lightingService.FogStart = 0
-				oldsky.SunAngularSize = 0
-			end
-		end,
-		BetterNight = function()
-			if oldsky then
-				oldsky.SkyboxBk = "rbxassetid://155629671"
-                oldsky.SkyboxDn = "rbxassetid://12064152"
-                oldsky.SkyboxFt = "rbxassetid://155629677"
-                oldsky.SkyboxLf = "rbxassetid://155629662"
-                oldsky.SkyboxRt = "rbxassetid://155629666"
-                oldsky.SkyboxUp = "rbxassetid://155629686"
-				lightingService.FogColor = Color3.new(0, 20, 64)
-				oldsky.SunAngularSize = 0
-			end
-		end,
-		BetterNight2 = function()
-			if oldsky then
-				oldsky.SkyboxBk = "rbxassetid://248431616"
-                oldsky.SkyboxDn = "rbxassetid://248431677"
-                oldsky.SkyboxFt = "rbxassetid://248431598"
-                oldsky.SkyboxLf = "rbxassetid://248431686"
-                oldsky.SkyboxRt = "rbxassetid://248431611"
-                oldsky.SkyboxUp = "rbxassetid://248431605"
-				oldsky.StarCount = 3000
-			end
-		end,
-		MagentaOrange = function()
-			if oldsky then
-				oldsky.SkyboxBk = "rbxassetid://566616113"
-                oldsky.SkyboxDn = "rbxassetid://566616232"
-                oldsky.SkyboxFt = "rbxassetid://566616141"
-                oldsky.SkyboxLf = "rbxassetid://566616044"
-                oldsky.SkyboxRt = "rbxassetid://566616082"
-                oldsky.SkyboxUp = "rbxassetid://566616187"
-				oldsky.StarCount = 3000
-			end
-		end,
-		Purple2 = function()
-			if oldsky then
-				oldsky.SkyboxBk = "rbxassetid://8107841671"
-				oldsky.SkyboxDn = "rbxassetid://6444884785"
-				oldsky.SkyboxFt = "rbxassetid://8107841671"
-				oldsky.SkyboxLf = "rbxassetid://8107841671"
-				oldsky.SkyboxRt = "rbxassetid://8107841671"
-				oldsky.SkyboxUp = "rbxassetid://8107849791"
-				oldsky.SunTextureId = "rbxassetid://6196665106"
-				oldsky.MoonTextureId = "rbxassetid://6444320592"
-				oldsky.MoonAngularSize = 0
-			end
-		end,
-		Galaxy2 = function()
-			if oldsky then
-				oldsky.SkyboxBk = "rbxassetid://14164368678"
-				oldsky.SkyboxDn = "rbxassetid://14164386126"
-				oldsky.SkyboxFt = "rbxassetid://14164389230"
-				oldsky.SkyboxLf = "rbxassetid://14164398493"
-				oldsky.SkyboxRt = "rbxassetid://14164402782"
-				oldsky.SkyboxUp = "rbxassetid://14164405298"
-				oldsky.SunTextureId = "rbxassetid://8281961896"
-				oldsky.MoonTextureId = "rbxassetid://6444320592"
-				oldsky.SunAngularSize = 0
-				oldsky.MoonAngularSize = 0
-				lightingService.OutdoorAmbient = Color3.fromRGB(172, 18, 255)
-			end
-		end,
-		Pink = function()
-			if oldsky then
-		    oldsky.SkyboxBk = "rbxassetid://271042516"
-			oldsky.SkyboxDn = "rbxassetid://271077243"
-			oldsky.SkyboxFt = "rbxassetid://271042556"
-			oldsky.SkyboxLf = "rbxassetid://271042310"
-			oldsky.SkyboxRt = "rbxassetid://271042467"
-			oldsky.SkyboxUp = "rbxassetid://271077958"
-			pcall(function() lightingService.ColorCorrection.TintColor = Color3.fromRGB(234, 208, 255) end)
-		end
-	end,
-	Purple3 = function()
-		if oldsky then
-			oldsky.SkyboxBk = "rbxassetid://433274085"
-			oldsky.SkyboxDn = "rbxassetid://433274194"
-			oldsky.SkyboxFt = "rbxassetid://433274131"
-			oldsky.SkyboxLf = "rbxassetid://433274370"
-			oldsky.SkyboxRt = "rbxassetid://433274429"
-			oldsky.SkyboxUp = "rbxassetid://433274285"
-            lightingService.FogColor = Color3.new(170, 0, 255)
-            lightingService.FogEnd = 200
-            lightingService.FogStart = 0
-		end
-	end,
-	DarkishPink = function()
-		if oldsky then
-			oldsky.SkyboxBk = "rbxassetid://570555736"
-			oldsky.SkyboxDn = "rbxassetid://570555964"
-			oldsky.SkyboxFt = "rbxassetid://570555800"
-			oldsky.SkyboxLf = "rbxassetid://570555840"
-			oldsky.SkyboxRt = "rbxassetid://570555882"
-			oldsky.SkyboxUp = "rbxassetid://570555929"
-			pcall(function() lightingService.ColorCorrection.TintColor = Color3.fromRGB(255, 179, 255) end)
-		end
-	end,
-	Space = function()
-		if oldsky then
-		oldsky.MoonAngularSize = 0
-		oldsky.SunAngularSize = 0
-		oldsky.SkyboxBk = "rbxassetid://166509999"
-		oldsky.SkyboxDn = "rbxassetid://166510057"
-		oldsky.SkyboxFt = "rbxassetid://166510116"
-		oldsky.SkyboxLf = "rbxassetid://166510092"
-		oldsky.SkyboxRt = "rbxassetid://166510131"
-		oldsky.SkyboxUp = "rbxassetid://166510114"
-		end
-	end,
-	Nebula = function()
-		if oldsky then
-		oldsky.MoonAngularSize = 0
-		oldsky.SunAngularSize = 0
-		oldsky.SkyboxBk = "rbxassetid://5084575798"
-		oldsky.SkyboxDn = "rbxassetid://5084575916"
-		oldsky.SkyboxFt = "rbxassetid://5103949679"
-		oldsky.SkyboxLf = "rbxassetid://5103948542"
-		oldsky.SkyboxRt = "rbxassetid://5103948784"
-		oldsky.SkyboxUp = "rbxassetid://5084576400"
-		lightingService.Ambient = Color3.fromRGB(170, 0, 255)
-		end
-	end,
-	PurpleNight = function()
-		if oldsky then
-		oldsky.MoonAngularSize = 0
-		oldsky.SunAngularSize = 0
-		oldsky.SkyboxBk = "rbxassetid://5260808177"
-		oldsky.SkyboxDn = "rbxassetid://5260653793"
-		oldsky.SkyboxFt = "rbxassetid://5260817288"
-		oldsky.SkyboxLf = "rbxassetid://5260800833"
-		oldsky.SkyboxRt = "rbxassetid://5260824661"
-		oldsky.SkyboxUp = "rbxassetid://5084576400"
-		lightingService.Ambient = Color3.fromRGB(170, 0, 255)
-		end
-	end,
-	Aesthetic = function()
-		if oldsky then
-		oldsky.MoonAngularSize = 0
-		oldsky.SunAngularSize = 0
-		oldsky.SkyboxBk = "rbxassetid://1417494030"
-		oldsky.SkyboxDn = "rbxassetid://1417494146"
-		oldsky.SkyboxFt = "rbxassetid://1417494253"
-		oldsky.SkyboxLf = "rbxassetid://1417494402"
-		oldsky.SkyboxRt = "rbxassetid://1417494499"
-		oldsky.SkyboxUp = "rbxassetid://1417494643"
-		end
-	end,
-	Aesthetic2 = function()
-		if oldsky then
-		oldsky.MoonAngularSize = 0
-		oldsky.SunAngularSize = 0
-		oldsky.SkyboxBk = "rbxassetid://600830446"
-		oldsky.SkyboxDn = "rbxassetid://600831635"
-		oldsky.SkyboxFt = "rbxassetid://600832720"
-		oldsky.SkyboxLf = "rbxassetid://600886090"
-		oldsky.SkyboxRt = "rbxassetid://600833862"
-		oldsky.SkyboxUp = "rbxassetid://600835177"
-		end
-	end,
-	Pastel = function()
-		if oldsky then
-		oldsky.SunAngularSize = 0
-		oldsky.MoonAngularSize = 0
-		oldsky.SkyboxBk = "rbxassetid://2128458653"
-		oldsky.SkyboxDn = "rbxassetid://2128462480"
-		oldsky.SkyboxFt = "rbxassetid://2128458653"
-		oldsky.SkyboxLf = "rbxassetid://2128462027"
-		oldsky.SkyboxRt = "rbxassetid://2128462027"
-		oldsky.SkyboxUp = "rbxassetid://2128462236"
-		end
-	end,
-	PurpleClouds = function()
-		if oldsky then
-		oldsky.SkyboxBk = "rbxassetid://570557514"
-		oldsky.SkyboxDn = "rbxassetid://570557775"
-		oldsky.SkyboxFt = "rbxassetid://570557559"
-		oldsky.SkyboxLf = "rbxassetid://570557620"
-		oldsky.SkyboxRt = "rbxassetid://570557672"
-		oldsky.SkyboxUp = "rbxassetid://570557727"
-		lightingService.Ambient = Color3.fromRGB(172, 18, 255)
-		end
-	end,
-	BetterSky = function()
-		if oldsky then
-		oldsky.SkyboxBk = "rbxassetid://591058823"
-		oldsky.SkyboxDn = "rbxassetid://591059876"
-		oldsky.SkyboxFt = "rbxassetid://591058104"
-		oldsky.SkyboxLf = "rbxassetid://591057861"
-		oldsky.SkyboxRt = "rbxassetid://591057625"
-		oldsky.SkyboxUp = "rbxassetid://591059642"
-		end
-	end,
-	BetterNight3 = function()
-		if oldsky then
-		oldsky.MoonTextureId = "rbxassetid://1075087760"
-		oldsky.SkyboxBk = "rbxassetid://2670643994"
-		oldsky.SkyboxDn = "rbxassetid://2670643365"
-		oldsky.SkyboxFt = "rbxassetid://2670643214"
-		oldsky.SkyboxLf = "rbxassetid://2670643070"
-		oldsky.SkyboxRt = "rbxassetid://2670644173"
-		oldsky.SkyboxUp = "rbxassetid://2670644331"
-		oldsky.MoonAngularSize = 1.5
-		oldsky.StarCount = 500
-        pcall(function()
-		local MoonColorCorrection = Instance.new("ColorCorrection")
-		table.insert(themeobjects, MoonColorCorrection)
-		MoonColorCorrection.Enabled = true
-		MoonColorCorrection.TintColor = Color3.fromRGB(189, 179, 178)
-		MoonColorCorrection.Parent = workspace
-		local MoonBlur = Instance.new("BlurEffect")
-		table.insert(themeobjects, MoonBlur)
-		MoonBlur.Enabled = true
-		MoonBlur.Size = 9
-		MoonBlur.Parent = workspace
-		local MoonBloom = Instance.new("BloomEffect")
-		table.insert(themeobjects, MoonBloom)
-		MoonBloom.Enabled = true
-		MoonBloom.Intensity = 100
-		MoonBloom.Size = 56
-		MoonBloom.Threshold = 5
-		MoonBloom.Parent = workspace
-        end)
-		end
-	end,
-	Orange = function()
-		if oldsky then
-		oldsky.SkyboxBk = "rbxassetid://150939022"
-		oldsky.SkyboxDn = "rbxassetid://150939038"
-		oldsky.SkyboxFt = "rbxassetid://150939047"
-		oldsky.SkyboxLf = "rbxassetid://150939056"
-		oldsky.SkyboxRt = "rbxassetid://150939063"
-		oldsky.SkyboxUp = "rbxassetid://150939082"
-		end
-	end,
-	DarkMountains = function()
-		if oldsky then
-			oldsky.SkyboxBk = "rbxassetid://5098814730"
-			oldsky.SkyboxDn = "rbxassetid://5098815227"
-			oldsky.SkyboxFt = "rbxassetid://5098815653"
-			oldsky.SkyboxLf = "rbxassetid://5098816155"
-			oldsky.SkyboxRt = "rbxassetid://5098820352"
-			oldsky.SkyboxUp = "rbxassetid://5098819127"
-		end
-	end,
-	FlamingSunset = function()
-		if oldsky then
-		oldsky.SkyboxBk = "rbxassetid://415688378"
-		oldsky.SkyboxDn = "rbxassetid://415688193"
-		oldsky.SkyboxFt = "rbxassetid://415688242"
-		oldsky.SkyboxLf = "rbxassetid://415688310"
-		oldsky.SkyboxRt = "rbxassetid://415688274"
-		oldsky.SkyboxUp = "rbxassetid://415688354"
-		end
-	end,
-	NewYork = function()
-		if oldsky then
-		oldsky.SkyboxBk = "rbxassetid://11333973069"
-		oldsky.SkyboxDn = "rbxassetid://11333969768"
-		oldsky.SkyboxFt = "rbxassetid://11333964303"
-		oldsky.SkyboxLf = "rbxassetid://11333971332"
-		oldsky.SkyboxRt = "rbxassetid://11333982864"
-		oldsky.SkyboxUp = "rbxassetid://11333967970"
-		oldsky.SunAngularSize = 0
-		end
-	end,
-	Aesthetic3 = function()
-		if oldsky then
-		oldsky.SkyboxBk = "rbxassetid://151165214"
-		oldsky.SkyboxDn = "rbxassetid://151165197"
-		oldsky.SkyboxFt = "rbxassetid://151165224"
-		oldsky.SkyboxLf = "rbxassetid://151165191"
-		oldsky.SkyboxRt = "rbxassetid://151165206"
-		oldsky.SkyboxUp = "rbxassetid://151165227"
-		end
-	end,
-	FakeClouds = function()
-		if oldsky then
-		oldsky.SkyboxBk = "rbxassetid://8496892810"
-		oldsky.SkyboxDn = "rbxassetid://8496896250"
-		oldsky.SkyboxFt = "rbxassetid://8496892810"
-		oldsky.SkyboxLf = "rbxassetid://8496892810"
-		oldsky.SkyboxRt = "rbxassetid://8496892810"
-		oldsky.SkyboxUp = "rbxassetid://8496897504"
-		oldsky.SunAngularSize = 0
-		end
-	end,
-	LunarNight = function()
-		if oldsky then
-			oldsky.SkyboxBk = "rbxassetid://187713366"
-			oldsky.SkyboxDn = "rbxassetid://187712428"
-			oldsky.SkyboxFt = "rbxassetid://187712836"
-			oldsky.SkyboxLf = "rbxassetid://187713755"
-			oldsky.SkyboxRt = "rbxassetid://187714525"
-			oldsky.SkyboxUp = "rbxassetid://187712111"
-			oldsky.SunAngularSize = 0
-			oldsky.StarCount = 0
-		end
-	end,
-	PitchDark = function()
-		oldsky.StarCount = 0
-		lightingService.TimeOfDay = "00:00:00"
-	end
-	}
-	local lighting = {Enabled = false}
-	local ambient = {Value = "BetterNight"}
-	lighting = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
-		Name = "LightingTheme",
-		Function = function(callback)
-			if callback then
-				task.spawn(function()
-					pcall(ambientfunctions[ambient.Value])
-				end)
-			else
-				local success = pcall(AmbientUnload)
-				if success and isEnabled("RichShader") then 
-					GuiLibrary.ObjectsThatCanBeSaved.RichShaderOptionsButton.Api.ToggleButton(false)
-					GuiLibrary.ObjectsThatCanBeSaved.RichShaderOptionsButton.Api.ToggleButton(false)
-				end
-			end
-		end,
-		HoverText = "custom game themes you could call this.",
-		ExtraText = function() 
-			if GuiLibrary.ObjectsThatCanBeSaved["Text GUIAlternate TextToggle"]["Api"].Enabled then 
-				return alternatelist[table.find(ambient.List, ambient.Value)]
-			end
-			return ambient.Value 
-		end
-	})
-	ambient = lighting.CreateDropdown({
-		Name = "Mode",
-		List = dumptable(ambientfunctions, 1),
-		Function = function(v) if lighting.Enabled then lighting.ToggleButton(false) lighting.ToggleButton(false) end end
-	})
-end)
-
-runFunction(function()
-	pcall(GuiLibrary.RemoveObject, "ChatCustomizationOptionsButton")
-	local ChatCustomization = {Enabled = false}
-	local oldchatbackgroundcolor = Color3.fromRGB(25, 27, 29)
-	local oldtextsize = 14
-	local chattextcolor = Color3.fromRGB(255, 255, 255)
-	local oldhorizontalpos = Enum.HorizontalAlignment.Left
-	local oldverticalpos = Enum.VerticalAlignment.Top
-	local chatframe
-	local ChatCustomMainColorToggle = {Enabled = false}
-	local ChatCustomMainColor = {Hue = 0, Sat = 0, Value = 0}
-	local ChatTextSizeToggle = {Enabled = false}
-	local ChatTextSize = {Value = 14}
-	local ChatHorizontalPosition = {Value = oldhorizontalpos}
-	local ChatVerticalPosition = {Value = oldverticalpos}
-	local ChatTextColorToggle = {Enabled = false}
-	local ChatTextColor = {Hue = 0, Sat = 0, Value = 0}
-	local oldheightscale = 0.85
-	local oldwidthscale = 1
-	local ChatHeightScale = {Value = oldheightscale}
-	local ChatWidthScale = {Value = oldwidthscale}
-	local oldsettings = 0
-	local oldsettingsdone = false
-	ChatCustomization = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-		Name = "ChatCustomization",
-		HoverText = "Customize the chat frame.",
-		Function = function(callback)
-			if callback then
-				task.spawn(function()
-				  pcall(function()
-					chatframe = textChatService.ChatWindowConfiguration
-					if not oldsettingsdone then
-					    local suc, res
-						suc, res = pcall(function() return chatframe.BackgroundColor3 end)
-						if suc then oldchatbackgroundcolor = res end
-						suc, res = pcall(function() return chatframe.TextColor3 end)
-						if suc then chattextcolor = res end
-						suc, res = pcall(function() return chatframe.TextSize end)
-						if suc then oldtextsize = res end
-						suc, res = pcall(function() return chatframe.HorizontalAlignment end)
-						if suc then oldhorizontalpos = res end
-						suc, res = pcall(function() return chatframe.VerticalAlignment end)
-						if suc then oldverticalpos = res end
-						suc, res = pcall(function() return chatframe.HeightScale end)
-						if suc then oldheightscale = res end
-						suc, res = pcall(function() return chatframe.WidthScale end)
-						if suc then oldwidthscale = res end
-						oldsettingsdone = true
-					end
-					chatframe.BackgroundColor3 = ChatCustomMainColorToggle.Enabled and Color3.fromHSV(ChatCustomMainColor.Hue, ChatCustomMainColor.Sat, ChatCustomMainColor.Value) or oldchatbackgroundcolor
-					chatframe.TextSize = ChatTextSizeToggle.Enabled and ChatTextSize.Value or oldtextsize
-					chatframe.HorizontalAlignment = Enum.HorizontalAlignment[ChatHorizontalPosition.Value]
-					chatframe.VerticalAlignment = Enum.VerticalAlignment[ChatVerticalPosition.Value]
-					chatframe.TextColor3 = ChatTextColorToggle.Enabled and Color3.fromHSV(ChatTextColor.Hue, ChatTextColor.Sat, ChatTextColor.Value) or chattextcolor
-					chatframe.WidthScale = ChatWidthScale.Value
-					chatframe.HeightScale = ChatHeightScale.Value
-				end)
-			end)
-		    else
-				pcall(function() chatframe.BackgroundColor3 = oldchatbackgroundcolor end)
-				pcall(function() chatframe.TextColor3 = chattextcolor end)
-				pcall(function() chatframe.TextSize = oldtextsize end)
-				pcall(function() chatframe.HorizontalAlignment = oldhorizontalpos end)
-				pcall(function() chatframe.VerticalAlignment = oldverticalpos end)
-				pcall(function() chatframe.TextSize = oldtextsize end)
-				pcall(function() chatframe.HeightScale = oldheightscale end)
-				pcall(function() chatframe.WidthScale = oldwidthscale end)
-			end
-		end
-	})
-	ChatCustomMainColorToggle = ChatCustomization.CreateToggle({
-		Name = "Custom Background Color",
-		Function = function(callback) 
-		pcall(function() ChatCustomMainColor.Object.Visible = callback end)
-		if ChatCustomization.Enabled then
-			ChatCustomization.ToggleButton(false)
-			ChatCustomization.ToggleButton(false)
-		end
-	end
-	})
-	ChatCustomMainColor = ChatCustomization.CreateColorSlider({
-		Name = "Background Color",
-		Function = function(h, s, v)
-			if ChatCustomMainColorToggle.Enabled and ChatCustomization.Enabled then
-				pcall(function() chatframe.BackgroundColor3 = Color3.fromHSV(h, s, v) end)
-			end
-		end
-	})
-	ChatTextSizeToggle = ChatCustomization.CreateToggle({
-		Name = "Custom Text Size",
-		Function = function(callback) 
-		pcall(function() ChatTextSize.Object.Visible = callback end)
-		if ChatCustomization.Enabled then
-			ChatCustomization.ToggleButton(false)
-			ChatCustomization.ToggleButton(false)
-		end
-	end
-	})
-	ChatTextSize = ChatCustomization.CreateSlider({
-		Name = "Text Size",
-		Min = 5,
-		Max = 30,
-		Function = function(callback) 
-		if ChatTextSizeToggle.Enabled and ChatCustomization.Enabled then
-			pcall(function() chatframe.TextSize = callback end)
-		end
-	   end
-	})
-	ChatTextColorToggle = ChatCustomization.CreateToggle({
-		Name = "Custom Text Color",
-		Function = function(callback) 
-		pcall(function() ChatTextColor.Object.Visible = callback end)
-		if ChatCustomization.Enabled then
-			ChatCustomization.ToggleButton(false)
-			ChatCustomization.ToggleButton(false)
-		end
-	end
-  })
-  ChatTextColor = ChatCustomization.CreateColorSlider({
-	Name = "Text Color",
-	Function = function(h, s, v)
-		if ChatTextColorToggle.Enabled and ChatCustomization.Enabled then
-			pcall(function() chatframe.TextColor3 = Color3.fromHSV(h, s, v) end)
-		end
-	end
-})
-	ChatHorizontalPosition = ChatCustomization.CreateDropdown({
-		Name = "Horizontal",
-		List = GetEnumItems("HorizontalAlignment"),
-		Function = function()
-			if ChatCustomization.Enabled then
-			ChatCustomization.ToggleButton(false)
-			ChatCustomization.ToggleButton(false)
-		end
-		end
-    })
-	ChatVerticalPosition = ChatCustomization.CreateDropdown({
-		Name = "Vertical",
-		List = GetEnumItems("VerticalAlignment"),
-		Function = function()
-			if ChatCustomization.Enabled then
-			ChatCustomization.ToggleButton(false)
-			ChatCustomization.ToggleButton(false)
-		end
-		end
-    })
-	ChatHeightScale = ChatCustomization.CreateSlider({
-		Name = "Height Scale",
-		Min = 1,
-		Max = 100,
-		Default = oldheightscale,
-		Function = function(callback) 
-			if ChatCustomization.Enabled then
-			pcall(function() chatframe.HeightScale = callback end) 
-			end
-		end
-	})
-	ChatCustomMainColor.Object.Visible = ChatCustomMainColorToggle.Enabled
-	ChatTextColor.Object.Visible = ChatTextColorToggle.Enabled
-	ChatTextSizeToggle.Object.Visible = ChatTextSizeToggle.Enabled
-end)
-        
-            
 		runFunction(function()
             local ConfettiExploit = {Enabled = false}
 			local confettilobbycheck = {Value = false}
@@ -7039,7 +6412,7 @@ end)
 									if breathelobbycheck.Enabled and bedwarsStore.matchState == 0 then 
 										return 
 									end
-									local success = pcall(function() bedwars.NetManaged.DragonBreath:FireServer({player = lplr}) end)
+									local success = pcall(function() bedwars.ClientHandler:Get("DragonBreath"):SendToServer({player = lplr}) end)
 									breatheTick = success and tick() + breathespeed.Value or breatheTick
 								end))
                             end)
@@ -7060,161 +6433,7 @@ end)
 				})
 			end)
         
-				runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "ChatBubbleOptionsButton")
-                local BubbleChat = {Enabled = false}
-				local BubbleChatEnabled = {Enabled = true}
-				local BubbleColorToggle = {Enabled = true}
-				local BubbleTextSizeToggle = {Enabled = false}
-				local BubbleDurationToggle = {Enabled = false}
-				local BubbleTextColorToggle = {Enabled = false}
-				local BubbleTextSize = {Value = 16}
-				local BubbleColor = {Hue = 0, Sat = 0, Value = 0}
-				local BubbleTextColor = {Hue = 0, Sat = 0, Value = 0}
-				local oldbubblesettings = {
-					Color = nil,
-					TextSize = nil,
-					Duration = nil,
-					TextColor = nil
-				}
-                BubbleChat = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-                    Name = "ChatBubble",
-					Approved = true,
-                    Function = function(callback)
-                        if callback then
-                            task.spawn(function()
-								if oldbubblesettings.Color == nil then
-								oldbubblesettings.Color = textChatService.BubbleChatConfiguration.BackgroundColor3
-								end
-								if oldbubblesettings.TextSize == nil then
-									oldbubblesettings.TextSize = textChatService.BubbleChatConfiguration.TextSize
-								end
-								if oldbubblesettings.Duration == nil then
-									oldbubblesettings.Duration = textChatService.BubbleChatConfiguration.BubbleDuration
-								end
-								if oldbubblesettings.TextColor == nil then
-									oldbubblesettings.TextColor = textChatService.BubbleChatConfiguration.TextColor3
-								end
-								if BubbleColorToggle.Enabled then
-								textChatService.BubbleChatConfiguration.BackgroundColor3 = Color3.fromHSV(BubbleColor.Hue, BubbleColor.Sat, BubbleColor.Value)
-								end
-								if BubbleTextSizeToggle.Enabled then
-								textChatService.BubbleChatConfiguration.TextSize = BubbleTextSize.Value
-								end
-								if BubbleDurationToggle.Enabled then
-								textChatService.BubbleChatConfiguration.BubbleDuration = BubbleDuration.Value
-								end
-								if BubbleTextColorToggle.Enabled then
-									textChatService.BubbleChatConfiguration.TextColor3 = Color3.fromHSV(BubbleTextColor.Hue, BubbleTextColor.Sat, BubbleTextColor.Value)
-								end
-                            end)
-                        else
-							textChatService.BubbleChatConfiguration.BackgroundColor3 = oldbubblesettings.Color
-							textChatService.BubbleChatConfiguration.TextSize = oldbubblesettings.TextSize
-							textChatService.BubbleChatConfiguration.BubbleDuration = oldbubblesettings.Duration
-							textChatService.BubbleChatConfiguration.TextColor3 = oldbubblesettings.TextColor
-                        end
-                    end,
-                    HoverText = "Customizable the bubble chat experience."
-                })
-				BubbleColorToggle = BubbleChat.CreateToggle({
-					Name = "Background Color",
-					HoverText = "apply a custom background color\nto chat bubbles.",
-					Default = true,
-					Function = function(callback)
-						if BubbleChat.Enabled then
-							BubbleChat.ToggleButton(false)
-							BubbleChat.ToggleButton(false)
-						end
-					 pcall(function() BubbleColor.Object.Visible = callback end) 
-					end
-				})
-				BubbleTextSizeToggle = BubbleChat.CreateToggle({
-					Name = "Bubble Text Size",
-					Function = function(callback)
-						if BubbleChat.Enabled then
-							BubbleChat.ToggleButton(false)
-							BubbleChat.ToggleButton(false)
-						end 
-						pcall(function() BubbleTextSize.Object.Visible = callback end) 
-					end
-				})
-				BubbleTextColorToggle = BubbleChat.CreateToggle({
-					Name = "Bubble Text Color",
-					Function = function(callback) 
-						if BubbleChat.Enabled then
-							BubbleChat.ToggleButton(false)
-							BubbleChat.ToggleButton(false)
-						end
-					pcall(function() BubbleTextColor.Object.Visible = callback end) 
-				    end
-				})
-				BubbleDurationToggle = BubbleChat.CreateToggle({
-					Name = "Bubble Duration",
-					Function = function(callback) 
-						if BubbleChat.Enabled then
-						BubbleChat.ToggleButton(false)
-						BubbleChat.ToggleButton(false)
-					end
-					pcall(function() BubbleDuration.Object.Visible = callback end) 
-				end
-				})
-				BubbleDuration = BubbleChat.CreateSlider({
-					Name = "Duration",
-					Min = 10,
-					Max = 60,
-					Function = function(val) 
-					if BubbleChat.Enabled and BubbleDurationToggle.Enabled then
-						textChatService.BubbleChatConfiguration.BubbleDuration = val
-					end
-				end
-				})
-				BubbleTextSize = BubbleChat.CreateSlider({
-					Name = "Text Size",
-					Min = 15,
-					Max = 30,
-					Function = function(val) 
-					if BubbleChat.Enabled and BubbleTextSizeToggle.Enabled then
-						textChatService.BubbleChatConfiguration.TextSize = val
-					end
-				end
-				})
-                BubbleColor = BubbleChat.CreateColorSlider({
-                    Name = "Bubble Color",
-                    Function = function(h, s, v)
-                        if BubbleChat.Enabled and BubbleColorToggle.Enabled then
-							textChatService.BubbleChatConfiguration.BackgroundColor3 = Color3.fromHSV(h, s, v)
-                        end
-                    end
-                })
-				BubbleTextColor = BubbleChat.CreateColorSlider({
-                    Name = "Text Color",
-                    Function = function(h, s, v)
-                        if BubbleChat.Enabled and BubbleTextColorToggle.Enabled then
-							textChatService.BubbleChatConfiguration.TextColor3 = Color3.fromHSV(h, s, v)
-                        end
-                    end
-                })
-				BubbleColor.Object.Visible = BubbleColorToggle.Enabled
-				BubbleTextSize.Object.Visible = BubbleTextSizeToggle.Enabled
-				BubbleDuration.Object.Visible = BubbleDurationToggle.Enabled
-				BubbleTextColor.Object.Visible = BubbleTextColorToggle.Enabled
-			end)
-    
-				--[[runFunction(function()
-                local playerlist = {Enabled = false}
-                playerlist = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-                    Name = "OldPlayerList",
-					Approved = true,
-                    Function = function(callback)
-                            task.spawn(function()
-                                game.StarterGui:SetCoreGuiEnabled("PlayerList",  callback)
-                            end)
-                    end,
-                    HoverText = "brings back the old roblox playerlist"
-                })
-			end)]]
-
+	
 			runFunction(function()
                 pcall(GuiLibrary.RemoveObject, "PingDetectorOptionsButton")
 				local RegionDetector = {Enabled = false}
@@ -7349,271 +6568,6 @@ end)
 			end
 		end)
 
-
-			runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "AnimationChangerOptionsButton")
-                local AnimationChanger = {Enabled = false}
-				local AnimFreeze = {Enabled = false}
-				local AnimRun = {Value = "Robot"}
-				local AnimWalk = {Value = "Robot"}
-				local AnimJump = {Value = "Robot"}
-				local AnimFall = {Value = "Robot"}
-				local AnimIdle = {Value = "Robot"}
-				local AnimIdleB = {Value = "Robot"}
-				local Animate
-				local oldanimations = {}
-				local RunAnimations = {}
-				local WalkAnimations = {}
-				local FallAnimations = {}
-				local JumpAnimations = {}
-				local IdleAnimations = {}
-				local IdleAnimationsB = {}
-				local AnimList = {
-					RunAnim = {
-					["Cartoony"] = "http://www.roblox.com/asset/?id=10921082452",
-					["Levitation"] = "http://www.roblox.com/asset/?id=10921135644",
-					["Robot"] = "http://www.roblox.com/asset/?id=10921250460",
-					["Stylish"] = "http://www.roblox.com/asset/?id=10921276116",
-					["Superhero"] = "http://www.roblox.com/asset/?id=10921291831",
-					["Zombie"] = "http://www.roblox.com/asset/?id=616163682",
-					["Ninja"] = "http://www.roblox.com/asset/?id=10921157929",
-					["Knight"] = "http://www.roblox.com/asset/?id=10921121197",
-					["Mage"] = "http://www.roblox.com/asset/?id=10921148209",
-					["Pirate"] = "http://www.roblox.com/asset/?id=750783738",
-					["Elder"] = "http://www.roblox.com/asset/?id=10921104374",
-					["Toy"] = "http://www.roblox.com/asset/?id=10921306285",
-					["Bubbly"] = "http://www.roblox.com/asset/?id=10921057244",
-					["Astronaut"] = "http://www.roblox.com/asset/?id=10921039308",
-					["Vampire"] = "http://www.roblox.com/asset/?id=10921320299",
-					["Werewolf"] = "http://www.roblox.com/asset/?id=10921336997",
-					["Rthro"] = "http://www.roblox.com/asset/?id=10921261968",
-					["Oldschool"] = "http://www.roblox.com/asset/?id=10921240218",
-					["Toilet"] = "http://www.roblox.com/asset/?id=4417979645",
-					["Rthro Heavy Run"] = "http://www.roblox.com/asset/?id=3236836670"
-				},
-				WalkAnim = {
-					["Cartoony"] = "http://www.roblox.com/asset/?id=10921082452",
-					["Levitation"] = "http://www.roblox.com/asset/?id=10921140719",
-					["Robot"] = "http://www.roblox.com/asset/?id=10921255446",
-					["Stylish"] = "http://www.roblox.com/asset/?id=10921283326",
-					["Superhero"] = "http://www.roblox.com/asset/?id=10921298616",
-					["Zombie"] = "http://www.roblox.com/asset/?id=10921355261",
-					["Ninja"] = "http://www.roblox.com/asset/?id=10921162768",
-					["Knight"] = "http://www.roblox.com/asset/?id=10921127095",
-					["Mage"] = "http://www.roblox.com/asset/?id=10921152678",
-					["Pirate"] = "http://www.roblox.com/asset/?id=750785693",
-					["Elder"] = "http://www.roblox.com/asset/?id=10921111375",
-					["Toy"] = "http://www.roblox.com/asset/?id=10921312010",
-					["Bubbly"] = "http://www.roblox.com/asset/?id=10980888364",
-					["Astronaut"] = "http://www.roblox.com/asset/?id=10921046031",
-					["Vampire"] = "http://www.roblox.com/asset/?id=10921326949",
-					["Werewolf"] = "http://www.roblox.com/asset/?id=10921342074",
-					["Rthro"] = "http://www.roblox.com/asset/?id=10921269718",
-					["Oldschool"] = "http://www.roblox.com/asset/?id=10921244891",
-					["Ud'zal"] = "http://www.roblox.com/asset/?id=3303162967"
-				},
-				FallAnim = {
-					["Cartoony"] = "http://www.roblox.com/asset/?id=10921077030",
-					["Levitation"] = "http://www.roblox.com/asset/?id=10921136539",
-					["Robot"] = "http://www.roblox.com/asset/?id=10921251156",
-					["Stylish"] = "http://www.roblox.com/asset/?id=10921278648",
-					["Superhero"] = "http://www.roblox.com/asset/?id=10921293373",
-					["Zombie"] = "http://www.roblox.com/asset/?id=10921350320",
-					["Ninja"] = "http://www.roblox.com/asset/?id=10921159222",
-					["Knight"] = "http://www.roblox.com/asset/?id=10921122579",
-					["Mage"] = "http://www.roblox.com/asset/?id=10921148939",
-					["Pirate"] = "http://www.roblox.com/asset/?id=750780242",
-					["Elder"] = "http://www.roblox.com/asset/?id=10921105765",
-					["Toy"] = "http://www.roblox.com/asset/?id=10921307241",
-					["Bubbly"] = "http://www.roblox.com/asset/?id=10921061530",
-					["Astronaut"] = "http://www.roblox.com/asset/?id=10921040576",
-					["Vampire"] = "http://www.roblox.com/asset/?id=10921321317",
-					["Werewolf"] = "http://www.roblox.com/asset/?id=10921337907",
-					["Rthro"] = "http://www.roblox.com/asset/?id=10921262864",
-					["Oldschool"] = "http://www.roblox.com/asset/?id=10921241244"
-				},
-				JumpAnim = {
-					["Cartoony"] = "http://www.roblox.com/asset/?id=10921078135",
-					["Levitation"] = "http://www.roblox.com/asset/?id=10921137402",
-					["Robot"] = "http://www.roblox.com/asset/?id=10921252123",
-					["Stylish"] = "http://www.roblox.com/asset/?id=10921279832",
-					["Superhero"] = "http://www.roblox.com/asset/?id=10921294559",
-					["Zombie"] = "http://www.roblox.com/asset/?id=10921351278",
-					["Ninja"] = "http://www.roblox.com/asset/?id=10921160088",
-					["Knight"] = "http://www.roblox.com/asset/?id=10921123517",
-					["Mage"] = "http://www.roblox.com/asset/?id=10921149743",
-					["Pirate"] = "http://www.roblox.com/asset/?id=750782230",
-					["Elder"] = "http://www.roblox.com/asset/?id=10921107367",
-					["Toy"] = "http://www.roblox.com/asset/?id=10921308158",
-					["Bubbly"] = "http://www.roblox.com/asset/?id=10921062673",
-					["Astronaut"] = "http://www.roblox.com/asset/?id=10921042494",
-					["Vampire"] = "http://www.roblox.com/asset/?id=10921322186",
-					["Werewolf"] = "http://www.roblox.com/asset/?id=1083218792",
-					["Rthro"] = "http://www.roblox.com/asset/?id=10921263860",
-					["Oldschool"] = "http://www.roblox.com/asset/?id=10921242013",
-				},
-				Animation1 = {
-					["Cartoony"] = "http://www.roblox.com/asset/?id=10921071918",
-					["Levitation"] = "http://www.roblox.com/asset/?id=10921132962",
-					["Robot"] = "http://www.roblox.com/asset/?id=10921248039",
-					["Stylish"] = "http://www.roblox.com/asset/?id=10921272275",
-					["Superhero"] = "http://www.roblox.com/asset/?id=10921288909",
-					["Zombie"] = "http://www.roblox.com/asset/?id=10921344533",
-					["Ninja"] = "http://www.roblox.com/asset/?id=10921155160",
-					["Knight"] = "http://www.roblox.com/asset/?id=10921117521",
-					["Mage"] = "http://www.roblox.com/asset/?id=10921144709",
-					["Pirate"] = "http://www.roblox.com/asset/?id=750781874",
-					["Elder"] = "http://www.roblox.com/asset/?id=10921101664",
-					["Toy"] = "http://www.roblox.com/asset/?id=10921301576",
-					["Bubbly"] = "http://www.roblox.com/asset/?id=10921054344",
-					["Astronaut"] = "http://www.roblox.com/asset/?id=10921034824",
-					["Vampire"] = "http://www.roblox.com/asset/?id=10921315373",
-					["Werewolf"] = "http://www.roblox.com/asset/?id=10921330408",
-					["Rthro"] = "http://www.roblox.com/asset/?id=10921258489",
-					["Oldschool"] = "http://www.roblox.com/asset/?id=10921230744",
-					["Toilet"] = "http://www.roblox.com/asset/?id=4417977954",
-					["Ud'zal"] = "http://www.roblox.com/asset/?id=3303162274"
-				},
-				Animation2 = {
-					["Cartoony"] = "http://www.roblox.com/asset/?id=10921072875",
-					["Levitation"] = "http://www.roblox.com/asset/?id=10921133721",
-					["Robot"] = "http://www.roblox.com/asset/?id=10921248831",
-					["Stylish"] = "http://www.roblox.com/asset/?id=10921273958",
-					["Superhero"] = "http://www.roblox.com/asset/?id=10921290167",
-					["Zombie"] = "http://www.roblox.com/asset/?id=10921345304",
-					["Ninja"] = "http://www.roblox.com/asset/?id=10921155867",
-					["Knight"] = "http://www.roblox.com/asset/?id=10921118894",
-					["Mage"] = "http://www.roblox.com/asset/?id=10921145797",
-					["Pirate"] = "http://www.roblox.com/asset/?id=750782770",
-					["Elder"] = "http://www.roblox.com/asset/?id=10921102574",
-					["Toy"] = "http://www.roblox.com/asset/?id=10921302207",
-					["Bubbly"] = "http://www.roblox.com/asset/?id=10921055107",
-					["Astronaut"] = "http://www.roblox.com/asset/?id=10921036806",
-					["Vampire"] = "http://www.roblox.com/asset/?id=10921316709",
-					["Werewolf"] = "http://www.roblox.com/asset/?id=10921333667",
-					["Rthro"] = "http://www.roblox.com/asset/?id=10921259953",
-					["Oldschool"] = "http://www.roblox.com/asset/?id=10921232093",
-					["Toilet"] = "http://www.roblox.com/asset/?id=4417978624",
-					["Ud'zal"] = "http://www.roblox.com/asset/?id=3303162549",
-				}
-			}
-			local function AnimateCharacter()
-				Animate = lplr.Character or lplr.CharacterAdded:Wait()
-				Animate = lplr.Character:WaitForChild("Animate")
-				if AnimFreeze.Enabled and GetCurrentProfile() ~= "Ghost" then
-					Animate.Enabled = false
-				table.insert(AnimationChanger.Connections, lplr.Character.Humanoid.Animator.AnimationPlayed:Connect(function(anim)
-					pcall(function() anim:Stop() end)
-				end))
-				end
-				Animate.run.RunAnim.AnimationId = AnimList.RunAnim[AnimRun.Value]
-				Animate.walk.WalkAnim.AnimationId = AnimList.WalkAnim[AnimWalk.Value]
-				Animate.fall.FallAnim.AnimationId = AnimList.FallAnim[AnimFall.Value]
-				Animate.jump.JumpAnim.AnimationId = AnimList.JumpAnim[AnimJump.Value]
-				Animate.idle.Animation1.AnimationId = AnimList.Animation1[AnimIdle.Value]
-				Animate.idle.Animation2.AnimationId = AnimList.Animation2[AnimIdleB.Value]
-			end
-                AnimationChanger = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-                    Name = "AnimationChanger",
-                    Function = function(callback)
-						if callback then
-							task.spawn(function()
-								table.insert(AnimationChanger.Connections, lplr.CharacterAdded:Connect(function()
-                                if not isAlive() then repeat task.wait() until isAlive() end
-                                pcall(AnimateCharacter)
-                                end))
-                                pcall(AnimateCharacter)
-                            end)
-						else
-							pcall(function() Animate.Enabled = true end)
-                            Animate = nil
-						end
-                    end,
-                    HoverText = "customize your animations freely."
-                })
-				for i,v in pairs(AnimList.RunAnim) do table.insert(RunAnimations, i) end
-				for i,v in pairs(AnimList.WalkAnim) do table.insert(WalkAnimations, i) end
-				for i,v in pairs(AnimList.FallAnim) do table.insert(FallAnimations, i) end
-				for i,v in pairs(AnimList.JumpAnim) do table.insert(JumpAnimations, i) end
-				for i,v in pairs(AnimList.Animation1) do table.insert(IdleAnimations, i) end
-				for i,v in pairs(AnimList.Animation2) do table.insert(IdleAnimationsB, i) end
-				AnimRun = AnimationChanger.CreateDropdown({
-					Name = "Run",
-					List = RunAnimations,
-					Function = function() 
-						if AnimationChanger.Enabled then
-							AnimationChanger.ToggleButton(false)
-							AnimationChanger.ToggleButton(false)
-						end
-					end
-				})
-				AnimWalk = AnimationChanger.CreateDropdown({
-					Name = "Walk",
-					List = WalkAnimations,
-					Function = function() 
-						if AnimationChanger.Enabled then
-							AnimationChanger.ToggleButton(false)
-							AnimationChanger.ToggleButton(false)
-						end
-					end
-				})
-				AnimFall = AnimationChanger.CreateDropdown({
-					Name = "Fall",
-					List = FallAnimations,
-					Function = function() 
-						if AnimationChanger.Enabled then
-							AnimationChanger.ToggleButton(false)
-							AnimationChanger.ToggleButton(false)
-						end
-					end
-				})
-				AnimJump = AnimationChanger.CreateDropdown({
-					Name = "Jump",
-					List = JumpAnimations,
-					Function = function() 
-						if AnimationChanger.Enabled then
-							AnimationChanger.ToggleButton(false)
-							AnimationChanger.ToggleButton(false)
-						end
-					end
-				})
-				AnimIdle = AnimationChanger.CreateDropdown({
-					Name = "Idle",
-					List = IdleAnimations,
-					Function = function() 
-						if AnimationChanger.Enabled then
-							AnimationChanger.ToggleButton(false)
-							AnimationChanger.ToggleButton(false)
-						end
-					end
-				})
-				AnimIdleB = AnimationChanger.CreateDropdown({
-					Name = "Idle 2",
-					List = IdleAnimationsB,
-					Function = function() 
-						if AnimationChanger.Enabled then
-							AnimationChanger.ToggleButton(false)
-							AnimationChanger.ToggleButton(false)
-						end
-					end
-				})
-				AnimFreeze = AnimationChanger.CreateToggle({
-					Name = "Freeze",
-					HoverText = "Freezes all your animations",
-					Function = function(callback)
-						if AnimationChanger.Enabled then
-							AnimationChanger.ToggleButton(false)
-							AnimationChanger.ToggleButton(false)
-						end
-					end
-				})
-				task.spawn(function()
-					if GetCurrentProfile() == "Ghost" then 
-						AnimFreeze.Object.Visible = false 
-					end
-				end)
-			end)
-
 			runFunction(function()
 				pcall(GuiLibrary.RemoveObject, "AutoDeathTPOptionsButton")
                 local AutoDeathTP = {Enabled = false}
@@ -7685,7 +6639,6 @@ end)
 						VoidwareStore.switchItemTick = tick() + 1.5
                         switchItem(item)
                         if isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
-						bedwars.ProjectileController:createLocalProjectile(bedwars.ProjectileMeta.telepearl, "telepearl", "telepearl", ent.RootPart.Position + Vector3.new(0, 3, 0), "", Vector3.new(0, -60, 0), {drawDurationSeconds = 1})
                         local fired = bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(item, "telepearl", "telepearl", ent.RootPart.Position + Vector3.new(0, 3, 0), ent.RootPart.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
                         if projectileexploit and not isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
                         if not fired then return nil end
@@ -7751,7 +6704,7 @@ end)
 									currentmethod = v.itemType
 								end
 							end
-							if currentmethod == nil or (currentmethod ~= nil and playertpextramethods[currentmethod](currentmethod, ent) == nil) then
+							if currentmethod == nil or (currentmethod ~= nil and layertpextramethods[currentmethod](currentmethod, ent) == nil) then
                             vapeAssert(FindTeamBed(), "PlayerTP", "Team Bed Missing.", 7, true, true, "PlayerTP")
                             vapeAssert(not bedwarsStore.queueType:find("skywars"), "PlayerTP", "Skywars noy Supported.", 7, true, true, "PlayerTP")
                             vapeAssert(bedwarsStore.queueType ~= "gun_game", "PlayerTP", "Can't run in gun game.", 7, true, true, "PlayerTP")
@@ -7780,86 +6733,6 @@ end)
 				})
 			end)
 
-			runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "RichShaderOptionsButton")
-				local Shader = {Enabled = false}
-				local ShaderColor = {Hue = 0, Sat = 0, Value = 0}
-				local ShaderTintSlider
-				local ShaderBlur
-				local ShaderTint
-				local oldlightingsettings = {
-					["Brightness"] = lightingService.Brightness,
-					["ColorShift_Top"] = lightingService.ColorShift_Top,
-					["ColorShift_Bottom"] = lightingService.ColorShift_Bottom,
-					["OutdoorAmbient"] = lightingService.OutdoorAmbient,
-					["ClockTime"] = lightingService.ClockTime,
-					["ExposureCompensation"] = lightingService.ExposureCompensation,
-					["ShadowSoftness"] = lightingService.ShadowSoftness,
-					["Ambient"] = lightingService.Ambient
-				}
-				Shader = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
-					Name = "RichShader",
-					HoverText = "pro shader",
-					Function = function(callback)
-						if callback then 
-							task.spawn(function()
-								pcall(function()
-								ShaderBlur = Instance.new("BlurEffect")
-								ShaderBlur.Parent = lightingService
-								ShaderBlur.Size = 4
-								end)
-								pcall(function()
-									ShaderTint = Instance.new("ColorCorrectionEffect")
-									ShaderTint.Parent = lightingService
-									ShaderTint.Saturation = -0.2
-				                    ShaderTint.TintColor = Color3.fromRGB(255, 224, 219)
-								end)
-								pcall(function()
-				                    lightingService.ColorShift_Bottom = Color3.fromHSV(ShaderColor.Hue, ShaderColor.Sat, ShaderColor.Value)
-									lightingService.ColorShift_Top = Color3.fromHSV(ShaderColor.Hue, ShaderColor.Sat, ShaderColor.Value)
-									lightingService.OutdoorAmbient = Color3.fromHSV(ShaderColor.Hue, ShaderColor.Sat, ShaderColor.Value)
-									lightingService.ClockTime = 8.7
-									lightingService.FogColor = Color3.fromHSV(ShaderColor.Hue, ShaderColor.Sat, ShaderColor.Value)
-									lightingService.FogEnd = 1000
-									lightingService.FogStart = 0
-									lightingService.ExposureCompensation = 0.24
-									lightingService.ShadowSoftness = 0
-									lightingService.Ambient = Color3.fromRGB(59, 33, 27)
-								end)
-							end)
-						else
-							pcall(function() ShaderBlur:Destroy() end)
-							pcall(function() ShaderTint:Destroy() end)
-							pcall(function()
-							lightingService.Brightness = oldlightingsettings.Brightness
-							lightingService.ColorShift_Top = oldlightingsettings.ColorShift_Top
-							lightingService.ColorShift_Bottom = oldlightingsettings.ColorShift_Bottom
-							lightingService.OutdoorAmbient = oldlightingsettings.OutdoorAmbient
-							lightingService.ClockTime = oldlightingsettings.ClockTime
-							lightingService.ExposureCompensation = oldlightingsettings.ExposureCompensation
-							lightingService.ShadowSoftness = oldlightingsettings.ShadowSoftnesss
-							lightingService.Ambient = oldlightingsettings.Ambient
-							lightingService.FogColor = oldthemesettings.FogColor
-							lightingService.FogStart = oldthemesettings.FogStart
-							lightingService.FogEnd = oldthemesettings.FogEnd
-							end)
-						end
-					end
-				})	
-				ShaderColor = Shader.CreateColorSlider({
-					Name = "Main Color",
-					Function = function(h, s, v)
-						if Shader.Enabled then 
-							pcall(function()
-								lightingService.ColorShift_Bottom = Color3.fromHSV(h, s, v)
-								lightingService.ColorShift_Top = Color3.fromHSV(h, s, v)
-								lightingService.OutdoorAmbient = Color3.fromHSV(h, s, v)
-								lightingService.FogColor = Color3.fromHSV(h, s, v)
-							end)
-						end
-					end
-				})
-			end)
 
 			runFunction(function()
                 local ClanDetector = {Enabled = false}
@@ -8371,7 +7244,6 @@ end)
                             switchItem(item)
                             local projectileexploit = false
                             if isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
-                            bedwars.ProjectileController:createLocalProjectile(bedwars.ProjectileMeta.telepearl, "telepearl", "telepearl", diamond.Position + Vector3.new(0, 3, 0), "", Vector3.new(0, -60, 0), {drawDurationSeconds = 1})
                             local fired = bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(item, "telepearl", "telepearl", diamond.Position + Vector3.new(0, 3, 0), diamond.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
                             if projectileexploit and not isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) end
                             if not fired then return nil end
@@ -8501,7 +7373,6 @@ end)
                             switchItem(item)
                             local projectileexploit = false
                             if isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
-							bedwars.ProjectileController:createLocalProjectile(bedwars.ProjectileMeta.telepearl, "telepearl", "telepearl", emerald.Position + Vector3.new(0, 3, 0), "", Vector3.new(0, -60, 0), {drawDurationSeconds = 1})
 							local fired = bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(item, "telepearl", "telepearl", emerald.Position + Vector3.new(0, 3, 0), emerald.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
                             if projectileexploit and not isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) end
                             if not fired then return nil end
@@ -8756,7 +7627,19 @@ end)
 				})
 			end)
 
-		
+			runFunction(function()
+				local PartyCrasher = {Enabled = false}
+				PartyCrasher = GuiLibrary.ObjectsThatCanBeSaved.MatchmakingWindow.Api.CreateOptionsButton({
+					Name = "PartyCrasher",
+					HoverText = "Crashes anyone who joins the invite.",
+					Function = function(callback)
+						if callback then 
+							task.spawn(function()
+							end)
+						end
+					end
+				})
+			end)
 
 			task.spawn(function()
 				repeat task.wait() until bedwarsStore.queueType ~= "bedwars_test"
@@ -8791,7 +7674,7 @@ end)
 				local thirdpersoninvitem
 				local function viewmodelFunction(handle)
 					pcall(function()
-						handle = handle or gameCamera:FindFirstChild("Viewmodel"):FindFirstChildWhichIsA("Accessor]y"):FindFirstChild("Handle")
+						handle = handle or gameCamera:FindFirstChild("Viewmodel"):FindFirstChildWhichIsA("Accessory"):FindFirstChild("Handle")
 						viewmodelhandle = handle
 						thirdpersoninvitem = nil
 						pcall(function()
@@ -9452,7 +8335,6 @@ end)
                     switchItem(item)
                     local projectileexploit = false
                     if isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
-                    bedwars.ProjectileController:createLocalProjectile(bedwars.ProjectileMeta.telepearl, "telepearl", "telepearl", bed.Position + Vector3.new(0, 3, 0), "", Vector3.new(0, -60, 0), {drawDurationSeconds = 1})
                     local fired = bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(item, "telepearl", "telepearl", bed.Position + Vector3.new(0, 3, 0), bed.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
                     if projectileexploit and not isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) end
                     if not fired then return nil end
@@ -9566,7 +8448,7 @@ end)
 	end)
 
 	  runFunction(function()
-		local hannahRemote = bedwars.NetManaged.HannahPromptTrigger
+		local hannahRemote = bedwars.ClientHandler:Get("HannahPromptTrigger")
 		local HannahExploit = {Enabled = false}
 		local ExecuteRangeCheck = {Enabled = false}
 		local ExecuteRange = {Value = 60}
@@ -9582,16 +8464,12 @@ end)
 						if executiontick > tick() then return end
 						if not isAlive() or (tick() - VoidwareStore.AliveTick) < 2.5 and GetCurrentProfile() == "Ghost" then return end
 						if bedwarsStore.equippedKit ~= "hannah" then return end
-						if hannahRemote == nil then
-							hannahRemote = bedwars.NetManaged.HannahPromptTrigger
-							return
-						end
 						local players = GetAllTargetsNearPosition(GetCurrentProfile() ~= "Ghost" and ExecuteRangeCheck.Enabled and ExecuteRange.Value or GetCurrentProfile() == "Ghost" and 28 or math.huge)
 						for i,v in pairs(players) do
 							if GetCurrentProfile() == "Ghost" then task.wait(0.07) end
 							if not isAlive(v.Player) or not isAlive() or isEnabled("InfiniteFly") or (v.Player.Character:GetAttribute("Health") and tostring(v.Player.Character:GetAttribute("Health")) == "inf") then continue end
 							executiontick = tick() + 0.10
-							hannahRemote:InvokeServer({
+							hannahRemote:CallServer({
 								user = lplr,
 								victimEntity = v.Player.Character
 							})
@@ -9615,38 +8493,6 @@ end)
 		Max = 60
 	})
 end)
-
-	    runFunction(function()
-			local cameraunlock = {Enabled = false}
-			local cameraunlockdistance = {Value = 14}
-			local oldzoomdistance = 14
-			cameraunlock = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-				Name = "CameraUnlocker",
-				HoverText = "Unlock your camera's zoom distance.",
-				Function = function(callback)
-					if callback then
-						task.spawn(function()
-							local camera, attribute = pcall(function() return lplr.CameraMaxZoomDistance end)
-							if not camera then repeat camera, attribute = pcall(function() return lplr.CameraMaxZoomDistance end) task.wait() until camera and attribute end
-							oldzoomdistance = attribute
-							lplr.CameraMaxZoomDistance = cameraunlockdistance.Value
-						end)
-					else
-						pcall(function() lplr.CameraMaxZoomDistance = oldzoomdistance end)
-					end
-				end
-			})
-			oldzoomdistance = cameraunlock.CreateSlider({
-				Name = "Zoom-Out Distance",
-				Min = 14,
-				Max = 1000,
-				Function = function(callback) 
-					if cameraunlock.Enabled then
-					pcall(function() lplr.CameraMaxZoomDistance = callback end) 
-					end
-				end
-			})
-		end)
 
 		runFunction(function()
 			local Gravity = {Enabled = false}
@@ -10043,7 +8889,7 @@ end)
 						end)
 					end
 				end,
-				HoverText = "Float disabler (and some speed check) with scythe"
+				HoverText = "Bypasses some speed checks (float checks with scythe)."
 			})
 			DisablerExtra = Disabler.CreateToggle({
 				Name = "Extra",
@@ -10243,6 +9089,34 @@ end)
 		})
 	end)
 
+	runFunction(function()
+		local InstantKill = {Enabled = false}
+		InstantKill = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+			Name = "4BigGuysExploit",
+			ExtraText = function() return "V3" end,
+			HoverText = "Credits to Taz for finding the method.",
+			Function = function(callback)
+				if callback then 
+					task.spawn(function()
+						table.insert(InstantKill.Connections, runService.Heartbeat:Connect(function()
+							if not FindTarget(30, nil, true).RootPart then 
+								return 
+							end
+							if VoidwareFunctions:SpecialNearPosition(100) then 
+								return
+							end
+							bedwars.ClientHandler:Get("RequestGauntletsChargedAttack"):SendToServer({
+								region = Region3.new(Vector3.new(math.huge, math.huge, math.huge), Vector3.new(math.huge, math.huge, math.huge)), 
+								blockDestroyTime = 0.1,
+								unitLookVector = isAlive(lplr, true) and lplr.Character.HumanoidRootPart.CFrame.LookVector or Vector3.new(0, 0, 0)
+							 })
+						end))
+					end)
+				end
+			end
+		})
+	end)
+
 	task.spawn(function() 
 		repeat task.wait()
 			pcall(function() VoidwareFunctions:GetFile("data/texturepackmodule.lua") end)
@@ -10250,7 +9124,7 @@ end)
 	end)
 
 	if isfile("vape/Voidware/data/texturepackmodule.lua") then 
-		pcall(function() loadstring(VoidwareFunctions:GetFile("data/texturepackmodule.lua"))() end)
+		pcall(function() loadstring(VoidwareFunctions:GetFile("data/texturepackmodule.lua", nil, nil, true))() end)
 	else
-		task.spawn(function() pcall(function() loadstring(VoidwareFunctions:GetFile("data/texturepackmodule.lua"))() end) end)
+		task.spawn(function() pcall(function() loadstring(VoidwareFunctions:GetFile("data/texturepackmodule.lua", nil, nil, true))() end) end)
 	end
