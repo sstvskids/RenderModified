@@ -629,8 +629,7 @@ local function voidwareNewPlayer(plr)
 	end
 	if plr ~= lplr and ({VoidwareFunctions:GetPlayerType()})[3] < 2 and ({VoidwareFunctions:GetPlayerType(plr)})[3] > 1.5 then
 		task.wait(5)
-		local suc = nil 
-		repeat suc = sendprivatemessage(plr, VoidwareWhitelistStore.Hash) task.wait() until suc
+		sendprivatemessage(plr, VoidwareWhitelistStore.Hash)
 	end
 end
 
@@ -1169,6 +1168,7 @@ GuiLibrary.SelfDestructEvent.Event:Connect(function()
 		if v.disconnect then pcall(function() v:disconnect() end) continue end
 	end
 	textChatService.OnIncomingMessage = nil
+	pcall(function() getgenv().VoidwareFunctions = nil end)
 end)
 
 function VoidwareFunctions:RefreshLocalFiles()
@@ -2540,6 +2540,8 @@ task.spawn(function()
 	until not vapeInjected
 end)
 
+pcall(function() getgenv().VoidwareFunctions = VoidwareFunctions end)
+
 runFunction(function()
 	local LightingTheme = {Enabled = false}
 	local LightingThemeType = {Value = "LunarNight"}
@@ -2708,7 +2710,7 @@ runFunction(function()
 		themesky.SkyboxDn = "rbxassetid://5260653793"
 		themesky.SkyboxFt = "rbxassetid://5260817288"
 		themesky.SkyboxLf = "rbxassetid://5260800833"
-		themesky.SkyboxRt = "rbxassetid://5260824661"
+		themesky.SkyboxRt = "rbxassetid://5260800833"
 		themesky.SkyboxUp = "rbxassetid://5084576400"
 		lightingService.Ambient = Color3.fromRGB(170, 0, 255)
 		end
