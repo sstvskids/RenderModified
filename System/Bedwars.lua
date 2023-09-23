@@ -9093,7 +9093,7 @@ end)
 		local InstantKill = {Enabled = false}
 		InstantKill = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 			Name = "4BigGuysExploit",
-			ExtraText = function() return "V3" end,
+			ExtraText = function() return "V4" end,
 			HoverText = "Credits to Taz for finding the method.",
 			Function = function(callback)
 				if callback then 
