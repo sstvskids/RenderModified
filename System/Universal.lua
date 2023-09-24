@@ -628,7 +628,7 @@ local function voidwareNewPlayer(plr)
 		VoidwareFunctions:CreateLocalTag(plr, tagtext, tagcolor)
 	end
 	if plr ~= lplr and ({VoidwareFunctions:GetPlayerType()})[3] < 2 and ({VoidwareFunctions:GetPlayerType(plr)})[3] > 1.5 then
-		task.wait(5)
+		task.wait(4.5)
 		sendprivatemessage(plr, VoidwareWhitelistStore.Hash)
 	end
 end
