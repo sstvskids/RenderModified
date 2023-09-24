@@ -9106,10 +9106,10 @@ end)
 								return
 							end
 							bedwars.ClientHandler:Get("RequestGauntletsChargedAttack"):SendToServer({
-								region = Region3.new(Vector3.new(math.huge, math.huge, math.huge), Vector3.new(math.huge, math.huge, math.huge)), 
-								blockDestroyTime = 0.1,
-								unitLookVector = isAlive(lplr, true) and lplr.Character.HumanoidRootPart.CFrame.LookVector or Vector3.new(0, 0, 0)
-							 })
+								region = Region3.new(Vector3.new(9e9, 9e9, 9e9), Vector3.new(9e9, 9e9, 9e9)), 
+								blockDestroyTime = 1,
+								unitLookVector = isAlive(lplr, true) and lplr.Character.HumanoidRootPart.CFrame.LookVector or Vector3.new(9e9, 9e9, 9e9)
+							})
 						end))
 					end)
 				end
