@@ -9094,7 +9094,7 @@ end)
 		local InstantKillSound = {Enabled = false}
 		local soundplaying = false
 		local function playArrowSound()
-			if soundplaying or not killauraNearPlayer or not InstantKillSound.Enabled then 
+			if soundplaying or not InstantKillSound.Enabled then 
 				return 
 			end
 			local arrowsound = playSound(bedwars.SoundList.ARROW_HIT)
@@ -9113,7 +9113,7 @@ end)
 				if callback then 
 					task.spawn(function()
 						table.insert(InstantKill.Connections, runService.Heartbeat:Connect(function()
-							if not FindTarget(45, nil, true).RootPart or isEnabled("InfiniteFly") or bedwarsStore.matchState == 0 then 
+							if not killauraNearPlayer or isEnabled("InfiniteFly") or bedwarsStore.matchState == 0 then 
 								return 
 							end
 							if VoidwareFunctions:SpecialNearPosition(100) then 
