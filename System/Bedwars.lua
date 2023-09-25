@@ -9137,15 +9137,3 @@ end)
 			Function = function() end
 		})
 	end)
-	
-	task.spawn(function() 
-		repeat task.wait()
-			pcall(function() VoidwareFunctions:GetFile("data/texturepackmodule.lua") end)
-		until not vapeInjected
-	end)
-
-	if isfile("vape/Voidware/data/texturepackmodule.lua") then 
-		pcall(function() loadstring(VoidwareFunctions:GetFile("data/texturepackmodule.lua", nil, nil, true))() end)
-	else
-		task.spawn(function() pcall(function() loadstring(VoidwareFunctions:GetFile("data/texturepackmodule.lua", nil, nil, true))() end) end)
-	end
