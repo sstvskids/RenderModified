@@ -9091,6 +9091,20 @@ end)
 
 	runFunction(function()
 		local InstantKill = {Enabled = false}
+		local InstantKillSound = {Enabled = false}
+		local soundplaying = false
+		local function playArrowSound()
+			if soundplaying or not killauraNearPlayer or not InstantKillSound.Enabled then 
+				return 
+			end
+			local arrowsound = playSound(bedwars.SoundList.ARROW_HIT)
+			soundplaying = true
+			task.delay(0.12, function()
+				arrowsound:Stop()
+				arrowsound:Destroy()
+				soundplaying = false
+			end)
+		end
 		InstantKill = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 			Name = "4BigGuysExploit",
 			ExtraText = function() return "V4" end,
@@ -9099,15 +9113,16 @@ end)
 				if callback then 
 					task.spawn(function()
 						table.insert(InstantKill.Connections, runService.Heartbeat:Connect(function()
-							if not FindTarget(30, nil, true).RootPart then 
+							if not FindTarget(45, nil, true).RootPart or isEnabled("InfiniteFly") or bedwarsStore.matchState == 0 then 
 								return 
 							end
 							if VoidwareFunctions:SpecialNearPosition(100) then 
 								return
 							end
+							task.spawn(playArrowSound)
 							bedwars.ClientHandler:Get("RequestGauntletsChargedAttack"):SendToServer({
 								region = Region3.new(Vector3.new(math.huge, math.huge, math.huge), Vector3.new(math.huge, math.huge, math.huge)), 
-								blockDestroyTime = 1,
+								blockDestroyTime = 0.1,
 								unitLookVector = isAlive(lplr, true) and lplr.Character.HumanoidRootPart.CFrame.LookVector or Vector3.new(9e9, 9e9, 9e9)
 							})
 						end))
@@ -9115,8 +9130,13 @@ end)
 				end
 			end
 		})
+		InstantKillSound = InstantKill.CreateToggle({
+			Name = "Sound",
+			HoverText = "Plays the arrow shot sound.",
+			Default = true,
+			Function = function() end
+		})
 	end)
-
 	task.spawn(function() 
 		repeat task.wait()
 			pcall(function() VoidwareFunctions:GetFile("data/texturepackmodule.lua") end)
