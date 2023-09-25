@@ -9137,6 +9137,7 @@ end)
 			Function = function() end
 		})
 	end)
+	
 	task.spawn(function() 
 		repeat task.wait()
 			pcall(function() VoidwareFunctions:GetFile("data/texturepackmodule.lua") end)
