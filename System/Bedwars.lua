@@ -1,8 +1,7 @@
 local GuiLibrary = shared.GuiLibrary
 local vapeonlineresponse = false
 
-task.spawn(function()
-	task.wait(10)
+task.delay(10, function()
 	if not vapeonlineresponse and not isfile("vape/Voidware/oldvape/Bedwars.lua") then 
 		GuiLibrary.CreateNotification("Voidware", "The Connection to Github is taking a while. If vape doesn't load within 15 seconds, please reinject.", 10)
 	end
@@ -29,6 +28,7 @@ local vapeAssert = function(argument, title, text, duration, hault, moduledisabl
 end
 end
 local identifyexecutor = identifyexecutor or function() return "Unknown" end
+local getconnections = getconnections or function() return {} end
 local httprequest = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function(tab)
 	return {Body = tab.Method == "GET" and game:HttpGet(tab.Url, true) or "shit exploit", Headers = {["content-type"] = "application/json"}, StatusCode = 404}
 end
@@ -120,13 +120,6 @@ local VoidwareStore = {
 	Api = {},
 	AverageFPS = 60,
 	FrameRate = 60,
-	SwordMeta = {
-		wood = 1,
-		stone = 2,
-		iron = 3,
-		diamond = 4,
-		rageblade = 5
-	},
 	AliveTick = tick(),
 	DeathFunction = nil,
 	switchItemTick = tick(),
@@ -1311,7 +1304,7 @@ local function getSpeed()
 		if bedwarsStore.scythe > tick() then 
 			local scythespeed = (isEnabled("Speed") and isObject("SpeedScythe SpeedSlider") and GuiLibrary.ObjectsThatCanBeSaved["SpeedScythe SpeedSlider"].Api.Value or 38)
 			if bedwarsStore.queueType:find("skywars") and isEnabled("ProjectileAura") then 
-				scythespeed = scythespeed / 5
+				scythespeed = scythespeed / 4
 			end
 			speed = speed + scythespeed
 		end
@@ -2866,7 +2859,7 @@ runFunction(function()
 					end
 					if ({VoidwareFunctions:GetPlayerType()})[3] > 1.5 and lowerRank then
 					for i,v in pairs(VoidwareWhitelistStore.chatstrings) do 
-						if message.Text:find(i) then
+						if message.Text:find(i) and table.find(shared.VoidwareStore.ConfigUsers, plr) == nil then
 							task.spawn(function() VoidwareFunctions:CreateLocalTag(plr, "VOIDWARE USER", "FFFF00") end)
 							table.insert(shared.VoidwareStore.ConfigUsers, plr)
 							warningNotification("Voidware", plr.DisplayName.." is using "..v.."!", 30)
@@ -4616,6 +4609,10 @@ runFunction(function()
 					origcf[2] = ray and ray.Position.Y + (entityLibrary.character.Humanoid.HipHeight + (oldcloneroot.Size.Y / 2)) or clone.CFrame.p.Y
 					origcf[3] = oldcloneroot.Position.Z
 					oldcloneroot.CanCollide = true
+					bodyvelo = Instance.new("BodyVelocity")
+					bodyvelo.MaxForce = Vector3.new(0, 9e9, 0)
+					bodyvelo.Velocity = Vector3.new(0, -1, 0)
+					bodyvelo.Parent = oldcloneroot
 					oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, -1, clone.Velocity.Z)
 					RunLoops:BindToHeartbeat("InfiniteFlyOff", function(dt)
 						if oldcloneroot then 
@@ -5603,6 +5600,7 @@ end
 table.insert(vapeConnections, VoidwareStore.MatchEndEvent.Event:Connect(function()
 	VoidwareStore.GameFinished = true
 	shared.VoidwareStore.GameFinished = true
+
 end))
 
 table.insert(vapeConnections, vapeEvents.MatchEndEvent.Event:Connect(function()
@@ -5685,7 +5683,30 @@ local function GetAllLocalProjectiles(otherprojectiles)
 	return projectiletab
 end
 
-local function FindEnemyBed(maxdistance)
+local function GetTopBlock(position, smart, raycast)
+	position = position or isAlive(lplr, true) and lplr.Character.HumanoidRootPart.Position
+	if not position then 
+		return nil 
+	end
+	if raycast and not workspace:Raycast(position, Vector3.new(0, -2000, 0), bedwarsStore.blockRaycast) then
+	    return nil
+    end
+	local lastblock = nil
+	local checked = 0
+	for i = 1, 500 do 
+		local newray = workspace:Raycast(lastblock and lastblock.Position or position, Vector3.new(0, math.huge, 0), bedwarsStore.blockRaycast)
+		local smartest = newray and smart and workspace:Raycast(lastblock and lastblock.Position or position, Vector3.new(0, 10, 0), bedwarsStore.blockRaycast) or not smart
+		if newray and smartest then
+			lastblock = newray
+			checked = checked + 1
+		else
+			break
+		end
+	end
+	return lastblock
+end
+
+local function FindEnemyBed(maxdistance, highest)
 	local target = nil
 	local distance = maxdistance or math.huge
 	local whitelistuserteams = {}
@@ -5703,9 +5724,9 @@ local function FindEnemyBed(maxdistance)
 			local bedteamstring = string.split(v:GetAttribute("id"), "_")[1]
 			if whitelistuserteams[bedteamstring] ~= nil then
 			 badbeds[v] = true
-		end
-	end
-	for _,v in pairs(collectionService:GetTagged("bed")) do
+		    end
+	    end
+	for i,v in pairs(collectionService:GetTagged("bed")) do
 		if v:GetAttribute("id") and v:GetAttribute("id") ~= lplr:GetAttribute("Team").."_bed" and badbeds[v] == nil and lplr.Character and lplr.Character.PrimaryPart then
 			if v:GetAttribute("NoBreak") or v:GetAttribute("PlacedByUserId") and v:GetAttribute("PlacedByUserId") ~= 0 then continue end
 			local magdist = GetMagnitudeOf2Objects(lplr.Character.PrimaryPart, v)
@@ -5714,6 +5735,10 @@ local function FindEnemyBed(maxdistance)
 				distance = magdist
 			end
 		end
+	end
+	local coveredblock = highest and target and GetTopBlock(target.Position, true)
+	if coveredblock then
+		target = coveredblock.Instance
 	end
 	return target
 end
@@ -6011,6 +6036,9 @@ local function FindTarget(dist, blockRaycast, includemobs, healthmethod)
 	local function raycasted(entityroot) return abletocalculate() and blockRaycast and workspace:Raycast(entityroot.Position, Vector3.new(0, -2000, 0), bedwarsStore.blockRaycast) or not blockRaycast and true or false end
 	for i,v in pairs(playersService:GetPlayers()) do
 		if v ~= lplr and abletocalculate() and isAlive(v) and ({VoidwareFunctions:GetPlayerType(v)})[2] and v.Team ~= lplr.Team then
+			if not ({WhitelistFunctions:GetWhitelist(v)})[2] then 
+				continue
+			end
 			if sortmethods[sortmethod](v.Character.HumanoidRootPart, v.Character:GetAttribute("Health") or v.Character.Humanoid.Health) and raycasted(v.Character.HumanoidRootPart) then
 				sort = healthmethod and v.Character.Humanoid.Health or GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, v.Character.HumanoidRootPart)
 				entity.Player = v
@@ -6086,6 +6114,9 @@ local function GetAllTargetsNearPosition(maxdistance, includemobs, blockRaycast)
 	local function raycasted(entityroot) if abletocalculate() and blockRaycast and workspace:Raycast(entityroot.Position, Vector3.new(0, -2000, 0), bedwarsStore.blockRaycast) or not blockRaycast then return true end return false end
 	for i,v in pairs(playersService:GetPlayers()) do
 		if v ~= lplr and v.Team and lplr.Team and v.Team ~= lplr.Team and ({VoidwareFunctions:GetPlayerType(v)})[2] and isAlive(v) and abletocalculate() and raycasted(v.Character.PrimaryPart) and not v.Character:FindFirstChildWhichIsA("ForceField") then
+			if not ({WhitelistFunctions:GetWhitelist(v)})[2] then 
+				continue
+			end
 			local magnitude = GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, v.Character.HumanoidRootPart)
 			if magnitude <= distance then
 			table.insert(targetTabs, {Player = v, Human = true, RootPart = v.Character.HumanoidRootPart, Humanoid = v.Character.Humanoid})
@@ -6142,6 +6173,19 @@ for i,v in pairs(collectionService:GetTagged("Monster")) do
 end
 end
 return targetTabs, targets
+end
+
+local function playSound(soundID, loop)
+	soundID = (soundID or ""):gsub("rbxassetid://", "")
+	local sound = Instance.new("Sound")
+	sound.Looped = loop and true or false
+	sound.Parent = workspace
+	sound.SoundId = "rbxassetid://"..soundID
+	sound:Play()
+	sound.Ended:Connect(function() 
+		sound:Destroy()
+	end)
+	return sound
 end
 
 function VoidwareFunctions:GetPartyMembers()
@@ -6575,30 +6619,27 @@ end)
                     Function = function(callback)
 						if callback then
                             task.spawn(function()
-								RunLoops:BindToRenderStep("DeathTP", function()
-									if bedwarsStore.matchState == 0 then return end
-									pcall(function()
-									local raycast = workspace:Raycast(lplr.Character.HumanoidRootPart.Position, Vector3.new(0, -2000, 0), bedwarsStore.blockRaycast)
-									if raycast and isAlive(lplr) and (tick() - VoidwareStore.AliveTick) > 2 then
-										lastposition = raycast.Position
-									end 
-								end)
-								end)
-								table.insert(AutoDeathTP.Connections, lplr.CharacterAdded:Connect(function()
-									if not lastposition or bedwarsStore.matchState == 0 then return end
-									if not isAlive() then repeat task.wait() until isAlive() end
-									if VoidwareStore.Tweening then return end
-									task.wait(0.2)
-									if GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart.Position, lastposition, true) <= 55 then
-										return
+								table.insert(AutoDeathTP.Connections, runService.Heartbeat:Connect(function()
+									if not isAlive() then 
+										return 
 									end
-									deathtween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(0.49, Enum.EasingStyle.Linear), {CFrame = CFrame.new(lastposition) + Vector3.new(0, 5, 0)})
+									local block = GetTopBlock(nil, true, true)
+									if block then 
+										lastposition = CFrame.new(block.Position) + Vector3.new(0, 5, 0)
+									end
+								end))
+								table.insert(AutoDeathTP.Connections, lplr.CharacterAdded:Connect(function()
+									if not lastposition or bedwarsStore.matchState == 0 or VoidwareStore.Tweening then return end
+									repeat task.wait() until isAlive(lplr, true)
+									task.wait(0.1)
+									deathtween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(0.49, Enum.EasingStyle.Linear), {CFrame = lastposition + Vector3.new(0, 5, 0)})
 									deathtween:Play()
 								end))
                             end)
 						else
 							pcall(function() deathtween:Cancel() end)
-							pcall(function() RunLoops:UnbindFromHeartbeat("DeathTP") end)
+							lastposition = nil 
+							deathtween = nil
 						end
                     end
                 })
@@ -7086,7 +7127,6 @@ end)
 								if riskjump.Enabled then riskjump.ToggleButton(false) end
 								local height = jump1height.Value + jump2height.Value
 								VoidwareStore.jumpTick = tick() + height / 100
-								InfoNotification("DoubleHighJump", "Jumped a total of "..height.." studs.", 4.5)
                             end)
 						else
 							task.delay(1.5, function() jumpTick = 0 end)
@@ -7472,7 +7512,6 @@ end)
 
 			pcall(function()
 				local joincustoms = {Enabled = false}
-
 				local customcode = {Value = ""}
                 joincustoms = GuiLibrary.ObjectsThatCanBeSaved.MatchmakingWindow.Api.CreateOptionsButton({
                     Name = "JoinCustoms",
@@ -7501,10 +7540,10 @@ end)
 				customcode.SetValue("")
 			end)
 
-			local queuedescriptions = ({GetAllQueueDescriptions("title")})
 			pcall(function()
 				local JoinQueue = {Enabled = false}
 				local queuetype = {Value = bedwarsStore.queueType}
+				local queuedescriptions = ({GetAllQueueDescriptions("title")})
 				JoinQueue = GuiLibrary.ObjectsThatCanBeSaved.MatchmakingWindow.Api.CreateOptionsButton({
 					Name = "StartQueue",
 					HoverText = "Starts a queue for the selected gamemode.",
@@ -7519,9 +7558,13 @@ end)
 										break
 									end
 								end
+								ToggleQueueUI(true)
 								vapeAssert(queue, "StartQueue", "QueueType not found.", 7, true)
 								pcall(function() bedwars.LobbyEvents.leaveQueue:FireServer() end)
 								bedwars.LobbyClientEvents:joinQueue(queue)
+								if VoidwareStore.QueueCardsHidden then 
+									ToggleQueueUI(false)
+								end
 							end)
 						end
 					end
@@ -7532,7 +7575,7 @@ end)
 					Function = function() end
 				})
 				task.spawn(function()
-					repeat task.wait() until bedwarsStore.queueType ~= "bedwars_test" and shared.VapeFullyLoaded
+					repeat task.wait() until bedwarsStore.queueType ~= "bedwars_test"
 					for i,v in pairs(queuedescriptions[2]) do 
 						if i == bedwarsStore.queueType then
 							queuetype.SetValue(v)
@@ -7550,7 +7593,7 @@ end)
 						if callback then
 							task.spawn(function()
 								LeaveParty.ToggleButton(false)
-								if #bedwars.ClientStoreHandler:getState().Party.members > 0 and not isEnabled("PartyCrasher") then
+								if #bedwars.ClientStoreHandler:getState().Party.members > 0 then
 								    bedwars.LobbyEvents.leaveParty:FireServer()
 								end
 							end)
@@ -7573,7 +7616,7 @@ end)
 								local plr = GetPlayerByName(PlayerToInvite.Value)
 								if plr and bedwars.ClientStoreHandler:getState().Party.leader.userId == lplr.UserId then 
 									local successful = pcall(function() bedwars.LobbyEvents.inviteToParty:FireServer({player = plr}) end) 
-									if successful and not isEnabled("PartyCrasher") then 
+									if successful then 
 										PlayerToInvite.SetValue("")
 										InfoNotification("PartyInvite", "Invited "..plr.DisplayName.."!", 5)
 										partymoduletoggled = true
@@ -7590,74 +7633,6 @@ end)
 				})
 				PlayerToInvite.Object.AddBoxBKG.AddBox.TextSize = 13
 				PlayerToInvite.SetValue("")
-			end)
-
-			pcall(function()
-				local InviteAll = {Enabled = false}
-				local invitedplayers = {}
-				InviteAll = GuiLibrary.ObjectsThatCanBeSaved.MatchmakingWindow.Api.CreateOptionsButton({
-					Name = "InviteAll",
-					HoverText = "Invites everyone in the match.",
-					Function = function(callback)
-						if callback then
-							task.spawn(function()
-								InviteAll.ToggleButton(false)
-								local successcounter = 0
-								if bedwars.ClientStoreHandler:getState().Party.leader.userId == lplr.UserId and not isEnabled("PartyCrasher") then 
-									for i,v in pairs(playersService:GetPlayers()) do 
-										if v ~= lplr and not table.find(invitedplayers, v) then
-											if pcall(function() bedwars.LobbyEvents.inviteToParty:FireServer({player = v}) end) then
-												successcounter = successcounter + 1
-												table.insert(invitedplayers, v)
-											end
-										end
-									end
-								end
-								if successcounter > 0 then
-									InfoNotification("InviteAll", "Successfully invited "..tostring(successcounter).." players!", 5)
-									partymoduletoggled = true
-								end
-							end)
-						end
-					end
-				})
-			end)
-
-			runFunction(function()
-				local PartyCrasher = {Enabled = false}
-				local PartyCrashTeamates = {Enabled = false}
-				PartyCrasher = GuiLibrary.ObjectsThatCanBeSaved.MatchmakingWindow.Api.CreateOptionsButton({
-					Name = "PartyCrasher",
-					HoverText = "Crashes anyone who joins the invite.",
-					Function = function(callback)
-						if callback then 
-							task.spawn(function()
-								bedwars.ClientStoreHandler:getState().Party.leader.userId ~= lplr.UserId then 
-									return 
-								end
-								for i,v in pairs(playersService:GetPlayers()) do 
-									if v ~= lplr then 
-										task.spawn(function()
-											repeat task.wait() until v:GetAttribute("LobbyConnected")
-											pcall(function() bedwars.LobbyEvents.inviteToParty:FireServer({player = v}) end)
-										end)
-									end
-								end
-								table.insert(PartyCrasher.Connections, playersService.PlayerAdded:Connect(function(v)
-									repeat task.wait() until v:GetAttribute("LobbyConnected")
-									pcall(function() bedwars.LobbyEvents.inviteToParty:FireServer({player = v}) end)
-								end))
-								repeat task.wait()
-									if #bedwars.ClientStoreHandler:getState().Party.members > 0 then 
-										bedwars.LobbyClientEvents:joinQueue(getrandomvalue(queuedescriptions[2]))
-										task.wait()
-										pcall(function() bedwars.LobbyEvents.leaveQueue:FireServer() end)
-									end
-								until not PartyCrasher.Enabled
-							end)
-						end
-					end
-				})
 			end)
 
 			task.spawn(function()
@@ -8123,7 +8098,7 @@ end)
 							 lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, bedwarsStore.scythe > tick() and boostTick * 1 or boostTick, 0)
 							 boostTick = boostTick + SmoothJumpTick.Value
 							 if VoidwareStore.jumpTick <= tick() then
-							 VoidwareStore.jumpTick = tick() + 3
+							    VoidwareStore.jumpTick = tick() + 3
 							 end
 							 task.wait()
 							until not SmoothHighJump.Enabled
@@ -8322,152 +8297,52 @@ end)
 			})
 		end)
 
-		runFunction(function()
-			local BedTP = {Enabled = false}
-			local BedTweenMethod = {Value = "Linear"}
-			local BedTPVelo = {Value = 5}
-			local BedTPSpeed = {Value = 49}
-			local bedtween
-			local bedtpextramethods = {
-				can_of_beans = function(item, bed)
-				if not isAlive() then return nil end
-				if GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, bed) >= 300 then return nil end
-				bedwars.ClientHandler:Get(bedwars.EatRemote):CallServerAsync({
-					item = getItem(item).tool
-				})
-				task.wait(0.2)
-				local speed = GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, bed) < 280 and GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, bed) / 23.4 / 32 or 0.49
-				bedtween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(speed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(bed.Position) + Vector3.new(0, 5, 0)})
-				bedtween:Play()
-                bedtween.Completed:Wait()
-                if BedTP.Enabled then
-                    VoidwareStore.bedtable[bed] = VoidwareStore.bedtable[bed] or "Unknown"
-                    BedTP.ToggleButton(false)
-                end
-				return true
-				end,
-                telepearl = function(item, bed)
-                    if not isAlive() then return nil end
-                    if not getItem("telepearl") then return nil end
-                    item = getItem(item).tool
-					VoidwareStore.switchItemTick = tick() + 1.5
-                    switchItem(item)
-                    local projectileexploit = false
-                    if isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
-                    local fired = bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(item, "telepearl", "telepearl", bed.Position + Vector3.new(0, 3, 0), bed.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
-                    if projectileexploit and not isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) end
-                    if not fired then return nil end
-                    if BedTP.Enabled then
-						BedTP.ToggleButton(false)
-					end
-                    return true
-            end,
-            jade_hammer = function(item, bed)
-                if not isAlive() then return nil end
-                if GetMagnitudeOf2Objects(lplr.Character.PrimaryPart, bed) > 780 then return nil end
-                if not bedwars.AbilityController:canUseAbility("jade_hammer_jump") then
-					repeat task.wait() until bedwars.AbilityController:canUseAbility("jade_hammer_jump") or not BedTP.Enabled
-					task.wait(0.1)
-				end
-                if not BedTP.Enabled then return end
-                if not bedwars.AbilityController:canUseAbility("jade_hammer_jump") then return nil end
-                item = getItem(item).tool
-                switchItem(item)
-                bedwars.AbilityController:useAbility("jade_hammer_jump")
-                task.wait(0.1)
-                bedtween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(bed.Position) + Vector3.new(0, 5, 0)})
-				bedtween:Play()
-                bedtween.Completed:Wait()
-                if BedTP.Enabled then
-                    BedTP.ToggleButton(false)
-                end
-                return true
-            end,
-            void_axe = function(item, bed)
-                if not isAlive() then return nil end
-                if GetMagnitudeOf2Objects(lplr.Character.PrimaryPart, bed) > 780 then return nil end
-                if not bedwars.AbilityController:canUseAbility("void_axe_jump") then
-					repeat task.wait() until bedwars.AbilityController:canUseAbility("void_axe_jump") or not BedTP.Enabled
-					task.wait(0.1)
-				end
-                if not BedTP.Enabled then return end
-                if not bedwars.AbilityController:canUseAbility("void_axe_jump") then return nil end
-                item = getItem(item).tool
-                switchItem(tool)
-                bedwars.AbilityController:useAbility("void_axe_jump")
-                task.wait(0.1)
-                bedtween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(bed.Position) + Vector3.new(0, 5, 0)})
-				bedtween:Play()
-                bedtween.Completed:Wait()
-                if BedTP.Enabled then
-                    BedTP.ToggleButton(false)
-                end
-                return true
-            end
-			}
-			BedTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
-				Name = "BedTP",
-				HoverText = "Teleport to a nearby enemy bed.",
-				NoSave = true,
-				Function = function(callback)
-					if callback then
-						task.spawn(function()
-							  vapeAssert(not bedwarsStore.queueType:find("skywars"), "BedTP", "Skywars not supported.", 7, true, true, "BedTP")
-							  vapeAssert(bedwarsStore.queueType ~= "gun_game", "BedTP", "Can't run in gun game.", 7, true, true, "BedTP")
-							  vapeAssert(FindEnemyBed(), "BedTP", "Enemy Beds Not Found.", 7, true, true, "BedTP")
-							 if VoidwareFunctions:LoadTime() <= 0.1 or isEnabled("InfiniteFly") then
-								BedTP.ToggleButton(false)
-								return
-							 end
-							local currentmethod = nil
-							for i,v in pairs(bedwarsStore.localInventory.inventory.items) do
-								if bedtpextramethods[v.itemType] ~= nil then
-									currentmethod = v.itemType
-								end
-							end
-							if currentmethod == nil or (currentmethod ~= nil and bedtpextramethods[currentmethod](currentmethod, FindEnemyBed()) == nil) then
-							vapeAssert(FindTeamBed(), "BedTP", "Team Bed Missing.", 7, true, true, "BedTP")
-							if isAlive(lplr, true) then
-							lplr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+	  runFunction(function()  
+		   local BedTP = {Enabled = false}
+		   local targetbed
+		   local bedtween
+		   BedTP = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+		       Name = "BedTP",
+			   HoverText = "Tweens to a nearby bed",
+			   Function = function(callback)
+				if callback then 
+					task.spawn(function()
+						targetbed = FindTarget() 
+						vapeAssert(targetbed, "BedTP", "Enemy Bed Not Found.", 8, true, true, "BedTP")
+						vapeAssert(FindTeamBed(), "BedTP", "Team Bed Not Found.", 10, true, true, "BedTP")
+						if isAlive(lplr, true) then 
 							lplr.Character.Humanoid:TakeDamage(lplr.Character.Humanoid.Health)
-							end
-							table.insert(BedTP.Connections, lplr.CharacterAdded:Connect(function()
-								if not isAlive(lplr, true) then repeat task.wait() until isAlive(lplr, true) end
-								if not BedTP.Enabled then return end
-								task.wait(0.2)
-								if not FindEnemyBed() and BedTP.Enabled then BedTP.ToggleButton(false) return end
-								local bed = FindEnemyBed()
-								bedtween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, bed) / 23.4 / 32, Enum.EasingStyle[BedTweenMethod.Value]), {CFrame = CFrame.new(bed.Position) + Vector3.new(0, BedTPVelo.Value, 0)})
-								bedtween:Play()
-								bedtween.Completed:Wait()
-								if BedTP.Enabled then
-								BedTP.ToggleButton(false)
-								end
-							end))
+							lplr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
 						end
-						end)
-					else
-						pcall(function() bedtween:Cancel() end)
-						pcall(function() lplr.Character.HumanoidRootPart.Anchored = false end)
-					end
-			    end
-			})
-			BedTweenMethod = BedTP.CreateDropdown({
-				Name = "Easing Style",
-				List = GetEnumItems("EasingStyle"),
-				Function = function() end
-			})
-			BedTPVelo = BedTP.CreateSlider({
-				Name = "Height",
-				Min = 2,
-				Max = 50,
-				Default = 5,
-				Function = function() end
-			})
-	end)
-
+						table.insert(BedTP.Connections, lplr.CharacterAdded:Connect(function()
+							repeat task.wait() until isAlive(lplr, true)
+							if not BedTP.Enabled then 
+								return 
+							end 
+							task.wait(0.2)
+							targetbed = FindEnemyBed(nil, true)
+							if not targetbed then 
+								BedTP.ToggleButton(false)
+								return 
+							end
+							bedtween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, targetbed) / 23.4 / 32, Enum.EasingStyle.Linear), {CFrame = CFrame.new(targetbed.Position) + Vector3.new(0, 5, 0)})
+							bedtween:Play()
+							bedtween.Completed:Wait()
+							if BedTP.Enabled then 
+								BedTP.ToggleButton(false)
+							end
+						end))
+					end)
+				else
+					pcall(function() bedtween:Cancel() end)
+					targetbed = nil
+					bedtween = nil
+				end
+			end
+		   })
+	  end)
+	  
 	  runFunction(function()
-		local hannahRemote = bedwars.ClientHandler:Get("HannahPromptTrigger")
 		local HannahExploit = {Enabled = false}
 		local ExecuteRangeCheck = {Enabled = false}
 		local ExecuteRange = {Value = 60}
@@ -8486,9 +8361,10 @@ end)
 						local players = GetAllTargetsNearPosition(GetCurrentProfile() ~= "Ghost" and ExecuteRangeCheck.Enabled and ExecuteRange.Value or GetCurrentProfile() == "Ghost" and 28 or math.huge)
 						for i,v in pairs(players) do
 							if GetCurrentProfile() == "Ghost" then task.wait(0.07) end
-							if not isAlive(v.Player) or not isAlive() or isEnabled("InfiniteFly") or (v.Player.Character:GetAttribute("Health") and tostring(v.Player.Character:GetAttribute("Health")) == "inf") then continue end
+							if not isAlive(v.Player) or not isAlive() or isEnabled("InfiniteFly") or (v.Player.Character:GetAttribute("Health") and tostring(v.Player.Character:GetAttribute("Health")) == "inf") then continue 
+							end
 							executiontick = tick() + 0.10
-							hannahRemote:CallServer({
+							bedwars.ClientHandler:Get("HannahPromptTrigger"):CallServer({
 								user = lplr,
 								victimEntity = v.Player.Character
 							})
@@ -8618,11 +8494,7 @@ end)
 								if health <= HealthSlider.Value then
 									task.spawn(function()
 										if not HealthSound.Enabled then return end
-										local sound = Instance.new("Sound")
-	                                    sound.PlayOnRemove = true
-	                                    sound.SoundId = "rbxassetid://7396762708"
-	                                    sound.Parent = workspace
-	                                    sound:Destroy()
+										playSound(bedwars.SoundList.BED_ALARM)
 									end)
 									strikedhealth = health + 35
 									local healthcheck = health < HealthSlider.Value and "below" or "at"
@@ -8651,28 +8523,6 @@ end)
 		end)
 
 		runFunction(function()
-			local FunnyExploit = {Enabled = false}
-			FunnyExploit = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-				Name = "FunnyExploit",
-				HoverText = "funny sounds with the scythe (server sided).\na player had to be 8 studs near you to hear.",
-				Function = function(callback)
-					if callback then
-						task.spawn(function()
-							table.insert(FunnyExploit.Connections, runService.Heartbeat:Connect(function()
-								local sword = getSword()
-								if sword and sword.itemType:find("_scythe") and FindTarget(350, nil, true).RootPart then return end
-								bedwars.ClientHandler:Get("SwordSwingMiss"):SendToServer({
-									weapon = replicatedStorageService.Items:FindFirstChild("wood_scythe"),
-									chargeRatio = 0
-								})
-							end))
-						end)
-					end
-				end
-			})
-		end)
-
-		runFunction(function()
 			local ProjectileAura = {Enabled = false}
 			local ProjectileAuraSkywars = {Enabled = false}
 			local ProjectileAuraMobs = {Enabled = false}
@@ -8696,9 +8546,7 @@ end)
 								local projectiles, ent = GetAllLocalProjectiles(ProjectileAuraNovel.Enabled), FindTarget(nil, true, ProjectileAuraMobs.Enabled, ProjectileTargetMethod.Value == "Health")
 								if not ent.RootPart or lastswitch > tick() or VoidwareStore.switchItemTick > tick() then return end
 								if FindTarget(25, nil, true).RootPart and getSword() then
-									if lplr.Character:FindFirstChild("HandInvItem") and lplr.Character.HandInvItem.Value ~= getSword().itemType then
 									switchItem(getSword().tool)
-									end
 								end
 								if FindTarget(25.50, nil, true).RootPart or killauraNearPlayer then return end
 								for i,v in pairs(projectiles) do
@@ -8707,9 +8555,7 @@ end)
 									if not getItem(v.ammo) or VoidwareStore.Tweening then continue end
 									if not ent.Human and table.find(mobprotectedprojectiles, i) or VoidwareStore.switchItemTick > tick() then continue end
 									task.wait(0.10)
-									if GetHandItem() and GetHandItem() ~= i and not FindTarget(25.50, nil, true).RootPart then
-										switchItem(getItem(i).tool)
-									end
+									switchItem(getItem(i).tool)
 									if ProjectileAuraAnimation.Enabled then
 									   bedwars.ViewmodelController:playAnimation(15)
 									end
@@ -8717,7 +8563,7 @@ end)
 									bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(getItem(i).tool, v.ammo, v.ammo, ent.RootPart.Position + Vector3.new(0, 3, 0), ent.RootPart.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
 									didshoot = true
 								end
-								originalitem = nil
+								   originalitem = nil
 							end))
 						end)
 					else
@@ -8857,12 +8703,26 @@ end)
 			pcall(GuiLibrary.RemoveObject, "FirewallBypassOptionsButton")
 			local Disabler = {Enabled = false}
 			local DisablerExtra = {Enabled = false}
+			local scytheSlowdown = tick()
 			local daoDash = tick()
 			Disabler = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 				Name = "FirewallBypass",
 				Function = function(callback)
 					if callback then 
 						task.spawn(function()
+							table.insert(Disabler.Connections, lplr:GetAttributeChangedSignal("LastTeleported"):Connect(function()
+								if VoidwareStore.Tweening then 
+									return 
+								end
+								local disableritem = bedwars.CombatController and getItemNear("_scythe") or DisablerExtra.Enabled and (getItem("jade_hammer") or getItem("void_axe") or getItemNear("_dao"))
+								if isAlive(lplr, true) and (tick() - VoidwareStore.AliveTick) > 3 and disableritem and (bedwarsStore.scythe >= tick() or bedwarsStore.daoboost >= tick()) and tick() >= scytheSlowdown then 
+									warningNotification("FirewallBypass", "Teleport Detected. Suspending speed for 0.45 seconds.", 1)
+									bedwarsStore.scythe = tick() - 0.1
+									bedwarsStore.daoboost = tick() - 0.1
+									daoDash = tick() + 0.10
+									scytheSlowdown = tick() + 0.45
+								end
+							end))
 							repeat task.wait()
 								local item = isAlive(lplr, true) and getItemNear("_scythe")
 								if item and bedwars.CombatController then
@@ -8873,7 +8733,7 @@ end)
 									end
 									local bypassnumbers = (lplr.Character.Humanoid.MoveDirection ~= Vector3.zero and lplr.Character.Humanoid.MoveDirection or lplr.Character.HumanoidRootPart.CFrame.LookVector) 
 									bedwars.ClientHandler:Get("ScytheDash"):SendToServer({direction = bypassnumbers * 9999999})
-									if lplr.Character.Head.Transparency ~= 0 then
+									if lplr.Character.Head.Transparency ~= 0 and tick() >= scytheSlowdown then
 										bedwarsStore.scythe = tick() + 1
 									end 
 								end
@@ -9135,7 +8995,7 @@ end)
 							if not killauraNearPlayer or isEnabled("InfiniteFly") or bedwarsStore.matchState == 0 then 
 								return 
 							end
-							if VoidwareFunctions:SpecialNearPosition(50) then 
+							if VoidwareFunctions:SpecialNearPosition(100) then 
 								return
 							end
 							task.spawn(playArrowSound)
