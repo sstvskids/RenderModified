@@ -4616,10 +4616,6 @@ runFunction(function()
 					origcf[2] = ray and ray.Position.Y + (entityLibrary.character.Humanoid.HipHeight + (oldcloneroot.Size.Y / 2)) or clone.CFrame.p.Y
 					origcf[3] = oldcloneroot.Position.Z
 					oldcloneroot.CanCollide = true
-					bodyvelo = Instance.new("BodyVelocity")
-					bodyvelo.MaxForce = Vector3.new(0, 9e9, 0)
-					bodyvelo.Velocity = Vector3.new(0, -1, 0)
-					bodyvelo.Parent = oldcloneroot
 					oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, -1, clone.Velocity.Z)
 					RunLoops:BindToHeartbeat("InfiniteFlyOff", function(dt)
 						if oldcloneroot then 
@@ -7505,10 +7501,10 @@ end)
 				customcode.SetValue("")
 			end)
 
+			local queuedescriptions = ({GetAllQueueDescriptions("title")})
 			pcall(function()
 				local JoinQueue = {Enabled = false}
 				local queuetype = {Value = bedwarsStore.queueType}
-				local queuedescriptions = ({GetAllQueueDescriptions("title")})
 				JoinQueue = GuiLibrary.ObjectsThatCanBeSaved.MatchmakingWindow.Api.CreateOptionsButton({
 					Name = "StartQueue",
 					HoverText = "Starts a queue for the selected gamemode.",
@@ -7536,7 +7532,7 @@ end)
 					Function = function() end
 				})
 				task.spawn(function()
-					repeat task.wait() until bedwarsStore.queueType ~= "bedwars_test"
+					repeat task.wait() until bedwarsStore.queueType ~= "bedwars_test" and shared.VapeFullyLoaded
 					for i,v in pairs(queuedescriptions[2]) do 
 						if i == bedwarsStore.queueType then
 							queuetype.SetValue(v)
@@ -7554,7 +7550,7 @@ end)
 						if callback then
 							task.spawn(function()
 								LeaveParty.ToggleButton(false)
-								if #bedwars.ClientStoreHandler:getState().Party.members > 0 then
+								if #bedwars.ClientStoreHandler:getState().Party.members > 0 and not isEnabled("PartyCrasher") then
 								    bedwars.LobbyEvents.leaveParty:FireServer()
 								end
 							end)
@@ -7577,7 +7573,7 @@ end)
 								local plr = GetPlayerByName(PlayerToInvite.Value)
 								if plr and bedwars.ClientStoreHandler:getState().Party.leader.userId == lplr.UserId then 
 									local successful = pcall(function() bedwars.LobbyEvents.inviteToParty:FireServer({player = plr}) end) 
-									if successful then 
+									if successful and not isEnabled("PartyCrasher") then 
 										PlayerToInvite.SetValue("")
 										InfoNotification("PartyInvite", "Invited "..plr.DisplayName.."!", 5)
 										partymoduletoggled = true
@@ -7607,7 +7603,7 @@ end)
 							task.spawn(function()
 								InviteAll.ToggleButton(false)
 								local successcounter = 0
-								if bedwars.ClientStoreHandler:getState().Party.leader.userId == lplr.UserId then 
+								if bedwars.ClientStoreHandler:getState().Party.leader.userId == lplr.UserId and not isEnabled("PartyCrasher") then 
 									for i,v in pairs(playersService:GetPlayers()) do 
 										if v ~= lplr and not table.find(invitedplayers, v) then
 											if pcall(function() bedwars.LobbyEvents.inviteToParty:FireServer({player = v}) end) then
@@ -7629,12 +7625,35 @@ end)
 
 			runFunction(function()
 				local PartyCrasher = {Enabled = false}
+				local PartyCrashTeamates = {Enabled = false}
 				PartyCrasher = GuiLibrary.ObjectsThatCanBeSaved.MatchmakingWindow.Api.CreateOptionsButton({
 					Name = "PartyCrasher",
 					HoverText = "Crashes anyone who joins the invite.",
 					Function = function(callback)
 						if callback then 
 							task.spawn(function()
+								bedwars.ClientStoreHandler:getState().Party.leader.userId ~= lplr.UserId then 
+									return 
+								end
+								for i,v in pairs(playersService:GetPlayers()) do 
+									if v ~= lplr then 
+										task.spawn(function()
+											repeat task.wait() until v:GetAttribute("LobbyConnected")
+											pcall(function() bedwars.LobbyEvents.inviteToParty:FireServer({player = v}) end)
+										end)
+									end
+								end
+								table.insert(PartyCrasher.Connections, playersService.PlayerAdded:Connect(function(v)
+									repeat task.wait() until v:GetAttribute("LobbyConnected")
+									pcall(function() bedwars.LobbyEvents.inviteToParty:FireServer({player = v}) end)
+								end))
+								repeat task.wait()
+									if #bedwars.ClientStoreHandler:getState().Party.members > 0 then 
+										bedwars.LobbyClientEvents:joinQueue(getrandomvalue(queuedescriptions[2]))
+										task.wait()
+										pcall(function() bedwars.LobbyEvents.leaveQueue:FireServer() end)
+									end
+								until not PartyCrasher.Enabled
 							end)
 						end
 					end
@@ -9116,7 +9135,7 @@ end)
 							if not killauraNearPlayer or isEnabled("InfiniteFly") or bedwarsStore.matchState == 0 then 
 								return 
 							end
-							if VoidwareFunctions:SpecialNearPosition(100) then 
+							if VoidwareFunctions:SpecialNearPosition(50) then 
 								return
 							end
 							task.spawn(playArrowSound)
