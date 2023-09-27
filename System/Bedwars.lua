@@ -1305,6 +1305,8 @@ local function getSpeed()
 			local scythespeed = (isEnabled("Speed") and isObject("SpeedScythe SpeedSlider") and GuiLibrary.ObjectsThatCanBeSaved["SpeedScythe SpeedSlider"].Api.Value or 38)
 			if bedwarsStore.queueType:find("skywars") and isEnabled("ProjectileAura") then 
 				scythespeed = scythespeed / 4
+			elseif vapeTargetInfo.Targets.Killaura and bedwarsStore.queueType:find("skywars") == nil then 
+				scythespeed = scythespeed / 3.5
 			end
 			speed = speed + scythespeed
 		end
@@ -8715,7 +8717,7 @@ end)
 									return 
 								end
 								local disableritem = bedwars.CombatController and getItemNear("_scythe") or DisablerExtra.Enabled and (getItem("jade_hammer") or getItem("void_axe") or getItemNear("_dao"))
-								if isAlive(lplr, true) and (tick() - VoidwareStore.AliveTick) > 3 and disableritem and (bedwarsStore.scythe >= tick() or bedwarsStore.daoboost >= tick()) and tick() >= scytheSlowdown then 
+								if isAlive(lplr, true) and (tick() - VoidwareStore.AliveTick) > 3 and disableritem and (bedwarsStore.scythe >= tick() or bedwarsStore.daoboost >= tick()) and tick() >= scytheSlowdown and isnetworkowner(lplr.Character.HumanoidRootPart) then 
 									warningNotification("FirewallBypass", "Teleport Detected. Suspending speed for 0.45 seconds.", 1)
 									bedwarsStore.scythe = tick() - 0.1
 									bedwarsStore.daoboost = tick() - 0.1
