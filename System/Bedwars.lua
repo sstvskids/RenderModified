@@ -8980,7 +8980,7 @@ end)
 					task.spawn(function()
 						repeat 
 							local saber = getItem("infernal_saber")
-							if not isEnabled("InfiniteFly") and FindTarget(30, nil, true).RootPart and saber and not VoidwareFunctions:SpecialNearPosition(30) then 
+							if not isEnabled("InfiniteFly") and killauraNearPlayer and saber and not VoidwareFunctions:SpecialNearPosition(30) then 
 								bedwars.ClientHandler:Get("HellBladeRelease"):SendToServer({chargeTime = 0.5, player = lplr, weapon = saber.tool})
 							end
 							task.wait()
