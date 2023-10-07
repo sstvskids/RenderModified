@@ -8969,3 +8969,24 @@ end)
 			end
 		})
 	end)
+
+	runFunction(function()
+		local AutoEmber = {Enabled = false}
+		AutoEmber = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+			Name = "4BigGuysExploit",
+			HoverText = "Automatically uses the ember ability.",
+			Function = function(callback)
+				if callback then 
+					task.spawn(function()
+						repeat 
+							local saber = getItem("infernal_saber")
+							if not isEnabled("InfiniteFly") and FindTarget(30, nil, true).RootPart and saber and not VoidwareFunctions:SpecialNearPosition(30) then 
+								bedwars.ClientHandler:Get("HellBladeRelease"):SendToServer({chargeTime = 0.5, player = lplr, weapon = saber.tool})
+							end
+							task.wait()
+						until not AutoEmber.Enabled
+					end)
+				end
+			end
+		})
+	end)
