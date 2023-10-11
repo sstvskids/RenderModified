@@ -1,4 +1,3 @@
--- Voidware Custom Vape Signed File
 local GuiLibrary = shared.GuiLibrary
 local vapeonlineresponse = false
 task.spawn(function()
