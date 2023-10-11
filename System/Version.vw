@@ -1,1 +1,1 @@
-{"VersionType":"3.2.2","PatchVersion":"1","Nickname":"Universal Update V2"}
+{"VersionType":"3.3","PatchVersion":"1","Nickname":"Galaxy"}
