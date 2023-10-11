@@ -7242,6 +7242,7 @@ end)
 			end)
 		
 			runFunction(function()
+				pcall(GuiLibrary.RemoveObject, "DoubleHighJumpOptionsButton")
 				local jump1height = {Value = 550}
 				local jump1height2 = {Value = 550}
 				local riskjump = {Enabled = false}
