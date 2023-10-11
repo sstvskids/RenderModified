@@ -3749,55 +3749,6 @@ SmoothJumpTime = SmoothHighJump.CreateSlider({
 end)
 
 runFunction(function()
-	local jump1height = {Value = 480}
-	local jump1height2 = {Value = 230}
-	local riskjump = {Enabled = false}
-	local jumpTick = 0
-	riskjump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-		Name = "DoubleHighJump",
-		HoverText = "Bypassing Velocity HighJump up to 1k.",
-		ExtraText = function() return "Velocity" end,
-		Function = function(callback)
-			if callback then
-				task.spawn(function()
-					if not isAlive() or jumpTick > 0 then
-						riskjump.ToggleButton(false)
-						return
-					end
-					lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, jump1height.Value, 0)
-					jumpTick = jumpTick + 1
-					task.wait(1)
-					if lplr.Character.Humanoid.FloorMaterial == Enum.Material.Air and riskjump.Enabled then
-					jumpTick = jumpTick + 2
-					lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, jump2height.Value, 0)
-					end
-					if riskjump.Enabled then riskjump.ToggleButton(false) end
-					local height = jump1height.Value + jump2height.Value
-					VoidwareStore.jumpTick = tick() + height / 100
-					InfoNotification("DoubleHighJump", "Jumped a total of "..height.." studs.", 4.5)
-				end)
-			else
-				task.delay(1.5, function() jumpTick = 0 end)
-			end
-		end
-	})
-	jump1height = riskjump.CreateSlider({
-		Name = "Jump 1 Height",
-		Function = function() end,
-		Min = 50,
-		Max = 550,
-		Default = 450
-	})
-	jump2height = riskjump.CreateSlider({
-		Name = "Jump 2 Height",
-		Function = function() end,
-		Min = 50,
-		Max = 550,
-		Default = 230
-	})
-end)
-
-runFunction(function()
 	local TPFly = {Enabled = false}
 	local TPFlyVerticalHeight = {Value = 15}
 	local oldgravity
