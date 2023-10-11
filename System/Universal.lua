@@ -1,6 +1,8 @@
+-- Voidware Custom Vape Signed File
 local GuiLibrary = shared.GuiLibrary
 local vapeonlineresponse = false
-task.delay(10, function()
+task.spawn(function()
+	task.wait(10)
 	if not vapeonlineresponse and not isfile("vape/Voidware/oldvape/Universal.lua") then 
 		GuiLibrary.CreateNotification("Voidware", "The Connection to Github is taking a while. If vape doesn't load within 15 seconds, please reinject.", 10)
 	end
@@ -109,11 +111,13 @@ local VoidwareStore = {
 	AliveTick = tick(),
 	DeathFunction = nil,
 	vapeupdateroutine = nil,
-	entityTable = {}
+	entityTable = {},
+	objectraycast = RaycastParams.new()
 }
 VoidwareStore.FolderTable = {"vape/Voidware", VoidwareStore.maindirectory, VoidwareStore.maindirectory.."/".."data"}
 local VoidwareGlobe = {ConfigUsers = {}, BlatantModules = {}, Messages = {}, GameFinished = false, WhitelistChatSent = {}, HookedFunctions = {}, UpdateTargetInfo = function() end, targetInfo = {Target = {}}, entityIDs = {fakeIDs = {}}}
 local VoidwareQueueStore = shared.VoidwareQueueStore and type(shared.VoidwareQueueStore) == "string" and httpService:JSONDecode(shared.VoidwareQueueStore) or {lastServers = {}}
+VoidwareStore.objectraycast.FilterType = Enum.RaycastFilterType.Include
 shared.VoidwareQueueStore = nil
 task.spawn(function()
 	repeat 
@@ -138,7 +142,7 @@ table.insert(vapeConnections, lplr.OnTeleport:Connect(function()
 	local queuestore = shared.VoidwareQueueStore
 	local success, newqueuestore = pcall(function() return httpService:JSONEncode(queuestore) end)
 	if success and newqueuestore then
-	queueonteleport('shared.VoidwareQueueStore = '..newqueuestore)
+		queueonteleport('shared.VoidwareQueueStore = "'..newqueuestore..'"')
 	end
 end))
 
@@ -179,7 +183,6 @@ local function isDescendantOfCharacter(object, npcblacklist)
 	end
 	return false
 end
-
 
 
 task.spawn(function()
@@ -367,7 +370,7 @@ function VoidwareFunctions:GetFile(file, online, path, silent)
 			end
 		end
 	end
-			data = file:find(".lua") and "-- Voidware Custom Modules Signed File\n"..data or data
+			data = file:find(".lua") and "-- Voidware Custom Vape Signed File\n"..data or data
 			writefile(path or directory.."/"..file, data)
 		else
 			vapeAssert(false, "Voidware", "Failed to download "..directory.."/"..file.." | "..data, 60)
@@ -622,7 +625,7 @@ local function voidwareNewPlayer(plr)
 		VoidwareFunctions:CreateLocalTag(plr, tagtext, tagcolor)
 	end
 	if plr ~= lplr and ({VoidwareFunctions:GetPlayerType()})[3] < 2 and ({VoidwareFunctions:GetPlayerType(plr)})[3] > 1.5 then
-		task.wait(4.5)
+		task.wait(5)
 		sendprivatemessage(plr, VoidwareWhitelistStore.Hash)
 	end
 end
@@ -1229,7 +1232,7 @@ local function VoidwareDataDecode(datatab)
 				for i,v in pairs(VoidwareStore.SystemFiles) do
 					local req, body = pcall(function() return betterhttpget("https://raw.githubusercontent.com/SystemXVoid/Voidware/"..VoidwareFunctions:GetCommitHash("Voidware").."/System/"..(string.gsub(v, "vape/", ""))) end)
 					if req and body and body ~= "" and body ~= "404: Not Found" and body ~= "400: Bad Request" then
-						body = "-- Voidware Custom Modules Signed File\n"..body
+						body = "-- Voidware Custom Vape Signed File\n"..body
 						pcall(writefile, v, body)
 					end
 				end
@@ -1239,7 +1242,7 @@ local function VoidwareDataDecode(datatab)
 					local name = v ~= "vape/CustomModules/6872274481.lua" and "BedwarsLobby.lua" or "Bedwars.lua"
 					local req, body = pcall(function() return betterhttpget("https://raw.githubusercontent.com/SystemXVoid/Voidware/"..VoidwareFunctions:GetCommitHash("Voidware").."/System/"..(string.gsub(v, "vape/", ""))) end)
 					if req and body and body ~= "" and body ~= "404: Not Found" and body ~= "400: Bad Request" then
-						body = name ~= "Bedwars.lua" and "-- Voidware Custom Modules Signed File\n"..body or "-- Voidware Custom Modules Main File\n"..body
+						body = name ~= "Bedwars.lua" and "-- Voidware Custom Vape Signed File\n"..body or "-- Voidware Custom Modules Main File\n"..body
 						pcall(writefile, v, body)
 					end
 				end
@@ -1310,30 +1313,20 @@ end)
 		table.clear(shared.VoidwareStore.Messages)
     end)
 
-
-	runFunction(function()
-		local frames = {}
-		local framerate = 0
-		local startClock = os.clock()
-		local updateTick = tick()
-		local lastfps = VoidwareStore.AverageFPS
-		local didset = false
-		table.insert(vapeConnections, runService.Heartbeat:Connect(function()
-			local updateClock = os.clock()
-			for i = #frames, 1, -1 do
-				frames[i + 1] = frames[i] >= updateClock - 1 and frames[i] or nil
+	task.spawn(function()
+		local objects = {}
+		for i,v in pairs(workspace:GetDescendants()) do 
+			if v.ClassName:lower():find("part") or v:IsA("UnionOperation") and not isDescendantOfCharacter(v) then 
+				table.insert(objects, v)
 			end
-			frames[1] = updateClock
-			if not didset then
-				VoidwareStore.AverageFPS = math.floor(os.clock() - startClock >= 1 and #frames or #frames / (os.clock() - startClock))
-				didset = true
-			end
-			if updateTick < tick() then 
-				updateTick = tick() + 30
-				local fps = math.floor(os.clock() - startClock >= 1 and #frames or #frames / (os.clock() - startClock))
-				VoidwareStore.AverageFPS = math.floor(os.clock() - startClock >= 1 and #frames or #frames / (os.clock() - startClock))
+		end
+		table.insert(vapeConnections, workspace.DescendantAdded:Connect(function(v)
+			if v.ClassName:lower():find("part") or v:IsA("UnionOperation") and not isDescendantOfCharacter(v) then 
+				table.insert(objects, v)
+				VoidwareStore.objectraycast.FilterDescendantsInstances = {objects}
 			end
 		end))
+		VoidwareStore.objectraycast.FilterDescendantsInstances = {objects}
 	end)
 
 	local function isAlive(plr, healthblacklist)
@@ -1429,7 +1422,7 @@ end)
 	end
 	
 
-	local function FindTarget(dist, healthmethod, teamonly, enemyonly, entity)
+	local function FindTarget(dist, healthmethod, teamonly, enemyonly, entity, raycast)
 		local sort, playertab = healthmethod and math.huge or dist or math.huge, {}
 		local currentmethod = healthmethod and "Health" or "Nearest"
 		local sortmethods = {Nearest = function(ent, custom) return GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, custom or ent.Character.PrimaryPart) < sort end, Health = function(ent, custom) return (custom or ent.Character.Humanoid.Health) < sort end}
@@ -1439,6 +1432,9 @@ end)
 					continue
 				end
 				if lplr.Team == v.Team and enemyonly then 
+					continue
+				end
+				if raycast and not workspace:Raycast(v.Character.PrimaryPart.Position, Vector3.new(0, -10000, 0), VoidwareStore.objectraycast) then 
 					continue
 				end
 				if sortmethods[currentmethod] and sortmethods[currentmethod](v) and v.Character:FindFirstChildWhichIsA("ForceField") == nil then
@@ -1452,6 +1448,9 @@ end)
 		if entity then
 		for i,v in pairs(VoidwareStore.entityTable) do 
 			if v.PrimaryPart and sortmethods[currentmethod](v, healthmethod and v.Humanoid.Health or v.PrimaryPart) then 
+				if raycast and not workspace:Raycast(v.PrimaryPart.Position, Vector3.new(0, -10000, 0), VoidwareStore.objectraycast) then 
+					continue
+				end
 				sort = healthmethod and v.Humanoid.Health or GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, v.PrimaryPart)
 				playertab.Player = {Name = v.Name, DisplayName = v.Name, Character = v, UserId = 1}
                 playertab.Humanoid = v.Humanoid
@@ -2672,7 +2671,6 @@ runFunction(function()
 		end
 	end,
 	Space = function()
-		if themesky then
 		themesky.MoonAngularSize = 0
 		themesky.SunAngularSize = 0
 		themesky.SkyboxBk = "rbxassetid://166509999"
@@ -2681,20 +2679,37 @@ runFunction(function()
 		themesky.SkyboxLf = "rbxassetid://166510092"
 		themesky.SkyboxRt = "rbxassetid://166510131"
 		themesky.SkyboxUp = "rbxassetid://166510114"
-		end
 	end,
-	Nebula = function()
-		if themesky then
+	Galaxy3 = function()
 		themesky.MoonAngularSize = 0
 		themesky.SunAngularSize = 0
-		themesky.SkyboxBk = "rbxassetid://5084575798"
-		themesky.SkyboxDn = "rbxassetid://5084575916"
-		themesky.SkyboxFt = "rbxassetid://5103949679"
-		themesky.SkyboxLf = "rbxassetid://5103948542"
-		themesky.SkyboxRt = "rbxassetid://5103948784"
-		themesky.SkyboxUp = "rbxassetid://5084576400"
+		themesky.SkyboxBk = "rbxassetid://14543264135"
+		themesky.SkyboxDn = "rbxassetid://14543358958"
+		themesky.SkyboxFt = "rbxassetid://14543257810"
+		themesky.SkyboxLf = "rbxassetid://14543275895"
+		themesky.SkyboxRt = "rbxassetid://14543280890"
+		themesky.SkyboxUp = "rbxassetid://14543371676"
+	end,
+	NetherWorld = function()
+		themesky.MoonAngularSize = 0
+		themesky.SunAngularSize = 0
+		themesky.SkyboxBk = "rbxassetid://14365019002"
+		themesky.SkyboxDn = "rbxassetid://14365023350"
+		themesky.SkyboxFt = "rbxassetid://14365018399"
+		themesky.SkyboxLf = "rbxassetid://14365018705"
+		themesky.SkyboxRt = "rbxassetid://14365018143"
+		themesky.SkyboxUp = "rbxassetid://14365019327"
+	end,
+	Nebula = function()
+		themesky.MoonAngularSize = 0
+		themesky.SunAngularSize = 0
+		themesky.SkyboxBk = "rbxassetid://5260808177"
+		themesky.SkyboxDn = "rbxassetid://5260653793"
+		themesky.SkyboxFt = "rbxassetid://5260817288"
+		themesky.SkyboxLf = "rbxassetid://5260800833"
+		themesky.SkyboxRt = "rbxassetid://5260811073"
+		themesky.SkyboxUp = "rbxassetid://5260824661"
 		lightingService.Ambient = Color3.fromRGB(170, 0, 255)
-		end
 	end,
 	PurpleNight = function()
 		if themesky then
@@ -2887,9 +2902,11 @@ runFunction(function()
 LightingTheme = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 	Name = "LightingTheme",
 	HoverText = "Add a whole new look to your game.",
+	ExtraText = function() return LightingThemeType.Value end,
 	Function = function(callback) 
 		if callback then 
 			task.spawn(function()
+				task.wait()
 				themesky = Instance.new("Sky")
 				local success, err = pcall(themetable[LightingThemeType.Value])
 				err = err and " | "..err or ""
@@ -3352,7 +3369,7 @@ end
 					vapeAssert(lplr.Character.Humanoid.RigType == Enum.HumanoidRigType.R15, "AnimationChanger", "R15 RigTypes only.", 7, true, true, "AnimationChanger")
 					table.insert(AnimationChanger.Connections, lplr.CharacterAdded:Connect(function()
 					if not isAlive() then repeat task.wait() until isAlive() end
-					pcall(AnimateCharacter)
+					   pcall(AnimateCharacter)
 					end))
 					pcall(AnimateCharacter)
 				end)
@@ -3446,6 +3463,7 @@ runFunction(function()
 	local attachexploit = {Enabled = false}
 	local MaxAttachRange = {Value = 20}
 	local attachexploitnpc = {Enabled = false}
+	local attachexploitraycast = {Enabled = false}
 	local attachexploitanimate = {Enabled = false}
 	local playertween
 	local target 
@@ -3456,8 +3474,8 @@ runFunction(function()
 			if callback then
 				task.spawn(function()
 					repeat
-					target = FindTarget(MaxAttachRange.Value, nil, nil, nil, attachexploitnpc.Enabled)
-					if not isAlive(lplr, true) or not target.RootPart or VoidwareFunctions:LoadTime() < 0.1 or not isnetworkowner(lplr.Character.HumanoidRootPart) then
+					target = FindTarget(MaxAttachRange.Value, nil, nil, nil, attachexploitnpc.Enabled, attachexploitraycast.Enabled)
+					if not isAlive(lplr, true) or not target.RootPart or not isnetworkowner(lplr.Character.HumanoidRootPart) then
 						attachexploit.ToggleButton(false)
 						return
 					end
@@ -3465,7 +3483,7 @@ runFunction(function()
 						lplr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 					end
 					if attachexploitanimate.Enabled then
-						playertween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(0.27), {CFrame = target.RootPart.CFrame})
+						playertween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(0.23), {CFrame = target.RootPart.CFrame})
 						playertween:Play()
 					else
 						lplr.Character.HumanoidRootPart.CFrame = target.RootPart.CFrame
@@ -3493,6 +3511,11 @@ runFunction(function()
 		HoverText = "Attaches to npcs designed by the game.",
 		Function = function() end
 	})
+	attachexploitraycast = attachexploit.CreateToggle({
+		Name = "Void Check",
+		HoverText = "Doesn't target those in the void.",
+		Function = function() end
+	})
 	attachexploitanimate = attachexploit.CreateToggle({
 		Name = "Tween",
 		HoverText = "Tweens u instead of teleporting",
@@ -3507,14 +3530,14 @@ runFunction(function()
 	local ShaderBlur
 	local ShaderTint
 	local oldlightingsettings = {
-		["Brightness"] = lightingService.Brightness,
-		["ColorShift_Top"] = lightingService.ColorShift_Top,
-		["ColorShift_Bottom"] = lightingService.ColorShift_Bottom,
-		["OutdoorAmbient"] = lightingService.OutdoorAmbient,
-		["ClockTime"] = lightingService.ClockTime,
-		["ExposureCompensation"] = lightingService.ExposureCompensation,
-		["ShadowSoftness"] = lightingService.ShadowSoftness,
-		["Ambient"] = lightingService.Ambient
+		Brightness = lightingService.Brightness,
+		ColorShift_Top = lightingService.ColorShift_Top,
+		ColorShift_Bottom = lightingService.ColorShift_Bottom,
+		OutdoorAmbient = lightingService.OutdoorAmbient,
+		ClockTime = lightingService.ClockTime,
+		ExposureCompensation = lightingService.ExposureCompensation,
+		ShadowSoftness = lightingService.ShadowSoftness,
+		Ambient = lightingService.Ambient
 	}
 	Shader = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 		Name = "RichShader",
@@ -3701,6 +3724,7 @@ runFunction(function()
  end)
 
  runFunction(function()
+	local lastToggled = tick()
 	local SmoothHighJump = {Enabled = false}
 	local SmoothJumpTick = {Value = 5}
 	local SmoothJumpTime = {Value = 1.2}
@@ -3710,23 +3734,28 @@ runFunction(function()
 	Function = function(callback)
 		if callback then
 			task.spawn(function()
-				if not isAlive(lplr) or not isnetworkowner(entityLibrary.character.HumanoidRootPart) or VoidwareFunctions:LoadTime() < 0.1 then SmoothHighJump.ToggleButton(false) return end
-				task.delay(SmoothJumpTime.Value, function()
-					if SmoothHighJump.Enabled then
-						SmoothHighJump.ToggleButton(false)
-					end
-				end)	
+				if tick() >= lastToggled then 
+					lastToggled = tick() + SmoothJumpTime.Value
+				end
 				repeat
-				if not isAlive(lplr) or not isnetworkowner(entityLibrary.character.HumanoidRootPart) or VoidwareFunctions:LoadTime() < 0.1 or GuiLibrary.ObjectsThatCanBeSaved.FlyOptionsButton.Api.Enabled then SmoothHighJump.ToggleButton(false) return end
-				 lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, boostTick, 0)
-				 boostTick = boostTick + SmoothJumpTick.Value
-				 if VoidwareStore.jumpTick <= tick() then
-				 VoidwareStore.jumpTick = tick() + 3
-				 end
-				 task.wait()
+				if not isAlive() or not isnetworkowner(entityLibrary.character.HumanoidRootPart) then
+					 SmoothHighJump.ToggleButton(false) 
+					 return 
+				end
+				if tick() > lastToggled then
+					SmoothHighJump.ToggleButton(false) 
+					return 
+				end
+				lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, boostTick, 0)
+				boostTick = boostTick + SmoothJumpTick.Value
+				if VoidwareStore.jumpTick <= tick() then
+				   VoidwareStore.jumpTick = tick() + 3
+				end
+				task.wait()
 				until not SmoothHighJump.Enabled
 			end)
 		else
+			lastToggled = tick()
 			VoidwareStore.jumpTick = tick() + (boostTick / 30)
 			boostTick = 5
 		end
@@ -3749,41 +3778,38 @@ SmoothJumpTime = SmoothHighJump.CreateSlider({
 end)
 
 runFunction(function()
-	local TPFly = {Enabled = false}
-	local TPFlyVerticalHeight = {Value = 15}
-	local oldgravity
-	TPFly = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-	Name = "FlyTP",
-	HoverText = "a shit fly I would call this :omegalol:",
-	Function = function(callback)
-		if callback then
-			task.spawn(function()
-				oldgravity = workspace.Gravity
-				workspace.Gravity = 0
-				repeat
-				 if not TPFly.Enabled then return end
-				 if not isnetworkowner(lplr.Character.HumanoidRootPart) or not isAlive(lplr) or VoidwareFunctions:LoadTime() < 0.1 then TPFly.ToggleButton(false) return end
-				 lplr.Character.HumanoidRootPart.CFrame = lplr.Character.HumanoidRootPart.CFrame + Vector3.new(0, TPFlyVerticalHeight.Value, 0)
-				 lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, -1, 0)
-				 VoidwareStore.jumpTick = tick() + 2
-				task.wait(0.1)
-				until not TPFly.Enabled
-			end)
-		else
-			workspace.Gravity = oldgravity ~= 0 and oldgravity or 192
-			VoidwareStore.jumpTick = tick() + 3
+	local FlyTP = {Enabled = false}
+	local FlyTPVertical = {Value = 15}
+	FlyTP = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+		Name = "FlyTP",
+		NoSave = true,
+		Function = function(callback)
+			if callback then 
+				task.spawn(function()
+					repeat 
+					   if not isAlive() or not isnetworkowner(lplr.Character.HumanoidRootPart) then
+						   FlyTP.ToggleButton(false) 
+						   return 
+					   end
+					   if isEnabled("InfiniteFly") then 
+						   FlyTP.ToggleButton(false)
+						   return 
+					   end
+					  lplr.Character.HumanoidRootPart.CFrame = lplr.Character.HumanoidRootPart.CFrame + Vector3.new(0, FlyTPVertical.Value <= 0 and 0.01 or FlyTPVertical.Value, 0)
+					  lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, 1, 0)
+					  task.wait(0.1)
+					until not FlyTP.Enabled
+				end)
+			end
 		end
-	end
-})
-TPFlyVerticalHeight = TPFly.CreateSlider({
-	Name = "Vertical Height",
-	Function = function() end,
-	Min = 5,
-	Max = 100,
-	Default = 15
-})
+	})
+	FlyTPVertical = FlyTP.CreateSlider({
+		Name = "Vertical",
+		Min = 15,
+		Max = 60,
+		Function = function() end
+	})
 end)
-
 
 runFunction(function()
 	local InfiniteYield = {Enabled = false}
@@ -4026,6 +4052,7 @@ runFunction(function()
 end)
 
 runFunction(function()
+	pcall(GuiLibrary.RemoveObject, "AntiLoggerOptionsButton")
 	local AntiLogger = {Enabled = false}
 	AntiLogger = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 		Name = "AntiLogger",
@@ -4033,6 +4060,9 @@ runFunction(function()
 		Function = function(callback)
 			if callback then
 				task.spawn(function()
+					if shared.AntiLogger then 
+						return 
+					end
 					loadstring(VoidwareFunctions:GetFile("data/antilogger.lua"))()
 				end)
 			end
