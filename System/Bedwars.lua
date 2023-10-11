@@ -1,4 +1,3 @@
--- Voidware Custom Vape Signed File
 local GuiLibrary = shared.GuiLibrary
 local vapeonlineresponse = false
 
@@ -834,6 +833,7 @@ function VoidwareFunctions:RefreshLocalFiles()
 	local success, updateIndex = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/fileindex.vw", true)) end)
 	if not success or type(updateIndex) ~= "table" then 
 		updateIndex = {
+			["Universal"] = "System/Universal.lua",
 			["6872274481"] = "System/Bedwars.lua",
 			["6872265039"] = "System/BedwarsLobby.lua",
 			["855499080"] = "System/Skywars.lua"
@@ -847,6 +847,10 @@ function VoidwareFunctions:RefreshLocalFiles()
 	end
 	for i,v in pairs(VoidwareStore.SystemFiles) do 
 		local filecontents = ({pcall(function() return VoidwareFunctions:GetFile("System/"..v:gsub("vape/", ""), true) end)})
+		if i == "Universal" then 
+			pcall(writefile, "vape/Universal.lua", filecontents[2])
+			continue
+		end
 		if filecontents[1] and filecontents[2] then 
 			pcall(writefile, v, filecontents[2])
 		end
@@ -855,7 +859,6 @@ function VoidwareFunctions:RefreshLocalFiles()
 	pcall(delfolder, maindirectory.."/data")
 	pcall(delfolder, maindirectory.."/Libraries")
 end
-
 task.spawn(function()
 	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
     repeat 
