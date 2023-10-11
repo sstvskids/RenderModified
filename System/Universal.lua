@@ -4174,7 +4174,7 @@ runFunction(function()
 	local oldspecialmeshtextures = {}
 	local oldpartmaterials = {}
 	local function applyfpsboostsettings(v)
-		if v:IsA("Texture") then
+		if v:IsA("Texture") then    
 			oldtextures[v] = {object = v, texture = v.Texture}
 			v.Texture = ""
 			table.insert(FPSBoost.Connections, v:GetPropertyChangedSignal("Texture"):Connect(function()
