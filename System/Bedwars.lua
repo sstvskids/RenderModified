@@ -831,7 +831,7 @@ repeat
 end)
 
 function VoidwareFunctions:RefreshLocalFiles()
-	local success, updateIndex = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/fileindex.vw")) end)
+	local success, updateIndex = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/fileindex.vw", true)) end)
 	if not success or type(updateIndex) ~= "table" then 
 		updateIndex = {
 			["6872274481"] = "System/Bedwars.lua",
