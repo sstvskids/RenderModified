@@ -83,11 +83,11 @@ local tags = {}
 local VoidwareStore = {
 	maindirectory = "vape/Voidware",
 	VersionInfo = {
-        MainVersion = "3.2.1",
+        MainVersion = "3.3",
         PatchVersion = "0",
         Nickname = "Universal Update V2",
 		BuildType = "Stable",
-		VersionID = "3.2"
+		VersionID = "3.3"
     },
 	FolderTable = {"vape/Voidware", "vape/Voidware/data"},
 	SystemFiles = {"vape/NewMainScript.lua", "vape/MainScript.lua", "vape/GuiLibrary.lua", "vape/Universal.lua"},
