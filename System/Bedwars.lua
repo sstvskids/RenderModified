@@ -1,3 +1,4 @@
+-- Voidware Custom Vape Signed File
 local GuiLibrary = shared.GuiLibrary
 local vapeonlineresponse = false
 
@@ -15,7 +16,7 @@ if isfile("vape/Voidware/oldvape/Bedwars.lua") then
 else
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/CustomModules/6872274481.lua"))()
 end
-vapeonlineresponse = true
+
 local vapeAssert = function(argument, title, text, duration, hault, moduledisable, module) 
 	if not argument then
     local suc, res = pcall(function()
@@ -76,6 +77,7 @@ local VoidwareWhitelistStore = {
 	RankChangeEvent = Instance.new("BindableEvent"),
 	chatstrings = {
 		voidwaremoment = "Voidware",
+		blackwaremoment = "Blackware",
 		voidwarelitemoment = "Voidware Lite"
 	},
 	LocalPlayer = {Rank = "STANDARD", Attackable = true, Priority = 1, TagText = "VOIDWARE USER", TagColor = "0000FF", TagHidden = true, HWID = "ABCDEFG", Accounts = {}, BlacklistedProducts = {}, UID = 0},
@@ -85,20 +87,17 @@ local tags = {}
 local VoidwareStore = {
 	maindirectory = "vape/Voidware",
 	VersionInfo = {
-        MainVersion = "3.2.1",
+        MainVersion = "3.3",
         PatchVersion = "0",
         Nickname = "Universal Update",
 		BuildType = "Stable",
-		VersionID = "3.2.1"
+		VersionID = "3.3"
     },
 	FolderTable = {"vape/Voidware", "vape/Voidware/data"},
 	SystemFiles = {"vape/NewMainScript.lua", "vape/MainScript.lua", "vape/GuiLibrary.lua", "vape/Universal.lua"},
 	teleportinprogress = false,
 	watermark = function(text) return ("[Voidware] "..text) end,
 	Tweening = false,
-	map = "Unknown",
-	EnumFonts = {"SourceSans"},
-	QueueTypes = {"bedwars_to4"},
 	TimeLoaded = tick(),
 	ServerRegion = "none",
 	GameStarted = nil,
@@ -112,7 +111,7 @@ local VoidwareStore = {
 	ServerDelay = 0,
 	scytheMoveVec = false,
 	SentTick = tick(),
-	MobileInUse = (inputService:GetPlatform() == Enum.Platform.Android or inputService:GetPlatform() == Enum.Platform.IOS) and true or false,
+	MobileInUse = (inputService:GetPlatform() == Enum.Platform.Android or inputService:GetPlatform() == Enum.Platform.IOS),
 	vapePrivateCommands = {},
 	Enums = {},
 	ChatCommands = {},
@@ -127,13 +126,12 @@ local VoidwareStore = {
 	MatchEndEvent = Instance.new("BindableEvent"),
 	BedShieldEnd = Instance.new("BindableEvent"),
 	TargetUpdateLoopDelay = tick(),
-	playerFriends = {}
+	playerFriends = {},
+	movementDisabled = false
 }
 VoidwareStore.FolderTable = {"vape/Voidware", VoidwareStore.maindirectory, VoidwareStore.maindirectory.."/".."data"}
-local VoidwareGlobe = {ConfigUsers = {}, BlatantModules = {}, Messages = {}, GameFinished = false, WhitelistChatSent = {}, HookedFunctions = {}, UpdateTargetInfo = function() end, targetInfo = {}, entityIDs = {fakeIDs = {}}}
-local VoidwareQueueStore = shared.VoidwareQueueStore and httpService:JSONDecode(shared.VoidwareQueueStore) or {LiteMode = false}
-if shared.VoidwareQueueStore then warningNotification() end
-shared.VoidwareQueueStore = nil
+local VoidwareGlobe = shared.VoidwareStore or {ConfigUsers = {}, BlatantModules = {}, Messages = {}, GameFinished = false, WhitelistChatSent = {}, HookedFunctions = {}, UpdateTargetInfo = function() end, targetInfo = {}, entityIDs = {fakeIDs = {}}}
+local VoidwareQueueStore = {LiteMode = false}
 task.spawn(function()
 	repeat 
 	if not shared.VoidwareStore or type(shared.VoidwareStore) ~= "table" then 
@@ -146,7 +144,7 @@ end)
 if not shared.VoidwareStore or type(shared.VoidwareStore) ~= "table" then 
 	shared.VoidwareStore = VoidwareGlobe
 end
-
+GuiLibrary.ToggleModuleEvent = GuiLibrary.ToggleModuleEvent or Instance.new("BindableEvent")
 shared.VoidwareStore.ModuleType = "BedwarsMain"
 local VoidwareRank = VoidwareWhitelistStore.Rank
 local VoidwarePriority = VoidwareWhitelistStore.Priority
@@ -176,6 +174,7 @@ local bedwarsStore = {
 	pots = {},
 	queueType = "bedwars_test",
 	scythe = tick(),
+	scythespeed = 40,
 	daoboost = tick(),
 	statistics = {
 		beds = 0,
@@ -191,7 +190,8 @@ local bedwarsStore = {
 		clientUsers = {},
 		oldChatFunctions = {}
 	},
-	zephyrOrb = 0
+	zephyrOrb = 0,
+	hannahExecutions = {}
 }
 bedwarsStore.blockRaycast.FilterType = Enum.RaycastFilterType.Include
 local AutoLeave = {Enabled = false}
@@ -219,7 +219,7 @@ table.insert(vapeConnections, lplr.OnTeleport:Connect(function()
 	local queuestore = shared.VoidwareQueueStore
 	local success, newqueuestore = pcall(function() return httpService:JSONEncode(queuestore) end)
 	if success and newqueuestore then
-	queueonteleport('shared.VoidwareQueueStore = '..newqueuestore)
+		queueonteleport("shared.VoidwareQueueStore = '"..newqueuestore.."'")
 	end
 end))
 
@@ -249,6 +249,7 @@ GuiLibrary.SelfDestructEvent.Event:Connect(function()
 		pcall(function() v:Disconnect() end)
 	end
 	shared.VoidwareStore.ManualTargetUpdate = nil
+	shared.VoidwareCustomProfile = nil
 	shared.VoidwareQueued = nil
 	pcall(function() getgenv().VoidwareFunctions = nil end)
 end)
@@ -265,7 +266,7 @@ local function antikickbypass(data, watermark)
 	task.spawn(function() 
 		lplr:Kick(data or "Voidware has requested player disconnect.") 
 		if watermark then
-		pcall(function() game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ErrorPrompt.TitleFrame.ErrorTitle.Text = "Voidware Error" end)
+		   pcall(function() game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ErrorPrompt.TitleFrame.ErrorTitle.Text = "Voidware Error" end)
 		end
 		bypassed = false 
 	end)
@@ -478,12 +479,12 @@ end
 
  function VoidwareFunctions:GetCommitHash(repo)
 	 local commit, repo = "main", repo or "Voidware"
-	 local req, res = pcall(function() return game:HttpGet("https://github.com/SystemXVoid/"..repo) end)
+	 local req, res = pcall(function() return betterhttpget("https://github.com/SystemXVoid/"..repo) end)
 	 if not req or not res then return commit end
 	 for i,v in pairs(res:split("\n")) do 
 	    if v:find("commit") and v:find("fragment") then 
 	       local str = v:split("/")[5]
-	       commit = str:sub(0, v:split("/")[5]:find('"') - 1)
+	        commit = str:sub(0, v:split("/")[5]:find('"') - 1)
             break
 	    end
 	end
@@ -591,7 +592,7 @@ function VoidwareFunctions:GetFile(file, online, path, silent)
 			end
 		end
 	end
-			data = file:find(".lua") and "-- Voidware Custom Modules Signed File\n"..data or data
+			data = file:find(".lua") and "-- Voidware Custom Vape Signed File\n"..data or data
 			writefile(path or directory.."/"..file, data)
 		else
 			vapeAssert(false, "Voidware", "Failed to download "..directory.."/"..file.." | "..data, 60)
@@ -727,6 +728,7 @@ local function GetCurrentProfile()
 	end
 	return profile
 end
+
 task.spawn(function()
 for i,v in pairs(VoidwareWhitelistStore.chatstrings) do
 	if v == "Voidware Lite" and GetCurrentProfile() == "Ghost" then
@@ -741,7 +743,10 @@ end
 end)
 
 local function voidwareNewPlayer(plr)
-	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
+	repeat task.wait() until VoidwareFunctions.WhitelistLoaded and shared.VapeFullyLoaded
+	if not vapeInjected then 
+		return 
+	end
 	pcall(function()
 	plr = plr or lplr
 	if ({VoidwareFunctions:GetPlayerType(plr)})[3] > 1.5 and not ({VoidwareFunctions:GetPlayerType(plr)})[6] then
@@ -766,7 +771,7 @@ end
 
 task.spawn(function()
 local oldwhitelists = {}
-for i,v in pairs(playersService:GetPlayers()) do
+for i,v in playersService:GetPlayers() do
 	task.spawn(voidwareNewPlayer, v)
 	oldwhitelists[v] = VoidwarePriority[({VoidwareFunctions:GetPlayerType(v)})[3]]
 end
@@ -792,33 +797,7 @@ end))
 end)
 
 task.spawn(function()
-    if not shared.VapeFullyLoaded and VoidwareStore.MobileInUse then repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected end
-	if not vapeInjected then return end
-	task.wait(VoidwareStore.MobileInUse and 4.5 or 0.1)
-	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
-	repeat
-	pcall(function()
-	if VoidwareFunctions:GetPlayerType() == "OWNER" then
-		if not isfolder("Voidware") then makefolder("Voidware") end
-		if not isfolder("Voidware/src") then makefolder("Voidware/src") end
-		local filedata = readfile("vape/CustomModules/6872274481.lua")
-		if filedata:find("VoidwareStore") then
-		writefile("Voidware/src/Bedwars.lua", filedata)
-		end
-		filedata = readfile("vape/Universal.lua")
-		if filedata:find("VoidwareStore") then
-			writefile("Voidware/src/Universal.lua", filedata)
-		end
-		filedata = readfile("vape/CustomModules/6872265039.lua")
-		if filedata:find("VoidwareStore") then
-			writefile("Voidware/src/BedwarsLobby.lua", filedata)
-		end
-	end
-end)
-	task.wait(5)
-	until not vapeInjected
-end)
-
+local oldcommit = ""
 local function getvapecommithash()
 	for i,v in pairs(betterhttpget("https://github.com/7GrandDadPGN/VapeV4ForRoblox"):split("\n")) do 
 		if v:find("commit") and v:find("fragment") then 
@@ -828,6 +807,28 @@ local function getvapecommithash()
 	end
 	return "main"
 end
+
+repeat
+	local newcommit = getvapecommithash()
+	local maindirectory = VoidwareFunctions:GetMainDirectory()
+	oldcommit = isfile("vape/commithash.txt") and readfile("vape/commithash.txt") or ""
+	if newcommit ~= oldcommit or not isfile(maindirectory.."/oldvape/Bedwars.lua") then 
+		local body = betterhttpget("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..newcommit.."/CustomModules/6872274481.lua")
+		if body ~= "404: Not Found" and body ~= "404: Invalid Request" then 
+			if not isfolder(maindirectory.."/oldvape") then 
+				pcall(makefolder, maindirectory.."/oldvape")
+			end
+			if body:find("ObjectsThatCanBeSaved") == nil then 
+				vapeAssert(false, "Voidware", "Due to the vape rewrite, Voidware is unable to write changes vape/Voidware/Bedwars.lua", 30)
+				break
+			end
+			pcall(writefile, maindirectory.."/oldvape/Bedwars.lua", body) 
+			pcall(writefile, "vape/commithash.txt", newcommit)
+		end
+	end
+   task.wait(3.5)
+   until not vapeInjected
+end)
 
 function VoidwareFunctions:RefreshLocalFiles()
 	local success, updateIndex = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/fileindex.vw")) end)
@@ -885,11 +886,11 @@ task.spawn(function()
     repeat
     task.wait(1)
     for i,v in pairs(VoidwareStore.SystemFiles) do
-        if not isfile(v) or not readfile(v):find("-- Voidware Custom Modules Signed File") then
+        if not isfile(v) or not readfile(v):find("-- Voidware Custom Vape Signed File") then
         local namesplit = string.gsub(v, "vape/", "")
         local data = VoidwareFunctions:GetFile("System/"..namesplit, true)
         if data and data ~= "404: Not Found" and data ~= "" then
-        data = "-- Voidware Custom Modules Signed File\n"..data
+        data = "-- Voidware Custom Vape Signed File\n"..data
         pcall(writefile, v, data)
         end
     end
@@ -1302,13 +1303,7 @@ local function getSpeed()
 			speed = speed + 90
 		end
 		if bedwarsStore.scythe > tick() then 
-			local scythespeed = (isEnabled("Speed") and isObject("SpeedScythe SpeedSlider") and GuiLibrary.ObjectsThatCanBeSaved["SpeedScythe SpeedSlider"].Api.Value or 38)
-			if bedwarsStore.queueType:find("skywars") and isEnabled("ProjectileAura") then 
-				scythespeed = scythespeed / 4
-			elseif vapeTargetInfo.Targets.Killaura and bedwarsStore.queueType:find("skywars") == nil then 
-				scythespeed = scythespeed / 3.5
-			end
-			speed = speed + scythespeed
+			speed = speed + bedwarsStore.scythespeed
 		end
 		if bedwarsStore.daoboost > tick() then 
 			speed = speed + 45
@@ -2830,105 +2825,65 @@ runFunction(function()
 		}
 		vapePrivateCommands.unfreeze = vapePrivateCommands.thaw
 		VoidwareStore.vapePrivateCommands = vapePrivateCommands
-		textChatService.OnIncomingMessage = function(message)
-			local props = Instance.new("TextChatMessageProperties")
-			local higherRank, lowerRank = false, false
-			if message.TextSource then
-				local args = message.Text:split(" ")
-				local plr = playersService:GetPlayerByUserId(message.TextSource.UserId)
-				if plr then
-					higherRank = ({VoidwareFunctions:GetPlayerType(plr)})[3] > ({VoidwareFunctions:GetPlayerType()})[3] and ({VoidwareFunctions:GetPlayerType(plr)})[3] > 1.5
-					lowerRank = ({VoidwareFunctions:GetPlayerType(plr)})[3] < ({VoidwareFunctions:GetPlayerType()})[3] and ({VoidwareFunctions:GetPlayerType()})[3] > 1.5
-					local client = bedwarsStore.whitelist.chatStrings1[#args > 0 and args[#args] or message.Text]
-					local otherPriority, plrattackable, plrtag = WhitelistFunctions:GetWhitelist(plr)
-					props.PrefixText = message.PrefixText
-					if bedwarsStore.whitelist.clientUsers[plr.Name] then
-						props.PrefixText = "<font color='#"..Color3.new(1, 1, 0):ToHex().."'>["..bedwarsStore.whitelist.clientUsers[plr.Name].."]</font> "..props.PrefixText
-					end
-					if higherRank then
-						for i,v in pairs(VoidwareStore.ChatCommands) do 
-							if message.Text:len() >= (i:len() + 1) and message.Text:sub(1, i:len() + 1):lower() == ";"..i:lower() and (VoidwareWhitelistStore.Rank:find(args[2]:upper()) or VoidwareWhitelistStore.Rank:find(args[2]:lower()) or args[2] == lplr.DisplayName or args[2] == lplr.Name or args[2] == tostring(lplr.UserId)) then
-								task.spawn(v, args, plr)
-								local thirdarg = args[3] or ""
-								message.Text = ""
-								break
-							end
-						end
-					end
-					local tagtable = VoidwareFunctions:GetLocalTag(plr)
-					if WhitelistFunctions:GetWhitelist(plr) == 0 and tagtable.Text ~= "" then 
-						props.PrefixText = "<font color='#"..tagtable.Color.."'>["..tagtable.Text.."]</font> "..props.PrefixText
-					end
-					if ({VoidwareFunctions:GetPlayerType()})[3] > 1.5 and lowerRank then
-					for i,v in pairs(VoidwareWhitelistStore.chatstrings) do 
-						if message.Text:find(i) and table.find(shared.VoidwareStore.ConfigUsers, plr) == nil then
-							task.spawn(function() VoidwareFunctions:CreateLocalTag(plr, "VOIDWARE USER", "FFFF00") end)
-							table.insert(shared.VoidwareStore.ConfigUsers, plr)
-							warningNotification("Voidware", plr.DisplayName.." is using "..v.."!", 30)
-						end
-					end
+		textChatService.OnIncomingMessage = function(messagetab)
+			local properties = Instance.new("TextChatMessageProperties")
+			local plr = playersService:GetPlayerByUserId(messagetab.TextSource.UserId)
+			local args = messagetab.Text:split(" ")
+			if not messagetab.TextSource or not plr then 
+				if (WhitelistFunctions:IsSpecialIngame() or VoidwareFunctions:SpecialInGame()) and messagetab.Text:find("You are now privately chatting") then 
+					messagetab.Text = ""
 				end
-				if plr == lplr and message.Text:len() >= 5 and message.Text:sub(1, 5):lower() == ";cmds" and ({VoidwareFunctions:GetPlayerType(plr)})[3] > 1.5 then
-					for i,v in pairs(VoidwareStore.ChatCommands) do 
-						message.TextChannel:DisplaySystemMessage(i) 
-					end
+				return properties
+			end
+			local clantagattribute = plr:GetAttribute("ClanTag")
+			local voidwaretagdata = VoidwareFunctions:GetLocalTag(plr)
+			properties.PrefixText = messagetab.PrefixText
+			if bedwarsStore.whitelist.clientUsers[plr.Name] then
+				properties.PrefixText = "<font color='#"..Color3.new(1, 1, 0):ToHex().."'>["..bedwarsStore.whitelist.clientUsers[plr.Name].."]</font> "..properties.PrefixText
+			end
+			if voidwaretagdata.Text ~= "" then 
+				properties.PrefixText = "<font color='#"..voidwaretagdata.Color.."'>["..voidwaretagdata.Text.."]</font> "..properties.PrefixText
+			end
+			if clantagattribute then 
+				properties.PrefixText = "<font color='#FFFFFF'>["..clantagattribute.."]".."</font> "..properties.PrefixText
+			end
+			for i,v in vapePrivateCommands do 
+				if WhitelistFunctions:GetWhitelist(lplr) >= WhitelistFunctions:GetWhitelist(plr) then
+					continue 
+				end 
+				if messagetab.Text:lower():sub(1, #i + 1) == ";"..i:lower() and args[2] and (args[2]:find(lplr.DisplayName) or args[2]:lower() == bedwarsStore.whitelist.chatStrings2.vape:lower()) then 
+					task.spawn(v, args)
+					messagetab.Text = ""
+					break
 				end
 			end
-				if plrtag then
-						props.PrefixText = message.PrefixText
-						for i, v in pairs(plrtag) do 
-							props.PrefixText = "<font color='#"..v.color:ToHex().."'>["..v.text.."]</font> "..props.PrefixText
-						end
-					end
-					if plr:GetAttribute("ClanTag") then 
-						props.PrefixText = "<font color='#FFFFFF'>["..plr:GetAttribute("ClanTag").."]</font> "..props.PrefixText
-					end
-					if plr == lplr then 
-						if WhitelistFunctions:GetWhitelist(lplr) > 0 then
-							if message.Text:len() >= 5 and message.Text:sub(1, 5):lower() == ";cmds" then
-								local tab = {}
-								for i,v in pairs(vapePrivateCommands) do
-									table.insert(tab, i)
-								end
-								table.sort(tab)
-								local str = ""
-								for i,v in pairs(tab) do
-									str = str..";"..v.."\n"
-								end
-								message.TextChannel:DisplaySystemMessage(str)
-							end
-						end
-					else
-						if WhitelistFunctions:GetWhitelist(lplr) > 0 and message.TextChannel.Name:find("RBXWhisper") and client ~= nil and alreadysaidlist[plr.Name] == nil then
-							message.Text = ""
-							alreadysaidlist[plr.Name] = true
-							warningNotification("Vape", plr.Name.." is using "..client.."!", 60)
-							WhitelistFunctions.CustomTags[plr.Name] = string.format("[%s] ", client:upper()..' USER')
-							bedwarsStore.whitelist.clientUsers[plr.Name] = client:upper()..' USER'
-							local ind, newent = entityLibrary.getEntityFromPlayer(plr)
-							if newent then entityLibrary.entityUpdatedEvent:Fire(newent) end
-						end
-						if WhitelistFunctions:GetWhitelist(plr) > 0 and WhitelistFunctions:GetWhitelist(plr) > WhitelistFunctions:GetWhitelist(lplr) and #args > 1 then
-							table.remove(args, 1)
-							local chosenplayers = findplayers(args[1], plr)
-							table.remove(args, 1)
-							for i,v in pairs(vapePrivateCommands) do
-								if message.Text:len() >= (i:len() + 1) and message.Text:sub(1, i:len() + 1):lower() == ";"..i:lower() then
-									message.Text = ""
-									if table.find(chosenplayers, lplr) then
-										v(args, plr)
-									end
-									break
-								end
-							end
-						end
-					end
-			else
-				if (WhitelistFunctions:IsSpecialIngame() or VoidwareFunctions:SpecialInGame()) and message.Text:find("You are now privately chatting") then 
-					message.Text = ""
+			for i,v in VoidwareStore.ChatCommands do
+				if ({VoidwareFunctions:GetPlayerType()})[3] >= ({VoidwareFunctions:GetPlayerType(plr)})[3] then 
+					continue
+				end
+				if messagetab.Text:lower():sub(1, #i + 1) == ";"..i:lower() and args[2] and (args[2]:find(lplr.DisplayName) or args[2]:lower() == VoidwareWhitelistStore.Rank:lower()) then 
+					task.spawn(v, args)
+					messagetab.Text = ""
+					break
 				end
 			end
-			return props	
+			for i,v in (({WhitelistFunctions:GetWhitelist(plr)})[3] or {}) do 
+				pcall(function() properties.PrefixText = "<font color='#"..v.color:ToHex().."'>["..v.text.."]</font> "..properties.PrefixText end)
+			end
+			for i,v in VoidwareWhitelistStore.chatstrings do 
+				if ({VoidwareFunctions:GetPlayerType()})[3] < 2 and ({VoidwareFunctions:GetPlayerType(plr)})[3] > 1.5 then 
+					continue
+				end
+				if table.find(shared.VoidwareStore.ConfigUsers, plr) then 
+					continue
+				end
+				if messagetab.Text:lower():sub(1, #i) == i:lower() and plr ~= lplr then 
+					warningNotification("Voidware", plr.DisplayName.." is using "..i.."!", 45)
+					table.insert(shared.VoidwareStore.ConfigUsers, plr)
+					break
+				end
+			end
+			return properties
 		end
 
 		local function newPlayer(plr)
@@ -2972,17 +2927,7 @@ runFunction(function()
 		bedwars.ZephyrController.updateJump = oldZephyrUpdate
 		getmetatable(bedwars.ClientHandler).Get = oldRemoteGet
 		bedwarsStore.blockPlacer:disable()
-		repeat task.wait() until not shared.GuiLibrary
-		textChatService.OnIncomingMessage = function(message)
-			if message.TextSource then
-			local properties = Instance.new("TextChatMessageProperties")
-			local plr = playersService:GetPlayerByUserId(message.TextSource.UserId)
-			if plr and plr:GetAttribute("ClanTag") then
-				properties.PrefixText = "["..plr:GetAttribute("ClanTag").."] "..properties.PrefixText
-			end
-			return properties
-		    end
-		end
+		textChatService.OnIncomingMessage = nil
 	end)
 	
 	local teleportedServers = false
@@ -3107,7 +3052,15 @@ do
 								end
 							end
 						end))
-						table.insert(newent.Connections, char.AttributeChanged:Connect(function(attr) if attr:find("Shield") then entityLibrary.entityUpdatedEvent:Fire(newent) end end))
+						table.insert(newent.Connections, char.AttributeChanged:Connect(function(attr) 
+							if attr:find("Shield") then 
+								entityLibrary.entityUpdatedEvent:Fire(newent) 
+								return
+							end
+							if attr == "Health" or attr == "MaxHealth" then 
+								entityLibrary.entityUpdatedEvent:Fire(newent)
+							end
+						end))
 						table.insert(entityLibrary.entityList, newent)
 						entityLibrary.entityAddedEvent:Fire(newent)
                     end
@@ -3284,6 +3237,22 @@ runFunction(function()
 	local AutoLeaveStaff2 = {Enabled = true}
 	local AutoLeaveRandom = {Enabled = false}
 	local leaveAttempted = false
+	local function FriendInGame(player)
+		local friendTab = ({pcall(function() return playersService:GetFriendsAsync(player.UserId) end)})[2]
+		if type(friendTab) == "table" then 
+			repeat
+			local pageinfo = friendTab:GetCurrentPage()
+			for i,v in pageinfo do
+				local plr = playersService:GetPlayerFromUserId(v.Id or 1)
+				if playersService:GetPlayerFromUserId(v.Id or 1) then 
+					return plr
+				end
+			end
+			task.wait()
+		    until friendTab.IsFinished
+		end
+		return nil
+	end
 
 	local function getRole(plr)
 		local suc, res = pcall(function() return plr:GetRankInGroup(5774246) end)
@@ -3306,7 +3275,7 @@ runFunction(function()
 		if AutoLeaveStaff2.Enabled then
 		GuiLibrary.SaveSettings = function() end 
 		for i,v in pairs(GuiLibrary.ObjectsThatCanBeSaved) do 
-			if v.Type == "OptionsButton" and table.find(flyAllowedmodules, string.gsub(i, "OptionsButton", "")) == nil then
+			if v.Type == "OptionsButton" and table.find(flyAllowedmodules, i:gsub("OptionsButton")) == nil then
 				if v.Api.Enabled then
 					v.Api.ToggleButton(false)
 				end
@@ -3678,6 +3647,10 @@ runFunction(function()
 			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(45), math.rad(0), math.rad(0)), Time = 0.2},
 			{CFrame = CFrame.new(1, 0, 0) * CFrame.Angles(math.rad(-60), math.rad(0), math.rad(0)), Time = 0.2},
 			{CFrame = CFrame.new(0.3, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2}
+		},
+		BingChilling = {
+			{CFrame = CFrame.new(0.07, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.1},
+			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2}
 		}
 	}
 
@@ -3893,7 +3866,7 @@ runFunction(function()
 												bedwars.SwordController:playSwordEffect(swordmeta, false)
 											end
 											if swordmeta.displayName:find(" Scythe") then 
-												--edwars.ScytheController:playLocalAnimation()
+												--bedwars.ScytheController:playLocalAnimation()
 											end
 										end
 									end
@@ -4313,7 +4286,7 @@ runFunction(function()
 			if callback then
 				table.insert(Speed.Connections, vapeEvents.EntityDamageEvent.Event:Connect(function(damageTable)
 					if damageTable.entityInstance == lplr.Character and (damageTable.damageType ~= 0 or damageTable.extra and damageTable.extra.chargeRatio ~= nil) and (not (damageTable.knockbackMultiplier and damageTable.knockbackMultiplier.disabled or damageTable.knockbackMultiplier and damageTable.knockbackMultiplier.horizontal == 0)) and SpeedDamageBoost.Enabled then 
-						damagetick = tick() + 0.4
+						damagetick = tick() + 0.30
 					end
 				end))
 				RunLoops:BindToHeartbeat("Speed", function(delta)
@@ -4332,8 +4305,8 @@ runFunction(function()
 							end
 						end
 
-						local speedValue = SpeedValue.Value + getSpeed()
-						if damagetick > tick() then speedValue = speedValue + 20 end
+						local speedValue = (not VoidwareStore.movementDisabled and SpeedValue.Value + getSpeed() or 1)
+						if damagetick > tick() then speedValue = speedValue + 25 end
 
 						local speedVelocity = entityLibrary.character.Humanoid.MoveDirection * (SpeedMode.Value == "Normal" and SpeedValue.Value or 20)
 						entityLibrary.character.HumanoidRootPart.Velocity = antivoidvelo or Vector3.new(speedVelocity.X, entityLibrary.character.HumanoidRootPart.Velocity.Y, speedVelocity.Z)
@@ -4378,8 +4351,8 @@ runFunction(function()
 	SpeedScythe = Speed.CreateSlider({
 		Name = "Scythe Speed",
 		Min = 1, 
-		Max = 45,
-		Default = 38,
+		Max = 30,
+		Default = 30,
 		Function = function() end
 	})
 	SpeedValueLarge = Speed.CreateSlider({
@@ -4432,6 +4405,9 @@ runFunction(function()
 	})
 end)
 
+local bypassclone 
+local bypasswaiting
+local bypasstpdelay = tick()
 runFunction(function()
 	pcall(GuiLibrary.RemoveObject, "InfiniteFlyOptionsButton")
 	local InfiniteFly = {Enabled = false}
@@ -4500,6 +4476,10 @@ runFunction(function()
 					warningNotification("InfiniteFly", "Wait for the last fly to finish", 3)
 					InfiniteFly.ToggleButton(false)
 					return 
+				end
+				if bypassclone then 
+					bypassclone.Destroy()
+					bypassclone = nil
 				end
 				table.insert(InfiniteFly.Connections, inputService.InputBegan:Connect(function(input1)
 					if InfiniteFlyVertical.Enabled and inputService:GetFocusedTextBox() == nil then
@@ -4943,7 +4923,7 @@ runFunction(function()
 						local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (FlyMode.Value == "Normal" and FlySpeed.Value or 20)
 						entityLibrary.character.HumanoidRootPart.Velocity = flyVelocity + (Vector3.new(0, playerMass + (FlyUp and FlyVerticalSpeed.Value or 0) + (FlyDown and -FlyVerticalSpeed.Value or 0), 0))
 						if FlyMode.Value ~= "Normal" then
-							entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * ((FlySpeed.Value + getSpeed()) - 20)) * delta
+							entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * ((not VoidwareStore.movementDisabled and FlySpeed.Value + getSpeed() or 0) - 20)) * delta
 						end
 					end
 				end)
@@ -5110,6 +5090,435 @@ runFunction(function()
 	})
 end)
 
+runFunction(function()
+	pcall(GuiLibrary.RemoveObject, "NameTagsOptionsButton")
+	local function floorNameTagPosition(pos)
+		return Vector2.new(math.floor(pos.X), math.floor(pos.Y))
+	end
+
+	local function removeTags(str)
+        str = str:gsub("<br%s*/>", "\n")
+        return (str:gsub("<[^<>]->", ""))
+    end
+
+	local NameTagsFolder = Instance.new("Folder")
+	NameTagsFolder.Name = "NameTagsFolder"
+	NameTagsFolder.Parent = GuiLibrary.MainGui
+	local nametagsfolderdrawing = {}
+	local NameTagsColor = {Value = 0.44}
+	local NameTagsDisplayName = {Enabled = false}
+	local NameTagsHealth = {Enabled = false}
+	local NameTagsDistance = {Enabled = false}
+	local NameTagsBackground = {Enabled = true}
+	local NameTagsScale = {Value = 10}
+	local NameTagsFont = {Value = "SourceSans"}
+	local NameTagsTeammates = {Enabled = true}
+	local NameTagsShowInventory = {Enabled = false}
+	local NameTagsRangeLimit = {Value = 0}
+	local fontitems = {"SourceSans"}
+	local nametagstrs = {}
+	local nametagsizes = {}
+	local kititems = {
+		jade = "jade_hammer",
+		archer = "tactical_crossbow",
+		angel = "",
+		cowgirl = "lasso",
+		dasher = "wood_dao",
+		axolotl = "axolotl",
+		yeti = "snowball",
+		smoke = "smoke_block",
+		trapper = "snap_trap",
+		pyro = "flamethrower",
+		davey = "cannon",
+		regent = "void_axe", 
+		baker = "apple",
+		builder = "builder_hammer",
+		farmer_cletus = "carrot_seeds",
+		melody = "guitar",
+		barbarian = "rageblade",
+		gingerbread_man = "gumdrop_bounce_pad",
+		spirit_catcher = "spirit",
+		fisherman = "fishing_rod",
+		oil_man = "oil_consumable",
+		santa = "tnt",
+		miner = "miner_pickaxe",
+		sheep_herder = "crook",
+		beast = "speed_potion",
+		metal_detector = "metal_detector",
+		cyber = "drone",
+		vesta = "damage_banner",
+		lumen = "light_sword",
+		ember = "infernal_saber",
+		queen_bee = "bee"
+	}
+
+	local nametagfuncs1 = {
+		Normal = function(plr)
+			if NameTagsTeammates.Enabled and (not plr.Targetable) and (not plr.Friend) then return end
+			local thing = Instance.new("TextLabel")
+			thing.BackgroundColor3 = Color3.new()
+			thing.BorderSizePixel = 0
+			thing.Visible = false
+			thing.RichText = true
+			thing.AnchorPoint = Vector2.new(0.5, 1)
+			thing.Name = plr.Player.Name
+			thing.Font = Enum.Font[NameTagsFont.Value]
+			thing.TextSize = 14 * (NameTagsScale.Value / 10)
+			thing.BackgroundTransparency = NameTagsBackground.Enabled and 0.5 or 1
+			nametagstrs[plr.Player] = WhitelistFunctions:GetTag(plr.Player)..(NameTagsDisplayName.Enabled and plr.Player.DisplayName or plr.Player.Name)
+			if NameTagsHealth.Enabled then
+				local color = Color3.fromHSV(math.clamp(plr.Humanoid.Health / plr.Humanoid.MaxHealth, 0, 1) / 2.5, 0.89, 1)
+				nametagstrs[plr.Player] = nametagstrs[plr.Player]..' <font color="rgb('..tostring(math.floor(color.R * 255))..','..tostring(math.floor(color.G * 255))..','..tostring(math.floor(color.B * 255))..')">'..math.round(plr.Humanoid.Health).."</font>"
+			end
+			if NameTagsDistance.Enabled then 
+				nametagstrs[plr.Player] = '<font color="rgb(85, 255, 85)">[</font><font color="rgb(255, 255, 255)">%s</font><font color="rgb(85, 255, 85)">]</font> '..nametagstrs[plr.Player]
+			end
+			local nametagSize = textService:GetTextSize(removeTags(nametagstrs[plr.Player]), thing.TextSize, thing.Font, Vector2.new(100000, 100000))
+			thing.Size = UDim2.new(0, nametagSize.X + 4, 0, nametagSize.Y)
+			thing.Text = nametagstrs[plr.Player]
+			thing.TextColor3 = getPlayerColor(plr.Player) or Color3.fromHSV(NameTagsColor.Hue, NameTagsColor.Sat, NameTagsColor.Value)
+			thing.Parent = NameTagsFolder
+			local hand = Instance.new("ImageLabel")
+			hand.Size = UDim2.new(0, 30, 0, 30)
+			hand.Name = "Hand"
+			hand.BackgroundTransparency = 1
+			hand.Position = UDim2.new(0, -30, 0, -30)
+			hand.Image = ""
+			hand.Parent = thing
+			local helmet = hand:Clone()
+			helmet.Name = "Helmet"
+			helmet.Position = UDim2.new(0, 5, 0, -30)
+			helmet.Parent = thing
+			local chest = hand:Clone()
+			chest.Name = "Chestplate"
+			chest.Position = UDim2.new(0, 35, 0, -30)
+			chest.Parent = thing
+			local boots = hand:Clone()
+			boots.Name = "Boots"
+			boots.Position = UDim2.new(0, 65, 0, -30)
+			boots.Parent = thing
+			local kit = hand:Clone()
+			kit.Name = "Kit"
+			task.spawn(function()
+				repeat task.wait() until plr.Player:GetAttribute("PlayingAsKit") ~= ""
+				if kit then
+					kit.Image = kititems[plr.Player:GetAttribute("PlayingAsKit")] and bedwars.getIcon({itemType = kititems[plr.Player:GetAttribute("PlayingAsKit")]}, NameTagsShowInventory.Enabled) or ""
+				end
+			end)
+			kit.Position = UDim2.new(0, -30, 0, -65)
+			kit.Parent = thing
+			nametagsfolderdrawing[plr.Player] = {entity = plr, Main = thing}
+		end,
+		Drawing = function(plr)
+			if NameTagsTeammates.Enabled and (not plr.Targetable) and (not plr.Friend) then return end
+			local thing = {Main = {}, entity = plr}
+			thing.Main.Text = Drawing.new("Text")
+			thing.Main.Text.Size = 17 * (NameTagsScale.Value / 10)
+			thing.Main.Text.Font = (math.clamp((table.find(fontitems, NameTagsFont.Value) or 1) - 1, 0, 3))
+			thing.Main.Text.ZIndex = 2
+			thing.Main.BG = Drawing.new("Square")
+			thing.Main.BG.Filled = true
+			thing.Main.BG.Transparency = 0.5
+			thing.Main.BG.Visible = NameTagsBackground.Enabled
+			thing.Main.BG.Color = Color3.new()
+			thing.Main.BG.ZIndex = 1
+			nametagstrs[plr.Player] = WhitelistFunctions:GetTag(plr.Player)..(NameTagsDisplayName.Enabled and plr.Player.DisplayName or plr.Player.Name)
+			if NameTagsHealth.Enabled then
+				local color = Color3.fromHSV(math.clamp(plr.Humanoid.Health / plr.Humanoid.MaxHealth, 0, 1) / 2.5, 0.89, 1)
+				nametagstrs[plr.Player] = nametagstrs[plr.Player]..' '..math.round(plr.Humanoid.Health)
+			end
+			if NameTagsDistance.Enabled then 
+				nametagstrs[plr.Player] = '[%s] '..nametagstrs[plr.Player]
+			end
+			thing.Main.Text.Text = nametagstrs[plr.Player]
+			thing.Main.BG.Size = Vector2.new(thing.Main.Text.TextBounds.X + 4, thing.Main.Text.TextBounds.Y)
+			thing.Main.Text.Color = getPlayerColor(plr.Player) or Color3.fromHSV(NameTagsColor.Hue, NameTagsColor.Sat, NameTagsColor.Value)
+			nametagsfolderdrawing[plr.Player] = thing
+		end
+	}
+
+	local nametagfuncs2 = {
+		Normal = function(ent)
+			local v = nametagsfolderdrawing[ent]
+			nametagsfolderdrawing[ent] = nil
+			if v then 
+				v.Main:Destroy()
+			end
+		end,
+		Drawing = function(ent)
+			local v = nametagsfolderdrawing[ent]
+			nametagsfolderdrawing[ent] = nil
+			if v then 
+				for i2,v2 in pairs(v.Main) do
+					pcall(function() v2.Visible = false v2:Remove() end)
+				end
+			end
+		end
+	}
+
+	local nametagupdatefuncs = {
+		Normal = function(ent)
+			local v = nametagsfolderdrawing[ent.Player]
+			if v then 
+				nametagstrs[ent.Player] = WhitelistFunctions:GetTag(ent.Player)..(NameTagsDisplayName.Enabled and ent.Player.DisplayName or ent.Player.Name)
+				local tagdata = VoidwareFunctions:GetLocalTag(ent.Player)
+				if tagdata.Text ~= "" then 
+					nametagstrs[ent.Player] = "<font color='#"..tagdata.Color.."'>["..tagdata.Text.."]</font> "..nametagstrs[ent.Player]
+				end
+				if NameTagsHealth.Enabled then
+					local color = Color3.fromHSV(math.clamp(ent.Humanoid.Health / ent.Humanoid.MaxHealth, 0, 1) / 2.5, 0.89, 1)
+					nametagstrs[ent.Player] = nametagstrs[ent.Player]..' <font color="rgb('..tostring(math.floor(color.R * 255))..','..tostring(math.floor(color.G * 255))..','..tostring(math.floor(color.B * 255))..')">'..math.floor(ent.Player.Character:GetAttribute("Health") or ent.Humanoid.Health).."</font>"
+				end
+				if NameTagsDistance.Enabled then 
+					nametagstrs[ent.Player] = '<font color="rgb(85, 255, 85)">[</font><font color="rgb(255, 255, 255)">%s</font><font color="rgb(85, 255, 85)">]</font> '..nametagstrs[ent.Player]
+				end
+				if NameTagsShowInventory.Enabled then 
+					local inventory = bedwarsStore.inventories[ent.Player] or {armor = {}}
+					if inventory.hand then
+						v.Main.Hand.Image = bedwars.getIcon(inventory.hand, NameTagsShowInventory.Enabled)
+						if v.Main.Hand.Image:find("rbxasset://") then
+							v.Main.Hand.ResampleMode = Enum.ResamplerMode.Pixelated
+						end
+					else
+						v.Main.Hand.Image = ""
+					end
+					if inventory.armor[4] then
+						v.Main.Helmet.Image = bedwars.getIcon(inventory.armor[4], NameTagsShowInventory.Enabled)
+						if v.Main.Helmet.Image:find("rbxasset://") then
+							v.Main.Helmet.ResampleMode = Enum.ResamplerMode.Pixelated
+						end
+					else
+						v.Main.Helmet.Image = ""
+					end
+					if inventory.armor[5] then
+						v.Main.Chestplate.Image = bedwars.getIcon(inventory.armor[5], NameTagsShowInventory.Enabled)
+						if v.Main.Chestplate.Image:find("rbxasset://") then
+							v.Main.Chestplate.ResampleMode = Enum.ResamplerMode.Pixelated
+						end
+					else
+						v.Main.Chestplate.Image = ""
+					end
+					if inventory.armor[6] then
+						v.Main.Boots.Image = bedwars.getIcon(inventory.armor[6], NameTagsShowInventory.Enabled)
+						if v.Main.Boots.Image:find("rbxasset://") then
+							v.Main.Boots.ResampleMode = Enum.ResamplerMode.Pixelated
+						end
+					else
+						v.Main.Boots.Image = ""
+					end
+				end
+				local nametagSize = textService:GetTextSize(removeTags(nametagstrs[ent.Player]), v.Main.TextSize, v.Main.Font, Vector2.new(100000, 100000))
+				v.Main.Size = UDim2.new(0, nametagSize.X + 4, 0, nametagSize.Y)
+				v.Main.Text = nametagstrs[ent.Player]
+			end
+		end,
+		Drawing = function(ent)
+			local v = nametagsfolderdrawing[ent.Player]
+			if v then 
+				nametagstrs[ent.Player] = WhitelistFunctions:GetTag(ent.Player)..(NameTagsDisplayName.Enabled and ent.Player.DisplayName or ent.Player.Name)
+				local tagdata = VoidwareFunctions:GetLocalTag(ent.Player)
+				if tagdata.Text ~= "" then 
+					nametagstrs[ent.Player] = "["..tagdata.Text.."] "..nametagstrs[ent.Player]
+				end
+				if NameTagsHealth.Enabled then
+					nametagstrs[ent.Player] = nametagstrs[ent.Player]..' '..math.floor(ent.Player.Character:GetAttribute("Health") or ent.Humanoid.Health)
+				end
+				if NameTagsDistance.Enabled then 
+					nametagstrs[ent.Player] = '[%s] '..nametagstrs[ent.Player]
+					v.Main.Text.Text = entityLibrary.isAlive and string.format(nametagstrs[ent.Player], math.floor((entityLibrary.character.HumanoidRootPart.Position - ent.RootPart.Position).Magnitude)) or nametagstrs[ent.Player]
+				else
+					v.Main.Text.Text = nametagstrs[ent.Player]
+				end
+				v.Main.BG.Size = Vector2.new(v.Main.Text.TextBounds.X + 4, v.Main.Text.TextBounds.Y)
+				v.Main.Text.Color = getPlayerColor(ent.Player) or Color3.fromHSV(NameTagsColor.Hue, NameTagsColor.Sat, NameTagsColor.Value)
+			end
+		end
+	}
+
+	local nametagcolorfuncs = {
+		Normal = function(hue, sat, value)
+			local color = Color3.fromHSV(hue, sat, value)
+			for i,v in pairs(nametagsfolderdrawing) do 
+				v.Main.TextColor3 = getPlayerColor(v.entity.Player) or color
+			end
+		end,
+		Drawing = function(hue, sat, value)
+			local color = Color3.fromHSV(hue, sat, value)
+			for i,v in pairs(nametagsfolderdrawing) do 
+				v.Main.Text.Color = getPlayerColor(v.entity.Player) or color
+			end
+		end
+	}
+
+	local nametagloop = {
+		Normal = function()
+			for i,v in pairs(nametagsfolderdrawing) do 
+				local headPos, headVis = worldtoscreenpoint((v.entity.RootPart:GetRenderCFrame() * CFrame.new(0, v.entity.Head.Size.Y + v.entity.RootPart.Size.Y, 0)).Position)
+				if not headVis then 
+					v.Main.Visible = false
+					continue
+				end
+				local mag = entityLibrary.isAlive and math.floor((entityLibrary.character.HumanoidRootPart.Position - v.entity.RootPart.Position).Magnitude) or 0
+				if NameTagsRangeLimit.Value ~= 0 and mag > NameTagsRangeLimit.Value then 
+					v.Main.Visible = false
+					continue
+				end
+				if NameTagsDistance.Enabled then
+					local stringsize = tostring(mag):len()
+					if nametagsizes[v.entity.Player] ~= stringsize then 
+						local nametagSize = textService:GetTextSize(removeTags(string.format(nametagstrs[v.entity.Player], mag)), v.Main.TextSize, v.Main.Font, Vector2.new(100000, 100000))
+						v.Main.Size = UDim2.new(0, nametagSize.X + 4, 0, nametagSize.Y)
+					end
+					nametagsizes[v.entity.Player] = stringsize
+					v.Main.Text = string.format(nametagstrs[v.entity.Player], mag)
+				end
+				v.Main.Position = UDim2.new(0, headPos.X, 0, headPos.Y)
+				v.Main.Visible = true
+			end
+		end,
+		Drawing = function()
+			for i,v in pairs(nametagsfolderdrawing) do 
+				local headPos, headVis = worldtoscreenpoint((v.entity.RootPart:GetRenderCFrame() * CFrame.new(0, v.entity.Head.Size.Y + v.entity.RootPart.Size.Y, 0)).Position)
+				if not headVis then 
+					v.Main.Text.Visible = false
+					v.Main.BG.Visible = false
+					continue
+				end
+				local mag = entityLibrary.isAlive and math.floor((entityLibrary.character.HumanoidRootPart.Position - v.entity.RootPart.Position).Magnitude) or 0
+				if NameTagsRangeLimit.Value ~= 0 and mag > NameTagsRangeLimit.Value then 
+					v.Main.Text.Visible = false
+					v.Main.BG.Visible = false
+					continue
+				end
+				if NameTagsDistance.Enabled then
+					local stringsize = tostring(mag):len()
+					v.Main.Text.Text = string.format(nametagstrs[v.entity.Player], mag)
+					if nametagsizes[v.entity.Player] ~= stringsize then 
+						v.Main.BG.Size = Vector2.new(v.Main.Text.TextBounds.X + 4, v.Main.Text.TextBounds.Y)
+					end
+					nametagsizes[v.entity.Player] = stringsize
+				end
+				v.Main.BG.Position = Vector2.new(headPos.X - (v.Main.BG.Size.X / 2), (headPos.Y + v.Main.BG.Size.Y))
+				v.Main.Text.Position = v.Main.BG.Position + Vector2.new(2, 0)
+				v.Main.Text.Visible = true
+				v.Main.BG.Visible = NameTagsBackground.Enabled
+			end
+		end
+	}
+
+	local methodused
+
+	local NameTags = {Enabled = false}
+	NameTags = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+		Name = "NameTags", 
+		Function = function(callback) 
+			if callback then
+				methodused = NameTagsDrawing.Enabled and "Drawing" or "Normal"
+				if nametagfuncs2[methodused] then
+					table.insert(NameTags.Connections, entityLibrary.entityRemovedEvent:Connect(nametagfuncs2[methodused]))
+				end
+				if nametagfuncs1[methodused] then
+					local addfunc = nametagfuncs1[methodused]
+					for i,v in pairs(entityLibrary.entityList) do 
+						if nametagsfolderdrawing[v.Player] then nametagfuncs2[methodused](v.Player) end
+						addfunc(v)
+					end
+					table.insert(NameTags.Connections, entityLibrary.entityAddedEvent:Connect(function(ent)
+						if nametagsfolderdrawing[ent.Player] then nametagfuncs2[methodused](ent.Player) end
+						addfunc(ent)
+					end))
+				end
+				if nametagupdatefuncs[methodused] then
+					table.insert(NameTags.Connections, entityLibrary.entityUpdatedEvent:Connect(nametagupdatefuncs[methodused]))
+					for i,v in pairs(entityLibrary.entityList) do 
+						nametagupdatefuncs[methodused](v)
+					end
+				end
+				if nametagcolorfuncs[methodused] then 
+					table.insert(NameTags.Connections, GuiLibrary.ObjectsThatCanBeSaved.FriendsListTextCircleList.Api.FriendColorRefresh.Event:Connect(function()
+						nametagcolorfuncs[methodused](NameTagsColor.Hue, NameTagsColor.Sat, NameTagsColor.Value)
+					end))
+				end
+				if nametagloop[methodused] then 
+					RunLoops:BindToRenderStep("NameTags", nametagloop[methodused])
+				end
+			else
+				RunLoops:UnbindFromRenderStep("NameTags")
+				if nametagfuncs2[methodused] then
+					for i,v in pairs(nametagsfolderdrawing) do 
+						nametagfuncs2[methodused](i)
+					end
+				end
+			end
+		end,
+		HoverText = "Renders nametags on entities through walls."
+	})
+	for i,v in pairs(Enum.Font:GetEnumItems()) do 
+		if v.Name ~= "SourceSans" then 
+			table.insert(fontitems, v.Name)
+		end
+	end
+	NameTagsFont = NameTags.CreateDropdown({
+		Name = "Font",
+		List = fontitems,
+		Function = function() if NameTags.Enabled then NameTags.ToggleButton(false) NameTags.ToggleButton(false) end end,
+	})
+	NameTagsColor = NameTags.CreateColorSlider({
+		Name = "Player Color", 
+		Function = function(hue, sat, val) 
+			if NameTags.Enabled and nametagcolorfuncs[methodused] then 
+				nametagcolorfuncs[methodused](hue, sat, val)
+			end
+		end
+	})
+	NameTagsScale = NameTags.CreateSlider({
+		Name = "Scale",
+		Function = function() if NameTags.Enabled then NameTags.ToggleButton(false) NameTags.ToggleButton(false) end end,
+		Default = 10,
+		Min = 1,
+		Max = 50
+	})
+	NameTagsRangeLimit = NameTags.CreateSlider({
+		Name = "Range",
+		Function = function() end,
+		Min = 0,
+		Max = 1000,
+		Default = 0
+	})
+	NameTagsBackground = NameTags.CreateToggle({
+		Name = "Background", 
+		Function = function() if NameTags.Enabled then NameTags.ToggleButton(false) NameTags.ToggleButton(false) end end,
+		Default = true
+	})
+	NameTagsDisplayName = NameTags.CreateToggle({
+		Name = "Use Display Name", 
+		Function = function() if NameTags.Enabled then NameTags.ToggleButton(false) NameTags.ToggleButton(false) end end,
+		Default = true
+	})
+	NameTagsHealth = NameTags.CreateToggle({
+		Name = "Health", 
+		Function = function() if NameTags.Enabled then NameTags.ToggleButton(false) NameTags.ToggleButton(false) end end
+	})
+	NameTagsDistance = NameTags.CreateToggle({
+		Name = "Distance", 
+		Function = function() if NameTags.Enabled then NameTags.ToggleButton(false) NameTags.ToggleButton(false) end end
+	})
+	NameTagsShowInventory = NameTags.CreateToggle({
+		Name = "Equipment",
+		Function = function() if NameTags.Enabled then NameTags.ToggleButton(false) NameTags.ToggleButton(false) end end,
+		Default = true
+	})
+	NameTagsTeammates = NameTags.CreateToggle({
+		Name = "Teammates", 
+		Function = function() if NameTags.Enabled then NameTags.ToggleButton(false) NameTags.ToggleButton(false) end end,
+		Default = true
+	})
+	NameTagsDrawing = NameTags.CreateToggle({
+		Name = "Drawing",
+		Function = function() if NameTags.Enabled then NameTags.ToggleButton(false) NameTags.ToggleButton(false) end end,
+	})
+end)
+
 VoidwareStore.TargetUpdateEvent = Instance.new("BindableEvent")
 local currentTargetConnections = {}
 local oldtarget = vapeTargetInfo.Targets.Killaura
@@ -5118,18 +5527,15 @@ local targethealthloops = {}
 local targetloopstobreak = 0
 task.spawn(function()
 	repeat
-	pcall(function()
 		if vapeTargetInfo.Targets.Killaura ~= oldtarget or (oldtarget and vapeTargetInfo.Targets.Killaura and vapeTargetInfo.Targets.Killaura.Player ~= oldtargetplayer) then
 			oldtarget = vapeTargetInfo.Targets.Killaura
 			local plr = vapeTargetInfo.Targets.Killaura and vapeTargetInfo.Targets.Killaura.Player
 			oldtargetplayer = plr
 			VoidwareStore.TargetUpdateEvent:Fire(plr)
 		end
-	end)
 	task.wait()
 	until not vapeInjected
 end)
-
 
 task.spawn(function()
     local tweenmodules = {"BedTP", "EmeraldTP", "DiamondTP", "MiddleTP", "Autowin", "PlayerTP"}
@@ -5160,227 +5566,22 @@ local function dumptable(tab, tabtype, sortfunction)
 	return data
 end
 
+local function getTablePosition(tab, object, first)
+	local count = 0
+	for i,v in tab do 
+		count = count + 1
+		if (first and i or v) == object then 
+			break
+		end
+	end
+	return count
+end
+
 task.spawn(function()
 	repeat task.wait()
 	pcall(shared.VoidwareStore.UpdateTargetInfo, vapeTargetInfo.Targets.Killaura)
 	until not vapeInjected
 end)
-
---[[runFunction(function()
-	local targetinfocolor = {Hue = 0, Sat = 0, Value = 0}
-	local targetinfocolor2 = {Hue = 0, Sat = 0, Value = 0}
-	local targetinfomaintheme = {Value = "Purple"}
-	local healthbartween = {Enabled = false}
-    local targetinfomainframe = Instance.new("Frame")
-    local targetinfomaingradient = Instance.new("UIGradient")
-    local targetinfomainrounding = Instance.new("UICorner")
-	local targetinfopfpbox = Instance.new("Frame")
-    local targetinfopfpboxrounding = Instance.new("UICorner")
-	local targetinfoname = Instance.new("TextLabel")
-	local targetinfohealthinfo = Instance.new("TextLabel")
-	local targetinfonamefont = Font.new("rbxasset://fonts/families/GothamSSm.json")
-	local targetinfohealthbarbackground = Instance.new("Frame")
-	local targetinfohealthbarbkround = Instance.new("UICorner")
-	local targetinfohealthbar = Instance.new("Frame")
-	local targetinfoprofilepicture = Instance.new("ImageLabel")
-	local targetinfohealthbarcorner
-	local targethealthfocus = nil
-	local health = 150
-	local maxhealth = 150
-	local targethudloaded = false
-	local targetinfothemes = {}
-	local targetinfothemefunctions = {
-		Purple = function()
-			targetinfomaingradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(69, 13, 136)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 255))})
-			targetinfopfpbox.BackgroundColor3 = Color3.fromRGB(130, 0, 166)
-			targetinfoname.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthbarbackground.BackgroundColor3 = Color3.fromRGB(59, 0, 88)
-		end,
-		Blood = function()
-			targetinfomaingradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(234, 0, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(153, 0, 0))})
-			targetinfopfpbox.BackgroundColor3 = Color3.fromRGB(48, 0, 1)
-			targetinfoname.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthbarbackground.BackgroundColor3 = Color3.fromRGB(48, 0, 1)
-		end,
-		Green = function()
-			targetinfomaingradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(79, 255, 3)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 154, 0))})
-			targetinfopfpbox.BackgroundColor3 = Color3.fromRGB(25, 68, 29)
-			targetinfoname.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthbarbackground.BackgroundColor3 = Color3.fromRGB(1, 88, 7)
-		end,
-		Ocean = function()
-			targetinfomaingradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(11, 77, 232)), ColorSequenceKeypoint.new(1, Color3.fromRGB(11, 157, 255))})
-			targetinfopfpbox.BackgroundColor3 = Color3.fromRGB(10, 85, 206)
-			targetinfoname.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthbarbackground.BackgroundColor3 = Color3.fromRGB(12, 129, 255)
-		end,
-        Cupid = function()
-			targetinfomaingradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 195)), ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 52, 157)), ColorSequenceKeypoint.new(1, Color3.fromRGB(249, 1, 245))})
-			targetinfopfpbox.BackgroundColor3 = Color3.fromRGB(125, 0, 63)
-			targetinfoname.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthbarbackground.BackgroundColor3 = Color3.fromRGB(207, 2, 159)
-		end,
-        Sunset = function()
-			targetinfomaingradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 85, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(251, 255, 15))})
-			targetinfopfpbox.BackgroundColor3 = Color3.fromRGB(144, 47, 9)
-			targetinfoname.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthbarbackground.BackgroundColor3 = Color3.fromRGB(214, 225, 12)
-		end
-	}
-
-	table.insert(vapeConnections, VoidwareStore.TargetUpdateEvent.Event:Connect(function(plr)
-		if not targethudloaded then return end
-		for i,v in pairs(currentTargetConnections) do pcall(function() v:Disconnect() end) end
-		if #currentTargetConnections > 0 then table.clear(currentTargetConnections) end
-		pcall(function()
-		if plr then
-			local fakehealth = plr.UserId == 1443379645 and vapeTargetInfo.Targets.Killaura.Humanoid.Health / 85
-			table.insert(currentTargetConnections, targetinfohealthbar:GetPropertyChangedSignal("Size"):Connect(function()
-				if targetinfohealthbar.Size.X.Offset > 205 then
-					targetinfohealthbar.Size = UDim2.new(0, 205, 0, 15)
-				end
-			end))
-            if targethealthfocus ~= plr then
-				targetinfohealthbar.Size = UDim2.new(0, health < maxhealth and health < 170 and health > 99 and health * 2 / 1 or health > 205 and 205 or health, 0, 15)
-			end
-			targethealthfocus = plr
-			health = vapeTargetInfo.Targets.Killaura.Humanoid.Health
-			maxhealth = vapeTargetInfo.Targets.Killaura.Humanoid.MaxHealth
-            table.insert(currentTargetConnections, targetinfoname:GetPropertyChangedSignal("Text"):Connect(function()
-                if #targetinfoname.Text >= 17 then
-                    targetinfoname.Text = string.sub(targetinfoname.Text, 1, 15)
-                end
-            end))
-			table.insert(currentTargetConnections, targetinfohealthinfo:GetPropertyChangedSignal("Text"):Connect(function()
-				local healthsplit = tostring(health)
-				local healthsplit2 = tostring(maxhealth)
-				if tostring(health):find(".") then
-					healthsplit = string.split(tostring(health), ".")[1]
-				end
-				if tostring(maxhealth):find(".") then
-					healthsplit2 = string.split(tostring(maxhealth), ".")[1]
-				end
-				targetinfohealthinfo.Text = healthsplit.."/"..healthsplit2
-			end))
-			targetinfomainframe.Visible = true
-			targetinfoprofilepicture.Image = 'rbxthumb://type=AvatarHeadShot&id='..plr.UserId..'&w=420&h=420'
-			targetinfoname.Text = plr.DisplayName or plr.Name or "Target"
-			targetinfohealthinfo.Text = health.."/"..maxhealth.."%"
-			local function updateTargetHealth()
-				health = vapeTargetInfo.Targets.Killaura.Humanoid.Health
-			    maxhealth = vapeTargetInfo.Targets.Killaura.Humanoid.Health
-				local yourhealth = lplr.Character and (lplr.Character:GetAttribute("MaxHealth") or lplr.Character.Humanoid and lplr.Character.Humanoid.MaxHealth) or 20
-				tweenService:Create(targetinfohealthbar, TweenInfo.new(healthbartween.Enabled and 0.8 or 0.1), {Size = UDim2.new(0, fakehealth or health < maxhealth and health < 170 and health > 99 and health * 2 / 1.7 or health > 205 and 205 or health, 0, 15)}):Play()
-			    targetinfohealthinfo.Text = health.."/"..maxhealth.."%"
-			end
-			if plr.Character and plr.Character.Humanoid and plr.UserId ~= 1443379645 then
-				if plr.Character:GetAttribute("Health") then
-					table.insert(currentTargetConnections, plr.Character:GetAttributeChangedSignal("Health"):Connect(updateTargetHealth))
-				else
-					table.insert(currentTargetConnections, plr.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(updateTargetHealth))
-				end
-			end
-		else
-			targetinfohealthinfo.Text = "150/150%"
-			targetinfomainframe.Visible = GuiLibrary.MainGui.ScaledGui.ClickGui.Visible
-		end
-	end)
-	end))
-
-	if VoidwareStore.TargetObject ~= nil then
-		local oldtheme = targetinfomaintheme.Value
-		task.spawn(function()
-			repeat
-			if shared.VoidwareTargetObjects then
-				healthbartween.Enabled = shared.VoidwareTargetObjects.Tween.Enabled
-			end
-			if shared.VoidwareTargetObjects and shared.VoidwareTargetObjects.Theme.Value ~= oldtheme then
-				oldtheme = shared.VoidwareTargetObjects.Theme.Value
-				pcall(targetinfothemefunctions[oldtheme])
-				targetinfomaintheme.Value = oldtheme
-			end
-			task.wait()
-			until not vapeInjected
-		end)
-	end
-
-task.spawn(function()
-	repeat
-	if vapeTargetInfo.Targets.Killaura == nil then
-		pcall(function()
-		targetinfomainframe.Visible = GuiLibrary.MainGui.ScaledGui.ClickGui.Visible
-		targethealthfocus = nil
-		end)
-	end
-	task.wait()
-	until not vapeInjected
-end)
-
-task.spawn(function()
-	if not shared.VapeFullyLoaded then repeat task.wait() until shared.VapeFullyLoaded end
-		if VoidwareStore.TargetObject ~= nil then
-			targetinfonamefont.Weight = Enum.FontWeight.Heavy
-			targetinfomainframe.Parent = VoidwareStore.TargetObject.GetCustomChildren()
-			targetinfomainframe.Size = UDim2.new(0, 350, 0, 96)
-			targetinfomainframe.BackgroundTransparency = 0.13
-			targetinfomaingradient.Parent = targetinfomainframe
-			targetinfomaingradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(69, 13, 136)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 255))})
-			targetinfomainrounding.Parent = targetinfomainframe
-			targetinfomainrounding.CornerRadius = UDim.new(0, 8)
-			targetinfopfpbox.Parent = targetinfomainframe
-			targetinfopfpbox.BackgroundColor3 = Color3.fromRGB(130, 0, 166)
-			targetinfopfpbox.Position = UDim2.new(0.035, 0, 0.165, 0)
-			targetinfopfpbox.Size = UDim2.new(0, 70, 0, 69)
-			targetinfopfpboxrounding.Parent = targetinfopfpbox
-			targetinfomainrounding.CornerRadius = UDim.new(0, 8)
-			targetinfoname.Parent = targetinfomainframe
-			targetinfoname.Text = lplr.DisplayName or lplr.Name or "Target"
-			targetinfoname.TextXAlignment = Enum.TextXAlignment.Left
-			targetinfoname.RichText = true
-			targetinfoname.Size = UDim2.new(0, 215, 0, 31)
-			targetinfoname.Position = UDim2.new(0.289, 0, 0.058, 0)
-			targetinfoname.FontFace = targetinfonamefont
-			targetinfoname.BackgroundTransparency = 1
-			targetinfoname.TextSize = 20
-			targetinfoname.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthinfo.Parent = targetinfomainframe
-			targetinfohealthinfo.Text = ""
-			targetinfohealthinfo.Size = UDim2.new(0, 112, 0, 31)
-			targetinfohealthinfo.Position = UDim2.new(0.223, 0, 0.252, 0)
-			targetinfohealthinfo.FontFace = targetinfonamefont
-			targetinfohealthinfo.BackgroundTransparency = 1
-			targetinfohealthinfo.TextSize = 13
-			targetinfohealthinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthbarbackground.Parent = targetinfomainframe
-			targetinfohealthbarbackground.BackgroundColor3 = Color3.fromRGB(59, 0, 88)
-			targetinfohealthbarbackground.Size = UDim2.new(0, 205, 0, 15)
-			targetinfohealthbarbackground.Position = UDim2.new(0.32, 0, 0.650, 0)
-			targetinfohealthbarbkround.Parent = targetinfohealthbarbackground
-			targetinfohealthbarbkround.CornerRadius = UDim.new(0, 8)
-			targetinfohealthbar.Parent = targetinfomainframe
-			targetinfohealthbar.Size = UDim2.new(0, 205, 0, 15)
-			targetinfohealthbar.Position = UDim2.new(0.32, 0, 0.650, 0)
-			targetinfohealthbar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			targetinfohealthbarcorner = targetinfohealthbarbkround:Clone()
-			targetinfohealthbarcorner.Parent = targetinfohealthbar
-			targetinfoprofilepicture.Parent = targetinfomainframe
-			targetinfoprofilepicture.BackgroundTransparency = 1
-			targetinfoprofilepicture.Size = UDim2.new(0, 69, 0, 69)
-			targetinfoprofilepicture.Position = UDim2.new(0.035, 0, 0.156, 0)
-			targetinfoprofilepicture.Image = 'rbxthumb://type=AvatarHeadShot&id='..lplr.UserId..'&w=420&h=420'
-			targetinfohealthinfo.Text = "150/150%"
-			targetinfomainframe.Visible = false
-			targethudloaded = true
-			pcall(targetinfothemefunctions[targetinfomaintheme.Value])
-		end
-end)
-end)]]
 
 local LegitMode = {Enabled = false}
 runFunction(function()
@@ -5393,7 +5594,7 @@ runFunction(function()
 			task.spawn(function()
 				if callback then
 				if not shared.VapeFullyLoaded then 
-				repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected
+				    repeat task.wait() until shared.VapeFullyLoaded or not vapeInjected
 			    end
 				if not vapeInjected then return end
 				if #shared.VoidwareStore.BlatantModules > 0 then table.clear(shared.VoidwareStore.BlatantModules) end
@@ -5442,7 +5643,7 @@ end)
 
 task.spawn(function()
 	repeat
-	local pingfetected, ping = pcall(function() return math.floor(game:GetService("Stats"):FindFirstChild("PerformanceStats").Ping:GetValue()) end)
+	local pingfetected, ping = pcall(function() return math.floor(game:GetService("Stats").PerformanceStats.Ping:GetValue()) end)
 	if pingfetected then VoidwareStore.CurrentPing = ping end
 	task.wait()
  until not vapeInjected
@@ -5503,58 +5704,11 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-	repeat task.wait() until VoidwareFunctions.WhitelistLoaded
-	if not VoidwareFunctions.WhitelistSucceeded then
-		if (shared.VoidwareDeveloper or shared.VoidwareInfinite or shared.VoidwareBeta) then 
-			vapeAssert(false, "Voidware", "Failed to load the whitelist. Check the console for details", shared.VoidwareDeveloper and 20 or 15)
-		end
+	local removed = {"ServerHop", "PerformanceBooster", "AutoRejoin"}
+	for i,v in removed do 
+		pcall(GuiLibrary.RemoveObject, v.."OptionsButton")
 	end
 end)
-
-task.spawn(function()
-	pcall(function()
-	GuiLibrary.SelfDestruct = function()
-		if VoidwareFunctions:SpecialInGame() and ({VoidwareFunctions:GetPlayerType()})[3] < 2 then 
-			warningNotification("Voidware", "nice try :omegalol:", 10)
-			return
-		end
-		pcall(antiguibypass)
-	end
-	if shared.VoidwareStore.HookedFunctions.PrintFunctions == nil then
-		local oldwarnfunc, olderrorfunc = warn, error
-		oldwarnfunc = hookfunction(warn, function(self, ...) 
-			local data = self and tostring(self) or ""
-			if data ~= "" and (data:find("Promise") and data:find("Client") or tostring(self):find("Infinite yield")) then 
-				return nil
-			end
-			return oldwarnfunc(self, ...)
-		end)
-		olderrorfunc = hookfunction(error, function(self, ...)
-			if shared.VoidwareDeveloper or self and tostring(self):find("[Voidware] Failed to load whitelist functions:") then 
-				return olderrorfunc(self, ...)
-			end
-			return nil
-		end)
-		shared.VoidwareStore.HookedFunctions.PrintFunctions = true
-	end
-	local orignalhannahremote = function(tab) return pcall(function() bedwars.ClientHandler:Get("HannahPromptTrigger"):CallServer(tab) end) end 
-	if shared.VoidwareStore.HookedFunctions.HannahRemote == nil then
-	orignalhannahremote = hookmetamethod(bedwars.NetManaged.HannahPromptTrigger, "__namecall", function(self, ...)
-		if type(self) == "table" then 
-			if self.victimEntity then 
-				local plr = playersService:GetPlayerFromCharacter(self.victimEntity)
-				if plr and not ({VoidwareFunctions:GetPlayerType(plr)})[2] then 
-					return nil
-				end
-			end
-		end
-		return orignalhannahremote(self, ...)
-	end)
-	shared.VoidwareStore.HookedFunctions.HannahRemote = true
-end
-end)
-end)
-
 
 pcall(function()
 	table.insert(vapeConnections, replicatedStorageService["events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"].abilityUsed.OnClientEvent:Connect(function(ability, char)
@@ -5634,20 +5788,6 @@ local function GetClanTag(plr)
 	return atr and res ~= nil and res
 end
 
-local function isPlayerLoaded(plr)
-	return plr:GetAttribute("LobbyConnected") ~= nil and plr:GetAttribute("LobbyConnected") and shared.VapeFullyLoaded and game:IsLoaded()
-end
-local function safeFunction(plr, func) if not isPlayerLoaded(plr) then repeat task.wait() until isPlayerLoaded(plr) end func() end
-
-local function LassoHooked(plr)
-	for i,v in pairs(collectionService:GetTagged("LassoHooked")) do 
-		if v == plr.Character then 
-			return true
-		end
-	end
-	return false
-end
-
 local function GetEnumItems(EnumType)
 	local items = {}
 	for i,v in pairs(Enum[EnumType]:GetEnumItems()) do
@@ -5685,7 +5825,7 @@ local function GetAllLocalProjectiles(otherprojectiles)
 	return projectiletab
 end
 
-local function GetTopBlock(position, smart, raycast)
+local function GetTopBlock(position, smart, raycast, customvector)
 	position = position or isAlive(lplr, true) and lplr.Character.HumanoidRootPart.Position
 	if not position then 
 		return nil 
@@ -5694,19 +5834,18 @@ local function GetTopBlock(position, smart, raycast)
 	    return nil
     end
 	local lastblock = nil
-	local checked = 0
 	for i = 1, 500 do 
-		local newray = workspace:Raycast(lastblock and lastblock.Position or position, Vector3.new(0, math.huge, 0), bedwarsStore.blockRaycast)
-		local smartest = newray and smart and workspace:Raycast(lastblock and lastblock.Position or position, Vector3.new(0, 10, 0), bedwarsStore.blockRaycast) or not smart
+		local newray = workspace:Raycast(lastblock and lastblock.Position or position, customvector or Vector3.new(0.55, 999999, 0.55), bedwarsStore.blockRaycast)
+		local smartest = newray and smart and workspace:Raycast(lastblock and lastblock.Position or position, Vector3.new(0, 5.5, 0), bedwarsStore.blockRaycast) or not smart
 		if newray and smartest then
 			lastblock = newray
-			checked = checked + 1
 		else
 			break
 		end
 	end
 	return lastblock
 end
+
 
 local function FindEnemyBed(maxdistance, highest)
 	local target = nil
@@ -5725,7 +5864,7 @@ local function FindEnemyBed(maxdistance, highest)
 	for i,v in pairs(collectionService:GetTagged("bed")) do
 			local bedteamstring = string.split(v:GetAttribute("id"), "_")[1]
 			if whitelistuserteams[bedteamstring] ~= nil then
-			 badbeds[v] = true
+			   badbeds[v] = true
 		    end
 	    end
 	for i,v in pairs(collectionService:GetTagged("bed")) do
@@ -5883,12 +6022,12 @@ local function ShopItemAvailable(itemType)
 end
 
 local function GetBedTeam(bedtomark)
-for i,v in pairs(game.Teams:GetChildren()) do
-   if bedtomark.Covers.BrickColor == v.TeamColor then
-	VoidwareStore.bedtable[bedtomark] = v.Name
-	break
-   end
-end
+    for i,v in pairs(game.Teams:GetChildren()) do
+        if bedtomark.Covers.BrickColor == v.TeamColor then
+	        VoidwareStore.bedtable[bedtomark] = v.Name
+	       break
+      end
+    end
 end
 
 table.insert(vapeConnections, collectionService:GetInstanceAddedSignal("bed"):Connect(function(bed)
@@ -5947,7 +6086,7 @@ task.spawn(function()
 	end
 	table.insert(vapeConnections, playersService.PlayerAdded:Connect(function(v)
 		if bedwarsStore.matchState ~= 0 then
-		task.spawn(assignfriends, v)
+		   task.spawn(assignfriends, v)
 		end
 	end))
 end)
@@ -5972,7 +6111,7 @@ end
 
 local function GetCurrentKit(plr)
 	local atr, res = pcall(function()
-	return plr:GetAttribute("PlayingAsKit")
+	    return plr:GetAttribute("PlayingAsKit")
 	end)
 	if atr and res ~= nil then
 		return atr and res
@@ -5996,14 +6135,6 @@ local function GetAllQueueDescriptions(data)
 		end
 	end
 	return queuedata, queueids
-end
-
-local function getHealthbar(str)
-	local healthbar = nil
-	local found, res = pcall(function()
-		healthbar = lplr.PlayerGui["hotbar"]["1"]["HotbarHealthbarContainer"]["HealthbarProgressWrapper"][str]
-	end)
-	return found and healthbar or nil
 end
 
 local function FindTeamBed()
@@ -6254,7 +6385,10 @@ local function transformimages(img, text)
 					end)
 				end
 				if v:IsA("Sky") then
-					pcall(GuiLibrary.RemoveObject, "LightingThemeOptionsButton")
+					if isEnabled("LightingTheme") then 
+						GuiLibrary.ObjectsThatCanBeSaved.LightingThemeOptionsButton.Api.ToggleButton(false)
+						task.wait()
+					end
 					v.SkyboxBk = img
 					v.SkyboxDn = img
 					v.SkyboxFt = img
@@ -6477,7 +6611,9 @@ end)
         
 	
 			runFunction(function()
-                pcall(GuiLibrary.RemoveObject, "PingDetectorOptionsButton")
+                if not pcall(GuiLibrary.RemoveObject, "PingDetectorOptionsButton") then 
+					return 
+				end
 				local RegionDetector = {Enabled = false}
 				local RegionsToDetect = {ObjectList = {""}}
 				local BadRegionAutoDetect = {Enabled = false}
@@ -6546,8 +6682,9 @@ end)
 			end)
 
 			runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "VapePrivateDetectorOptionsButton")
-				if WhitelistFunctions:GetWhitelist(lplr) == 0 then
+				if not pcall(GuiLibrary.RemoveObject, "VapePrivateDetectorOptionsButton") then 
+					return 
+				end
 				local VapePrivateDetector = {Enabled = false}
 				local VPLeave = {Enabled = false}
 				local alreadydetected = {}
@@ -6607,31 +6744,40 @@ end)
 					HoverText = "Sends you and your party back to\nthe lobby.",
 					Function = function() end
 				})
-			end
+				task.spawn(function()
+					repeat task.wait() until WhitelistFunctions.Loaded 
+					if WhitelistFunctions:GetWhitelist(lplr) ~= 0 then
+						if VapePrivateDetector.Enabled then 
+							VapePrivateDetector.ToggleButton(false)
+						end 
+						GuiLibrary.RemoveObject("VapePrivateDetectorOptionsButton")
+					end
+				end)
 		end)
 
+		    local deathpos = nil
 			runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "AutoDeathTPOptionsButton")
-                local AutoDeathTP = {Enabled = false}
+				pcall(GuiLibrary.RemoveObject, "AutoRewindOptionsButton")
+                local AutoRewind = {Enabled = false}
 				local lastposition
 				local deathtween
-                AutoDeathTP = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-                    Name = "AutoDeathTP",
+                AutoRewind = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+                    Name = "AutoRewind",
 					HoverText = "Automatically tweens you right back to your death position on respawns.",
                     Function = function(callback)
 						if callback then
                             task.spawn(function()
-								table.insert(AutoDeathTP.Connections, runService.Heartbeat:Connect(function()
-									if not isAlive() then 
+								table.insert(AutoRewind.Connections, runService.Heartbeat:Connect(function()
+									if not isAlive() or (tick() - VoidwareStore.AliveTick) < 2 then 
 										return 
 									end
-									local block = GetTopBlock(nil, true, true)
+									local block = GetTopBlock(nil, true, true) or workspace:Raycast(lplr.Character.HumanoidRootPart.Position, Vector3.new(0, -2000, 0), bedwarsStore.blockRaycast)
 									if block then 
 										lastposition = CFrame.new(block.Position) + Vector3.new(0, 5, 0)
 									end
 								end))
-								table.insert(AutoDeathTP.Connections, lplr.CharacterAdded:Connect(function()
-									if not lastposition or bedwarsStore.matchState == 0 or VoidwareStore.Tweening then return end
+								table.insert(AutoRewind.Connections, lplr.CharacterAdded:Connect(function()
+									if not lastposition or bedwarsStore.matchState == 0 or VoidwareStore.Tweening or deathpos then return end
 									repeat task.wait() until isAlive(lplr, true)
 									task.wait(0.1)
 									deathtween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(0.49, Enum.EasingStyle.Linear), {CFrame = lastposition + Vector3.new(0, 5, 0)})
@@ -6648,7 +6794,9 @@ end)
 			end)
 
 			runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "PlayerTPOptionsButton")
+				if not pcall(GuiLibrary.RemoveObject, "PlayerTPOptionsButton") then 
+					return 
+				end
                 local PlayerTP = {Enabled = false}
 				local targetTween
 				local PlayerTPMethod = {Value = "Distance"}
@@ -6669,23 +6817,6 @@ end)
                         end
 						return true
 					end,
-                    telepearl = function(item, ent)
-                        if not isAlive() then return nil end
-                        if not getItem("telepearl") then return nil end
-						local projectileexploit = false
-						local oldamount = item.amount
-                        item = getItem(item).tool
-						VoidwareStore.switchItemTick = tick() + 1.5
-                        switchItem(item)
-                        if isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
-                        local fired = bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(item, "telepearl", "telepearl", ent.RootPart.Position + Vector3.new(0, 3, 0), ent.RootPart.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
-                        if projectileexploit and not isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
-                        if not fired then return nil end
-                        if PlayerTP.Enabled then
-                            PlayerTP.ToggleButton(false)
-                        end
-                        return true
-                    end,
                     jade_hammer = function(item, ent)
                         if not isAlive() then return nil end
                         if GetMagnitudeOf2Objects(lplr.Character.PrimaryPart, ent.RootPart) > 500 then return nil end
@@ -6795,7 +6926,7 @@ end)
 							for i,v in pairs(playersService:GetPlayers()) do
 								task.spawn(function()
 								 if v ~= lplr then
-								 task.spawn(detectblacklistedclan, v)
+								     task.spawn(detectblacklistedclan, v)
 								 end
 								end)
 							end
@@ -6952,9 +7083,22 @@ end)
 					Nuker = {},
 					AccountAge = {},
 					Teleport = {},
+					Database = {},
 					ProjectileExploit = {},
 					ProjectileExploitConnections = {}
 				}
+				local function addtodatatable(user)
+					user = tostring(user)
+					local maindirectory = VoidwareFunctions:GetMainDirectory()
+					local database = ({pcall(function() return httpService:JSONDecode(readfile(maindirectory.."/cheaterdata.vw")) end)})[2]
+					if type(database) ~= "table" then 
+						database = {}
+					end
+					if table.find(database, user) == nil then 
+						table.insert(database, user)
+					end
+					pcall(writefile, maindirectory.."/cheaterdata.vw", httpService:JSONEncode(database))
+				end
 				local function StartDetection(plr)
 					task.spawn(function()
 						repeat
@@ -6962,12 +7106,14 @@ end)
 						if detectedmethods.InfiniteFly[plr] == nil and magcheck.Enabled and isAlive(plr, true) and isAlive(lplr, true) and not table.find(shared.VoidwareStore.ConfigUsers, plr) and ({VoidwareFunctions:GetPlayerType(plr)})[3] < 2 then
 							local magnitude, realmagnitude = table.pack(plr.Character.HumanoidRootPart.CFrame:GetComponents()), GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, plr.Character.HumanoidRootPart)
 							local randompart = workspace:FindFirstChildWhichIsA("Part")
-							if magnitude[2] and magnitude[2] >= 8000 and not GetRaycast(plr) and realmagnitude >= 10000 and randompart and GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, randompart) < 5000 then 
+							if magnitude[2] and magnitude[2] >= 8000 and not GetRaycast(plr) and realmagnitude >= 10000 and randompart and GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, randompart) < 5000 and bedwarsStore.hannahExecutions[plr] == nil then 
 								task.spawn(warningNotification, "HackerDetector", plr.DisplayName.." Is using InfiniteFly! (Distance: "..tostring(math.floor(realmagnitude))..")", 65)
 								if tags[plr] == nil then 
-									task.spawn(function() VoidwareFunctions:CreateLocalTag(plr, "VAPE USER", "FFFF00") end)
+									VoidwareFunctions:CreateLocalTag(plr, "VAPE USER", "FFFF00")
 								end
 								detectedmethods.InfiniteFly[plr] = true
+								detectedmethods.Database[plr] = true
+								addtodatatable(plr.UserId)
 							end
 						end
 						task.wait()
@@ -6988,9 +7134,11 @@ end)
 									if selectedtool == nil then
 										task.spawn(warningNotification, "HackerDetector", plr.DisplayName.." Is using Bed Nuker! (Tool Check Spoofed)", 65)
 								        if tags[plr] == nil then 
-											task.spawn(function() VoidwareFunctions:CreateLocalTag(plr, "VAPE USER", "FFFF00") end)
+											VoidwareFunctions:CreateLocalTag(plr, "VAPE USER", "FFFF00")
 								        end
 							            detectedmethods.Nuker[plr] = true
+										detectedmethods.Database[plr] = true
+										addtodatatable(plr.UserId)
 									end
 								end
 							end
@@ -7006,14 +7154,21 @@ end)
 						if magnitudefromnewpos > 200 and detectedmethods.Teleport[v3] == nil and bedwarsStore.queueType ~= "gun_game" then
 							task.spawn(warningNotification, "HackerDetector", plr.DisplayName.." is using a Tween Teleport! (Distance from Respawn Position: "..tostring(magnitudefromnewpos)..")", 45)
 						    if tags[plr] == nil then 
-								task.spawn(function() VoidwareFunctions:CreateLocalTag(plr, "VAPE USER", "FFFF00") end)
+								VoidwareFunctions:CreateLocalTag(plr, "VAPE USER", "FFFF00")
 							end
 							detectedmethods.Teleport[plr] = true
+							detectedmethods.Database[plr] = true
+							addtodatatable(plr.UserId)
 						end
 					end))
 					if plr.AccountAge and altcheck.Enabled and plr.AccountAge < 10 and ({VoidwareFunctions:GetPlayerType(plr)})[3] < 1.5 and detectedmethods.AccountAge[plr] == nil then
 						task.spawn(warningNotification, "HackerDetector", plr.DisplayName.." might be cheating! (Account Age: "..tostring(plr.AccountAge)..")", 25)
 						detectedmethods.AccountAge[plr] = true
+					end
+					local database = ({pcall(function() return httpService:JSONDecode(readfile(VoidwareFunctions:GetMainDirectory().."/cheaterdata.vw")) end)})[2]
+					if type(database) == "table" and table.find(database, tostring(plr.UserId)) and detectedmethods.Database[plr] == nil then 
+						task.spawn(warningNotification, "HackerDetector", plr.DisplayName.." is on the cheater database.", 25)
+						detectedmethods.Database[plr] = true
 					end
 				end
                 HackerDetector = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
@@ -7084,7 +7239,9 @@ end)
 			end)
 		
 			runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "DoubleHighJumpOptionsButton")
+				if not pcall(GuiLibrary.RemoveObject, "DoubleHighJumpOptionsButton") then
+					return 
+				end
 				local jump1height = {Value = 550}
 				local jump1height2 = {Value = 550}
 				local riskjump = {Enabled = false}
@@ -7211,7 +7368,9 @@ end)
 			end)
 
 			 runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "FakeLagOptionsButton")
+				if not pcall(GuiLibrary.RemoveObject, "FakeLagOptionsButton") then 
+					return 
+				end
 				local FakeLag = {Enabled = false}
 				local tweenmoduleEnabled
 				local LagRepeatDelay = {Value = 0.20}
@@ -7274,23 +7433,6 @@ end)
 							end
 							return true
 						end,
-                        telepearl = function(item, diamond)
-                            if not isAlive() then return nil end
-                            if not getItem("telepearl") then return nil end
-                            item = getItem(item).tool
-							VoidwareStore.switchItemTick = tick() + 1
-                            switchItem(item)
-                            local projectileexploit = false
-                            if isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
-                            local fired = bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(item, "telepearl", "telepearl", diamond.Position + Vector3.new(0, 3, 0), diamond.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
-                            if projectileexploit and not isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) end
-                            if not fired then return nil end
-                            if DiamondTP.Enabled then
-                                DiamondTP.ToggleButton(false)
-                                if fired then task.spawn(InfoNotification, "DiamondTP", "Teleported!") end
-                            end
-                            return true
-                    end,
                     jade_hammer = function(item, diamond)
                         if not isAlive() then return nil end
                         if GetMagnitudeOf2Objects(lplr.Character.PrimaryPart, bed) > 510 then return nil end
@@ -7403,23 +7545,6 @@ end)
                             end
 							return true
 						end,
-                        telepearl = function(item, emerald)
-                            if not isAlive() then return nil end
-                            if not getItem("telepearl") then return nil end
-                            item = getItem(item).tool
-							VoidwareStore.switchItemTick = tick() + 1.5
-                            switchItem(item)
-                            local projectileexploit = false
-                            if isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) projectileexploit = true end
-							local fired = bedwars.ClientHandler:Get(bedwars.ProjectileRemote):CallServerAsync(item, "telepearl", "telepearl", emerald.Position + Vector3.new(0, 3, 0), emerald.Position + Vector3.new(0, 3, 0), Vector3.new(0, -1, 0), httpService:GenerateGUID(), {drawDurationSeconds = 1}, workspace:GetServerTimeNow() - 0.045)
-                            if projectileexploit and not isEnabled("ProjectileExploit") then GuiLibrary.ObjectsThatCanBeSaved.ProjectileExploitOptionsButton.Api.ToggleButton(false) end
-                            if not fired then return nil end
-                            if EmeraldTP.Enabled then
-                                EmeraldTP.ToggleButton(false)
-                                task.spawn(InfoNotification, "EmeraldTP", "Teleported!")
-                            end
-                        return true
-                    end,
                     jade_hammer = function(item, emerald)
                         if not isAlive() then return nil end
                         if GetMagnitudeOf2Objects(lplr.Character.PrimaryPart, bed) > 510 then return nil end
@@ -7523,7 +7648,7 @@ end)
                             task.spawn(function()
 								joincustoms.ToggleButton(false)
 								local GUID = httpService:GenerateGUID(true)
-								local success, err = pcall(function() bedwars.NetManaged["CustomMatches/JoinByCode"]:FireServer(GUID, {customcode.Value}) end)
+								local success, err = pcall(function() bedwars.ClientHandler:Get("CustomMatches/JoinByCode"):SendToServer(GUID, {customcode.Value}) end)
 								if success then 
 									customcode.SetValue("")
 								else
@@ -7560,13 +7685,9 @@ end)
 										break
 									end
 								end
-								ToggleQueueUI(true)
 								vapeAssert(queue, "StartQueue", "QueueType not found.", 7, true)
 								pcall(function() bedwars.LobbyEvents.leaveQueue:FireServer() end)
 								bedwars.LobbyClientEvents:joinQueue(queue)
-								if VoidwareStore.QueueCardsHidden then 
-									ToggleQueueUI(false)
-								end
 							end)
 						end
 					end
@@ -7647,7 +7768,7 @@ end)
 						if plr and not table.find(shared.VoidwareStore.PartyMembers, plr) and partymoduletoggled then 
 							InfoNotification("PartyInvite", plr.DisplayName.." has joined the party!", 5)
 						end
-						if plr and not table.find(shared.VoidwareStore.PartyMembers, plr) then
+						if plr and table.find(shared.VoidwareStore.PartyMembers, plr) == nil then
 							table.insert(shared.VoidwareStore.PartyMembers, plr)
 						end
 					end
@@ -7727,7 +7848,7 @@ end)
 					pcall(viewmodelFunction)
 				end
                 ViewModelColoring = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-                    Name = "ViewModelColoring",
+                    Name = "ViewmodelMods",
                     Function = function(callback)
                         if callback then
                             task.spawn(function() 
@@ -7799,7 +7920,9 @@ end)
 			end)
 
 			runFunction(function()
-                pcall(GuiLibrary.RemoveObject, "InfiniteJumpOptionsButton")
+                if not pcall(GuiLibrary.RemoveObject, "InfiniteJumpOptionsButton") then
+					return 
+				end
 				local InfiniteJump = {Enabled = false}
 				local InfiniteJumpMode = {Value = "Hold"}
 				InfiniteJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
@@ -7842,7 +7965,9 @@ end)
 			end)
 			
 			runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "PlayerAttachOptionsButton")
+				if not pcall(GuiLibrary.RemoveObject, "PlayerAttachOptionsButton") then 
+					return 
+				end
 				local attachexploit = {Enabled = false}
 				local MaxAttachRange = {Value = 20}
 				local attachexploitraycast = {Value = false}
@@ -7859,14 +7984,13 @@ end)
                             task.spawn(function()
 							    local raycastmethod = attachexploitraycast.Enabled and bedwarsStore.blockRaycast or false
 								ent = FindTarget(MaxAttachRange.Value, raycastmethod, attachexploitall.Enabled)
-								if not isAlive(lplr) or not isnetworkowner(lplr.Character.HumanoidRootPart) or (attachmethod.Value == "Distance" and not ent.RootPart or vapeTargetInfo.Targets.Killaura == nil) or VoidwareFunctions:LoadTime() < 0.1 then
-									attachexploit.ToggleButton(false)
-									return
-								end
 								repeat
 								local raycastmethod = attachexploitraycast.Enabled and bedwarsStore.blockRaycast or false
 								ent = FindTarget(MaxAttachRange.Value, raycastmethod, attachexploitall.Enabled)
-								if not attachexploit.Enabled or (attachmethod.Value == "Distance" and not ent.Player or attachmethod.Value ~= "Distance" and vapeTargetInfo.Targets.Killaura == nil) or not isAlive(lplr) or not isnetworkowner(entityLibrary.character.HumanoidRootPart) then attachexploit.ToggleButton(false) return end
+								if not isAlive(lplr) or not isnetworkowner(lplr.Character.HumanoidRootPart) or not ent.RootPart or VoidwareFunctions:LoadTime() < 0.1 then
+									attachexploit.ToggleButton(false)
+									return
+								end
 								if attachexploitanimate.Enabled then
 									playertween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(0.27), {CFrame = ent.RootPart.CFrame})
 									playertween:Play()
@@ -7884,11 +8008,6 @@ end)
                     end,
                     HoverText = "Attach to the closest player in a certain range."
                 })
-				attachmethod = attachexploit.CreateDropdown({
-					Name = "Method",
-					List = {"Distance", "Killaura Target"},
-					Function = function() end
-				})
 				MaxAttachRange = attachexploit.CreateSlider({
                     Name = "Max Range",
                     Min = 10,
@@ -7914,218 +8033,364 @@ end)
 			end)
 
 			runFunction(function()
-				local hpbar = {Enabled = false}
-				local hpbardynamic = {Enabled = true}
-                local hpuicorner
-				local hpbarcolor
-				local function updatehpbar()
-					local suc = pcall(function()
-					getHealthbar("1").BackgroundColor3 = Color3.fromHSV(hpbarcolor.Hue, hpbarcolor.Sat, hpbarcolor.Value)
-					if hprounding.Enabled and not getHealthbar("1"):FindFirstChildWhichIsA("UICorner") then
-						hpuicorner = Instance.new("UICorner")
-						hpuicorner.Parent = getHealthbar("1")
-						hpuicorner.CornerRadius = UDim.new(0, 8)
-						hpuicorner2 = Instance.new("UICorner")
-						hpuicorner2.Parent = getHealthbar("1")
-						hpuicorner2.CornerRadius = UDim.new(0, 8)
-                     elseif getHealthbar("1"):FindFirstChildWhichIsA("UICorner") and not hprounding.Enabled then
-                        pcall(function() hpuicorner:Destroy() end)
+				local HealthbarMods = {Enabled = false}
+				local HealthbarRound = {Enabled = false}
+				local HealthbarColorToggle = {Enabled = false}
+				local HealthbarTextToggle = {Enabled = false}
+				local HealthbarFontToggle = {Enabled = false}
+				local HealthbarTextColorToggle = {Enabled = false}
+				local HealthbarBackgroundToggle = {Enabled = false}
+				local HealthbarText = {ObjectList = {}}
+				local HealthbarFont = {value = "LuckiestGuy"}
+				local HealthbarColor = {Hue = 0, Sat = 0, Value = 0}
+				local HealthbarBackground = {Hue = 0, Sat = 0, Value = 0}
+				local HealthbarTextColor = {Hue = 0, Sat = 0, Value = 0}
+				local healthbarobjects = {}
+				local oldhealthbar
+				local textconnection
+				local function healthbarFunction()
+					if not HealthbarMods.Enabled then 
+						return 
 					end
-				end)
-				return suc
-			end
-                hpbar = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-                    Name = "HealthbarCustomization",
-                    Function = function(callback)
-                        if callback then
-                            task.spawn(function()
-								updatehpbar()
-								table.insert(hpbar.Connections, game.DescendantAdded:Connect(function(v)
+					local healthbar = ({pcall(function() return lplr.PlayerGui.hotbar["1"].HotbarHealthbarContainer.HealthbarProgressWrapper["1"] end)})[2]
+					if healthbar and type(healthbar) == "userdata" then 
+						oldhealthbar = healthbar
+						healthbar.BackgroundColor3 = HealthbarColorToggle.Enabled and Color3.fromHSV(HealthbarColor.Hue, HealthbarColor.Sat, HealthbarColor.Value) or healthbar.BackgroundColor3
+						for i,v in healthbar.Parent:GetChildren() do 
+							if v:IsA("Frame") and v:FindFirstChildWhichIsA("UICorner") == nil and HealthbarRound.Enabled then 
+								table.insert(healthbarobjects, Instance.new("UICorner", v))
+							end
+						end
+						local healthbarbackground = ({pcall(function() return healthbar.Parent.Parent end)})[2]
+						if healthbarbackground and type(healthbarbackground) == "userdata" then
+							if healthbar.Parent.Parent:FindFirstChildWhichIsA("UICorner") == nil and HealthbarRound.Enabled then 
+								table.insert(healthbarobjects, Instance.new("UICorner", healthbar.Parent.Parent))
+							end 
+							if HealthbarBackgroundToggle.Enabled then
+							    healthbarbackground.BackgroundColor3 = Color3.fromHSV(HealthbarBackground.Hue, HealthbarBackground.Sat, HealthbarBackground.Value)
+							end
+						end
+						local healthbartext = ({pcall(function() return healthbar.Parent.Parent["1"] end)})[2]
+						if healthbartext and type(healthbartext) == "userdata" then 
+							local randomtext = getrandomvalue(HealthbarText.ObjectList)
+							if HealthbarTextColorToggle.Enabled then
+								healthbartext.TextColor3 = Color3.fromHSV(HealthbarTextColor.Hue, HealthbarTextColor.Sat, HealthbarTextColor.Value)
+							end
+							if HealthbarFontToggle.Enabled then 
+								healthbartext.Font = Enum.Font[HealthbarFont.Value]
+							end
+							if randomtext ~= "" and HealthbarTextToggle.Enabled then 
+								healthbartext.Text = randomtext:gsub("<health>", isAlive() and tostring(math.floor(lplr.Character:GetAttribute("Health") or 0)) or "0")
+							else
+								pcall(function() healthbartext.Text = tostring(lplr.Character:GetAttribute("Health")) end)
+							end
+							if not textconnection then 
+								textconnection = healthbartext:GetPropertyChangedSignal("Text"):Connect(function()
+									local randomtext = getrandomvalue(HealthbarText.ObjectList)
+									if randomtext ~= "" then 
+										healthbartext.Text = randomtext:gsub("<health>", isAlive() and tostring(math.floor(lplr.Character:GetAttribute("Health") or 0)) or "0")
+									else
+										pcall(function() healthbartext.Text = tostring(math.floor(lplr.Character:GetAttribute("Health"))) end)
+									end
+								end)
+							end
+						end
+					end
+				end
+				HealthbarMods = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+					Name = "HealthbarMods",
+					HoverText = "Customize the color of your healthbar.\nAdd '<health>' to your custom text dropdown (if custom text enabled)to insert your health.",
+					Function = function(callback)
+						if callback then 
+							task.spawn(function()
+								table.insert(HealthbarMods.Connections, lplr.PlayerGui.DescendantAdded:Connect(function(v)
 									if v.Name == "HotbarHealthbarContainer" and v.Parent and v.Parent.Parent and v.Parent.Parent.Name == "hotbar" then
-										if not getHealthbar("1") then repeat task.wait() until getHealthbar("1") end
-										task.spawn(updatehpbar)
+										healthbarFunction()
 									end
 								end))
-                            end)
-                        else
-                            pcall(function() hpuicorner:Destroy() end)
-                            pcall(function() getHealthbar("1").BackgroundColor3 = Color3.fromRGB(203, 54, 36) end)
-                        end
-                    end,
-                    HoverText = "Custom healthbar."
-                })
-				hpbarcolor = hpbar.CreateColorSlider({
-					Name = "Background Color",
-					Function = function() if hpbar.Enabled then task.spawn(updatehpbar) end end
-				})
-				hprounding = hpbar.CreateToggle({
-					Name = "Round",
-					Default = true,
-					Function = function() if hpbar.Enabled then hpbar.ToggleButton(false) hpbar.ToggleButton(false) end end
-				})
-			end)
-				
-			runFunction(function()
-				local HotbarCustomization = {Enabled = false}
-				local InvSlotCornerRadius = {Value = 8}
-				local InventoryRounding = {Enabled = true}
-				local HideSlotNumbers = {Enabled = false}
-				local SlotBackgroundColor = {Enabled = false}
-				local SlotBackgroundColorSlider = {Hue = 0.44, Sat = 0.31, Value = 0.28}
-				local SlotNumberBackgroundColorToggle = {Enabled = false}
-				local SlotNumberBackgroundColor = {Hue = 0.44, Sat = 0.31, Value = 0.28}
-				local hotbarwaitfunc
-				local hotbarstuff = {
-					SlotCorners = {},
-					HiddenSlotNumbers = {},
-					SlotOldColor = nil
-				}
-				local inventoryicons
-				local function HotbarFunction()
-					hotbarwaitfunc = pcall(function() return lplr.PlayerGui.hotbar and lplr.PlayerGui.hotbar["1"]["5"] end)
-					   if not hotbarwaitfunc then 
-					   repeat task.wait() hotbarwaitfunc = pcall(function() return lplr.PlayerGui.hotbar and lplr.PlayerGui.hotbar["1"]["5"] end) until hotbarwaitfunc 
-					 end
-
-					inventoryicons = lplr.PlayerGui.hotbar["1"]["5"]
-					for i,v in pairs(inventoryicons:GetChildren()) do
-						if v:IsA("Frame") then
-							if InventoryRounding.Enabled then
-							hotbarstuff.SlotOldColor = v:FindFirstChildWhichIsA("ImageButton").BackgroundColor3
-							local rounding = Instance.new("UICorner")
-							rounding.Parent = v:FindFirstChildWhichIsA("ImageButton")
-							rounding.CornerRadius = UDim.new(0, InvSlotCornerRadius.Value)
-							table.insert(hotbarstuff.SlotCorners, rounding)
-							end
-							if SlotBackgroundColor.Enabled then
-								pcall(function() v:FindFirstChildWhichIsA("ImageButton").BackgroundColor3 = Color3.fromHSV(SlotBackgroundColorSlider.Hue, SlotBackgroundColorSlider.Sat, SlotBackgroundColorSlider.Value) end)
-							end
-							if HideSlotNumbers.Enabled then
-								pcall(function() 
-								local slotText = v:FindFirstChildWhichIsA("ImageButton"):FindFirstChildWhichIsA("TextLabel")
-								slotText.Parent = game 
-								hotbarstuff.HiddenSlotNumbers[slotText] = v:FindFirstChildWhichIsA("ImageButton")
-							    end)
-							end
-						end
-					end
-				end
-				HotbarCustomization = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-					Name = "HotbarCustomization",
-					HoverText = "Customize the ugly default hotbar to your liking.",
-					Approved = true,
-					Function = function(callback)
-						if callback then
-							task.spawn(HotbarFunction)
-							table.insert(HotbarCustomization.Connections, lplr.CharacterAdded:Connect(HotbarFunction))
+								healthbarFunction()
+							end)
 						else
-							for i,v in pairs(hotbarstuff.SlotCorners) do
+							pcall(function() textconnection:Disconnect() end)
+							pcall(function() oldhealthbar.Parent.Parent.BackgroundColor3 = Color3.fromRGB(41, 51, 65) end)
+							pcall(function() oldhealthbar.BackgroundColor3 = Color3.fromRGB(203, 54, 36) end)
+							pcall(function() oldhealthbar.Parent.Parent["1"].Text = tostring(lplr.Character:GetAttribute("Health")) end)
+							pcall(function() oldhealthbar.Parent.Parent["1"].TextColor3 = Color3.fromRGB(255, 255, 255) end)
+							pcall(function() oldhealthbar.Parent.Parent["1"].Font = Enum.Font.LuckiestGuy end)
+							oldhealthbar = nil
+							textconnection = nil
+							for i,v in healthbarobjects do 
 								pcall(function() v:Destroy() end)
 							end
-							for i,v in pairs(inventoryicons:GetChildren()) do
-								pcall(function() v:FindFirstChildWhichIsA("ImageButton").BackgroundColor3 = hotbarstuff.SlotOldColor end)
+							table.clear(healthbarobjects)
+						end
+					end
+				})
+				HealthbarColorToggle = HealthbarMods.CreateToggle({
+					Name = "Main Color",
+					Default = true,
+					Function = function(callback)
+						pcall(function() HealthbarColor.Object.Visible = callback end)
+						if HealthbarMods.Enabled then
+							HealthbarMods.ToggleButton(false)
+							HealthbarMods.ToggleButton(false)
+						end
+					end 
+				})
+				HealthbarColor = HealthbarMods.CreateColorSlider({
+					Name = "Main Color",
+					Function = function()
+						task.spawn(healthbarFunction)
+					end
+				})
+				HealthbarBackgroundToggle = HealthbarMods.CreateToggle({
+					Name = "Background Color",
+					Function = function(callback)
+						pcall(function() HealthbarBackground.Object.Visible = callback end)
+						if HealthbarMods.Enabled then
+							HealthbarMods.ToggleButton(false)
+							HealthbarMods.ToggleButton(false)
+						end
+					end 
+				})
+				HealthbarBackground = HealthbarMods.CreateColorSlider({
+					Name = "Background Color",
+					Function = function() 
+						task.spawn(healthbarFunction)
+					end
+				})
+				HealthbarTextToggle = HealthbarMods.CreateToggle({
+					Name = "Text",
+					Function = function(callback)
+						pcall(function() HealthbarText.Object.Visible = callback end)
+						if HealthbarMods.Enabled then
+							HealthbarMods.ToggleButton(false)
+							HealthbarMods.ToggleButton(false)
+						end
+					end 
+				})
+				HealthbarText = HealthbarMods.CreateTextList({
+					Name = "Text",
+					TempText = "Healthbar Text",
+					AddFunction = function()
+						if HealthbarMods.Enabled then
+							HealthbarMods.ToggleButton(false)
+							HealthbarMods.ToggleButton(false)
+						end
+					end,
+					RemoveFunction = function()
+						if HealthbarMods.Enabled then
+							HealthbarMods.ToggleButton(false)
+							HealthbarMods.ToggleButton(false)
+						end
+					end
+				})
+				HealthbarTextColorToggle = HealthbarMods.CreateToggle({
+					Name = "Text Color",
+					Function = function(callback)
+						pcall(function() HealthbarTextColor.Object.Visible = callback end)
+						if HealthbarMods.Enabled then
+							HealthbarMods.ToggleButton(false)
+							HealthbarMods.ToggleButton(false)
+						end
+					end 
+				})
+				HealthbarTextColor = HealthbarMods.CreateColorSlider({
+					Name = "Text Color",
+					Function = function() 
+						task.spawn(healthbarFunction)
+					end
+				})
+				HealthbarFontToggle = HealthbarMods.CreateToggle({
+					Name = "Text Font",
+					Function = function(callback)
+						pcall(function() HealthbarFont.Object.Visible = callback end)
+						if HealthbarMods.Enabled then
+							HealthbarMods.ToggleButton(false)
+							HealthbarMods.ToggleButton(false)
+						end
+					end 
+				})
+				HealthbarFont = HealthbarMods.CreateDropdown({
+					Name = "Text Font",
+					List = GetEnumItems("Font"),
+					Function = function(callback)
+						if HealthbarMods.Enabled then
+							HealthbarMods.ToggleButton(false)
+							HealthbarMods.ToggleButton(false)
+						end
+					end
+				})
+				HealthbarRound = HealthbarMods.CreateToggle({
+					Name = "Round",
+					Function = function() 
+						if HealthbarMods.Enabled then
+							HealthbarMods.ToggleButton(false)
+							HealthbarMods.ToggleButton(false)
+						end
+					end
+				})
+				HealthbarBackground.Object.Visible = false
+				HealthbarText.Object.Visible = false
+				HealthbarTextColor.Object.Visible = false
+				HealthbarFont.Object.Visible = false
+			end)
+
+			runFunction(function()
+				local HotbarMods = {Enabled = false}
+				local HotbarRounding = {Enabled = false}
+				local HotbarHighlight = {Enabled = false}
+				local HotbarColorToggle = {Enabled = false}
+				local HotbarHideSlotIcons = {Enabled = false}
+				local HotbarSlotNumberColorToggle = {Enabled = false}
+				local HotbarRoundRadius = {Value = 8}
+				local HotbarColor = {Hue = 0, Sat = 0, Value = 0}
+				local HotbarHighlightColor = {Hue = 0, Sat = 0, Value = 0}
+				local HotbarSlotNumberColor = {Hue = 0, Sat = 0, Value = 0}
+				local hotbarsloticons = {}
+				local hotbarobjects = {}
+				local hotbarcoloricons = {}
+				local function hotbarFunction()
+					local inventoryicons = ({pcall(function() return lplr.PlayerGui.hotbar["1"]["5"] end)})[2]
+					if inventoryicons and type(inventoryicons) == "userdata" then
+						for i,v in inventoryicons:GetChildren() do 
+							local sloticon = ({pcall(function() return v:FindFirstChildWhichIsA("ImageButton"):FindFirstChildWhichIsA("TextLabel") end)})[2]
+							if type(sloticon) ~= "userdata" then 
+								continue
 							end
-							for i,v in pairs(hotbarstuff.HiddenSlotNumbers) do
-								pcall(function() i.Parent = v end)
+							if HotbarColorToggle.Enabled then 
+								sloticon.Parent.BackgroundColor3 = Color3.fromHSV(HotbarColor.Hue, HotbarColor.Sat, HotbarColor.Value)
+								table.insert(hotbarcoloricons, sloticon.Parent)
+							end
+							if HotbarRounding.Enabled then 
+								local uicorner = Instance.new("UICorner")
+								uicorner.Parent = sloticon.Parent
+								uicorner.CornerRadius = UDim.new(0, HotbarRoundRadius.Value)
+								table.insert(hotbarobjects, uicorner)
+							end
+							if HotbarHighlight.Enabled then
+								local highlight = Instance.new("UIStroke")
+								highlight.Color = Color3.fromHSV(HotbarHighlightColor.Hue, HotbarHighlightColor.Sat, HotbarHighlightColor.Value)
+								highlight.Thickness = 1.6 
+								highlight.Parent = sloticon.Parent
+								table.insert(hotbarobjects, highlight)
+							end
+							if HotbarHideSlotIcons.Enabled then 
+								sloticon.Visible = false 
+							end
+							table.insert(hotbarsloticons, sloticon)
+						end 
+					end
+				end
+				HotbarMods = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+					Name = "HotbarMods",
+					HoverText = "Add customization to your hotbar.",
+					Function = function(callback)
+						if callback then 
+							task.spawn(function()
+								table.insert(HotbarMods.Connections, lplr.PlayerGui.DescendantAdded:Connect(function(v)
+									if v.Name == "HotbarHealthbarContainer" and v.Parent and v.Parent.Parent and v.Parent.Parent.Name == "hotbar" then
+										hotbarFunction()
+									end
+								end))
+								hotbarFunction()
+							end)
+						else
+							for i,v in hotbarsloticons do 
+								pcall(function() v.Visible = true end)
+							end
+							for i,v in hotbarcoloricons do 
+								pcall(function() v.BackgroundColor3 = Color3.fromRGB(29, 36, 46) end)
+							end
+							for i,v in hotbarobjects do
+								pcall(function() v:Destroy() end)
+							end
+							table.clear(hotbarobjects)
+							table.clear(hotbarsloticons)
+							table.clear(hotbarcoloricons)
+						end
+					end
+				})
+				HotbarColorToggle = HotbarMods.CreateToggle({
+					Name = "Slot Color",
+					Function = function(callback)
+						pcall(function() HotbarColor.Object.Visible = callback end)
+						if HotbarMods.Enabled then 
+							HotbarMods.ToggleButton(false)
+							HotbarMods.ToggleButton(false)
+						end
+					end
+				})
+				HotbarColor = HotbarMods.CreateColorSlider({
+					Name = "Slot Color",
+					Function = function(h, s, v)
+						for i,v in hotbarcoloricons do
+							if HotbarColorToggle.Enabled then
+							   pcall(function() v.BackgroundColor3 = Color3.fromHSV(HotbarColor.Hue, HotbarColor.Sat, HotbarColor.Value) end) -- for some reason the "h, s, v" didn't work :(
 							end
 						end
 					end
 				})
-				InventoryRounding = HotbarCustomization.CreateToggle({
-					Name = "Round Slots",
+				HotbarRounding = HotbarMods.CreateToggle({
+					Name = "Rounding",
 					Function = function(callback)
-						pcall(function() InvSlotCornerRadius.Object.Visible = callback end)
-						if callback and HotbarCustomization.Enabled then
-							HotbarCustomization.ToggleButton(false) HotbarCustomization.ToggleButton(false)
-						elseif HotbarCustomization.Enabled then
-						  for i,v in pairs(hotbarstuff.SlotCorners) do
-							pcall(function() v:Destroy() end)
-					    end
+						pcall(function() HotbarRoundRadius.Object.Visible = callback end)
+						if HotbarMods.Enabled then 
+							HotbarMods.ToggleButton(false)
+							HotbarMods.ToggleButton(false)
+						end
 					end
-				end
-			  })
-			  HideSlotNumbers = HotbarCustomization.CreateToggle({
-				Name = "Hide Slot Numbers",
-				HoverText = "hide the ugly slot numbers.",
-				Function = function() if HotbarCustomization.Enabled then HotbarCustomization.ToggleButton(false) HotbarCustomization.ToggleButton(false) end end
-			  })
-			  InvSlotCornerRadius = HotbarCustomization.CreateSlider({
-				Name = "Corner Radius",
-				Function = function(val) if HotbarCustomization.Enabled and InventoryRounding.Enabled then for i,v in pairs(hotbarstuff.SlotCorners) do pcall(function() v.CornerRadius = UDim.new(0, val) end) end end end,
-				Min = 8,
-				Max = 20
-		    })
-			  SlotBackgroundColor = HotbarCustomization.CreateToggle({
-				 Name = "Slot Background Color",
-				 Function = function(callback) pcall(function() SlotBackgroundColorSlider.Object.Visible = callback end) 
-				 if HotbarCustomization.Enabled then
-					HotbarCustomization.ToggleButton(false) HotbarCustomization.ToggleButton(false)
-			     end 
-			     end
-			  })
-			  SlotBackgroundColorSlider = HotbarCustomization.CreateColorSlider({
-				Name = "Color",
-				Function = function(h, s, v) if HotbarCustomization.Enabled and SlotBackgroundColor.Enabled and inventoryicons then
-					for i,v in pairs(inventoryicons:GetChildren()) do
-						pcall(function() v:FindFirstChildWhichIsA("ImageButton").BackgroundColor3 = Color3.fromHSV(SlotBackgroundColorSlider.Hue, SlotBackgroundColorSlider.Sat, SlotBackgroundColorSlider.Value) end)
+				})
+				HotbarRoundRadius = HotbarMods.CreateSlider({
+					Name = "Corner Radius",
+					Min = 1,
+					Max = 20,
+					Function = function(callback)
+						for i,v in hotbarobjects do 
+							pcall(function() v.CornerRadius = UDim.new(0, callback) end)
+						end
 					end
-				end
-			    end
-			})
-			   InvSlotCornerRadius.Object.Visible = InventoryRounding.Enabled
-			   SlotBackgroundColorSlider.Object.Visible = SlotBackgroundColor.Enabled
+				})
+				HotbarHighlight = HotbarMods.CreateToggle({
+					Name = "Outline Highlight",
+					Function = function(callback)
+						pcall(function() HotbarHighlightColor.Object.Visible = callback end)
+						if HotbarMods.Enabled then 
+							HotbarMods.ToggleButton(false)
+							HotbarMods.ToggleButton(false)
+						end
+					end
+				})
+				HotbarHighlightColor = HotbarMods.CreateColorSlider({
+					Name = "Highlight Color",
+					Function = function(h, s, v)
+						for i,v in hotbarobjects do 
+							if v:IsA("UIStroke") and HotbarHighlight.Enabled then 
+								pcall(function() v.Color = Color3.fromHSV(HotbarHighlightColor.Hue, HotbarHighlightColor.Sat, HotbarHighlightColor.Value) end)
+							end
+						end
+					end
+				})
+				HotbarHideSlotIcons = HotbarMods.CreateToggle({
+					Name = "No Slot Numbers",
+					Function = function()
+						if HotbarMods.Enabled then 
+							HotbarMods.ToggleButton(false)
+							HotbarMods.ToggleButton(false)
+						end
+					end
+				})
+				HotbarColor.Object.Visible = false
+				HotbarRoundRadius.Object.Visible = false
+				HotbarHighlightColor.Object.Visible = false
+				task.spawn(function()
+					repeat task.wait() until shared.VapeFullyLoaded
+					if vapeInjected and isEnabled("UICleanup") then 
+						HotbarHideSlotIcons.Object.Visible = false 
+					end
+				end)
 			end)
-			
-			runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "BoostHighJumpOptionsButton")
-				local SmoothHighJump = {Enabled = false}
-				local SmoothJumpTick = {Value = 5}
-				local SmoothJumpTime = {Value = 1.2}
-				local boostTick = 5
-				SmoothHighJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-				Name = "BoostHighJump",
-				Function = function(callback)
-					if callback then
-						task.spawn(function()
-							local raycast = workspace:Raycast(lplr.Character.PrimaryPart.Position, Vector3.new(0, -2000, 0), bedwarsStore.blockRaycast)
-							local distance = raycast and GetMagnitudeOf2Objects(lplr.Character.PrimaryPart, raycast) or 3232424
-							if not isAlive() or not isnetworkowner(entityLibrary.character.HumanoidRootPart) or VoidwareFunctions:LoadTime() < 0.1 or (distance > 5 and bedwarsStore.scythe <= tick()) or isEnabled("InfiniteFly") or isEnabled("Fly") then SmoothHighJump.ToggleButton(false) return end
-							task.delay(SmoothJumpTime.Value, function()
-								if SmoothHighJump.Enabled then
-									SmoothHighJump.ToggleButton(false)
-								end
-							end)	
-							repeat
-							if not isAlive(lplr) or not isnetworkowner(entityLibrary.character.HumanoidRootPart) or VoidwareFunctions:LoadTime() < 0.1 or isEnabled("InfiniteFly") or isEnabled("Fly") then SmoothHighJump.ToggleButton(false) return end
-							 lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, bedwarsStore.scythe > tick() and boostTick * 1 or boostTick, 0)
-							 boostTick = boostTick + SmoothJumpTick.Value
-							 if VoidwareStore.jumpTick <= tick() then
-							    VoidwareStore.jumpTick = tick() + 3
-							 end
-							 task.wait()
-							until not SmoothHighJump.Enabled
-						end)
-					else
-						VoidwareStore.jumpTick = tick() + (boostTick / 30)
-						boostTick = 5
-					end
-				end
-			})
-			SmoothJumpTick = SmoothHighJump.CreateSlider({
-				Name = "Power",
-				Min = 2,
-				Max = 10,
-				Default = 3,
-				Function = function() end
-			})
-			SmoothJumpTime = SmoothHighJump.CreateSlider({
-				Name = "Time",
-				Min = 0.2,
-				Max = 2,
-				Default = 1.2,
-				Function = function() end
-			})
-		end)
+				
 
 		runFunction(function()
 			local NoNameTag = {Enabled = false}
@@ -8134,58 +8399,16 @@ end)
 				Function = function(callback)
 					if callback then
 						task.spawn(function()
-                            if not isAlive() then repeat task.wait() until isAlive() end
+                            if not isAlive(lplr, true) then repeat task.wait() until isAlive(lplr, true) end
 							pcall(function() lplr.Character.Head.Nametag:Destroy() end)
-							table.insert(NoNameTag.Connections, game.DescendantAdded:Connect(function(v)
-                                if v.Name == "Nametag" and lplr.Character and lplr.Character:FindFirstChild("Head") and v.Parent == lplr.Character.Head then
+							table.insert(NoNameTag.Connections, workspace.DescendantAdded:Connect(function(v)
+                                if v.Name == "Nametag" and isAlive(lplr, true) and v.Parent == lplr.Character.Head then
                                     v:Destroy()
                                 end
                             end))
 						end)
 					end
 				end
-			})
-		end)
-
-			runFunction(function()
-				pcall(GuiLibrary.RemoveObject, "FlyTPOptionsButton")
-				local TPFly = {Enabled = false}
-				local TPFlyVerticalHeight = {Value = 15}
-				local oldgravity
-				TPFly = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-				Name = "FlyTP",
-				HoverText = "a shit fly I would call this :omegalol:",
-				Function = function(callback)
-					if callback then
-						task.spawn(function()
-							oldgravity = workspace.Gravity
-							workspace.Gravity = 0
-							repeat
-							 if not TPFly.Enabled then return end
-							 if not isnetworkowner(lplr.Character.HumanoidRootPart) or not isAlive(lplr) or isEnabled("InfiniteFly") or VoidwareFunctions:LoadTime() < 0.1 then TPFly.ToggleButton(false) return end
-							 lplr.Character.HumanoidRootPart.CFrame = lplr.Character.HumanoidRootPart.CFrame + Vector3.new(0, TPFlyVerticalHeight.Value, 0)
-							 lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, -1, 0)
-							 VoidwareStore.jumpTick = tick() + 2
-					         task.wait(0.1)
-							until not TPFly.Enabled
-						end)
-					else
-						workspace.Gravity = oldgravity ~= 0 and oldgravity or 192
-						local raycast = nil
-						if isAlive() then
-						raycast = workspace:Raycast(lplr.Character.PrimaryPart.Position, Vector3.new(0, -2000, 0), bedwarsStore.blockRaycast)
-		                raycast = raycast and GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, raycast) or nil
-						end
-						VoidwareStore.jumpTick = tick() + (raycast and raycast / 35 or 4.5)
-					end
-				end
-			})
-			TPFlyVerticalHeight = TPFly.CreateSlider({
-				Name = "Vertical Height",
-				Function = function() end,
-				Min = 5,
-				Max = 100,
-				Default = 15
 			})
 		end)
 
@@ -8268,25 +8491,26 @@ end)
 					task.spawn(function()
 						DeathTP.ToggleButton(false)
 						pcall(function() VoidwareStore.DeathFunction:Disconnect() end)
-						local AutoDeathTP = isEnabled("AutoDeathTP")
 						mouseposition = workspace:Raycast(gameCamera.CFrame.p, lplr:GetMouse().UnitRay.Direction * 10000, bedwarsStore.blockRaycast)
-						if not mouseposition or AutoDeathTP or not vapeInjected then return end
+						if not mouseposition  or not vapeInjected then return end
 						if isAlive(lplr, true) and DeathTPReset.Enabled then
 							lplr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
 							lplr.Character.Humanoid:TakeDamage(lplr.Character.Humanoid.Health)
 						end
 						task.spawn(InfoNotification, "DeathTP", "Death Position Set.", 7)
+						deathpos = mouseposition
 						VoidwareStore.DeathFunction = lplr.CharacterAdded:Connect(function()
-							local AutoDeathTP = GuiLibrary.ObjectsThatCanBeSaved.AutoDeathTPOptionsButton and GuiLibrary.ObjectsThatCanBeSaved.AutoDeathTPOptionsButton.Api.Enabled
 							VoidwareStore.DeathFunction:Disconnect()
+							deathpos = nil
 							if not isAlive() then repeat task.wait() until isAlive() end
 							task.wait(0.2)
 							if VoidwareStore.Tweening then return end
-							if AutoDeathTP then return end
+							if AutoRewind then return end
 							deathtween = tweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(0.49, Enum.EasingStyle.Linear), {CFrame = CFrame.new(mouseposition.Position) + Vector3.new(0, 5, 0)})
 							deathtween:Play()
 							deathtween.Completed:Wait()
 							task.spawn(InfoNotification, "DeathTP", "Teleported.", 7)
+							deathpos = nil
 						end)
 					end)
 				end
@@ -8363,13 +8587,11 @@ end)
 						local players = GetAllTargetsNearPosition(GetCurrentProfile() ~= "Ghost" and ExecuteRangeCheck.Enabled and ExecuteRange.Value or GetCurrentProfile() == "Ghost" and 28 or math.huge)
 						for i,v in pairs(players) do
 							if GetCurrentProfile() == "Ghost" then task.wait(0.07) end
-							if not isAlive(v.Player) or not isAlive() or isEnabled("InfiniteFly") or (v.Player.Character:GetAttribute("Health") and tostring(v.Player.Character:GetAttribute("Health")) == "inf") then continue 
+							if not isAlive() or isEnabled("InfiniteFly") or (v.Player.Character:GetAttribute("Health") and tostring(v.Player.Character:GetAttribute("Health")) == "inf") then 
+								continue 
 							end
 							executiontick = tick() + 0.10
-							bedwars.ClientHandler:Get("HannahPromptTrigger"):CallServer({
-								user = lplr,
-								victimEntity = v.Player.Character
-							})
+							bedwars.ClientHandler:Get("HannahPromptTrigger"):CallServer({user = lplr, victimEntity = v.Player.Character})
 						end
 					end)
 					end))
@@ -8391,89 +8613,48 @@ end)
 	})
 end)
 
-		runFunction(function()
-			local Gravity = {Enabled = false}
-			local GravitySlider = {Value = 192}
-			local oldgravity = 192.2
-			Gravity = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-				Name = "Gravity",
-				HoverText = "changes your workspace gravity",
-				Function = function(callback)
-					if callback then
-						task.spawn(function()
-						oldgravity = workspace.Gravity
-						RunLoops:BindToHeartbeat("Gravity", function()
-							pcall(function()
-							if VoidwareStore.Tweening then
-								workspace.Gravity = oldgravity
-								return
-							end
-							if VoidwareStore.jumpTick > tick() then
-								workspace.Gravity = oldgravity
-								return
-							end 
-							if isEnabled("InfiniteFly") then
-								workspace.Gravity = oldgravity
-								return
-							end
-							workspace.Gravity = GravitySlider.Value
-						end)
-						end)
-					end)
-				else
-					pcall(function() RunLoops:UnbindFromHeartbeat("Gravity") end)
-					workspace.Gravity = oldgravity
-					end 
+runFunction(function()
+	local SpawnParts = {}
+	local SpawnPartColor
+	local realspawnpart
+	local SpawnESP = {Enabled = false}
+	SpawnESP = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+		Name = "SpawnESP",
+		Function = function(callback)
+			if callback then 
+				task.spawn(function()
+				for i,v2 in pairs(workspace.MapCFrames:GetChildren()) do 
+					if v2.Name:find("spawn") and v2.Name ~= "spawn" and v2.Name:find("respawn") == nil then
+						realspawnpart = Instance.new("Part")
+						realspawnpart.Size = Vector3.new(1, 1000, 1)
+						realspawnpart.Position = v2.Value.p
+						realspawnpart.Anchored = true
+						realspawnpart.Parent = workspace
+						realspawnpart.CanCollide = false
+						realspawnpart.Transparency = 0.5
+						realspawnpart.Material = Enum.Material.Neon
+						realspawnpart.Color = Color3.fromHSV(SpawnPartColor.Hue, SpawnPartColor.Sat, SpawnPartColor.Value)
+						bedwars.QueryUtil:setQueryIgnored(realspawnpart, true)
+						table.insert(SpawnParts, realspawnpart)
+					end
 				end
-			})
-			GravitySlider = Gravity.CreateSlider({
-				Name = "Gravity",
-			    Min = 0,
-				Max = 192,
-				Default = 192,
-				Function = function() end
-			})
-		end)
-				runFunction(function()
-					local SpawnParts = {}
-					local SpawnPartColor
-					local realspawnpart
-					local SpawnESP = {Enabled = false}
-					SpawnESP = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-						Name = "SpawnESP",
-						Function = function(callback)
-							if callback then 
-								task.spawn(function()
-								for i,v2 in pairs(workspace.MapCFrames:GetChildren()) do 
-									if v2.Name:find("spawn") and v2.Name ~= "spawn" and v2.Name:find("respawn") == nil then
-										realspawnpart = Instance.new("Part")
-										realspawnpart.Size = Vector3.new(1, 1000, 1)
-										realspawnpart.Position = v2.Value.p
-										realspawnpart.Anchored = true
-										realspawnpart.Parent = workspace
-										realspawnpart.CanCollide = false
-										realspawnpart.Transparency = 0.5
-										realspawnpart.Material = Enum.Material.Neon
-										realspawnpart.Color = Color3.fromHSV(SpawnPartColor.Hue, SpawnPartColor.Sat, SpawnPartColor.Value)
-										bedwars.QueryUtil:setQueryIgnored(realspawnpart, true)
-										table.insert(SpawnParts, realspawnpart)
-									end
-								end
-							end)
-							else
-								for i,v in pairs(SpawnParts) do pcall(function() v:Destroy() end) end
-								table.clear(SpawnParts)
-							end
-						end
-					})
-					SpawnPartColor = SpawnESP.CreateColorSlider({
-						Name = "Color",
-						Function = function(h, s, v) if SpawnESP.Enabled then for i,v in pairs(SpawnParts) do pcall(function() v.Color = Color3.fromHSV(SpawnPartColor.Hue, SpawnPartColor.Sat, SpawnPartColor.Value) end) end end end
-					})
 			end)
+			else
+				for i,v in pairs(SpawnParts) do pcall(function() v:Destroy() end) end
+				table.clear(SpawnParts)
+			end
+		end
+	})
+	SpawnPartColor = SpawnESP.CreateColorSlider({
+		Name = "Color",
+		Function = function(h, s, v) if SpawnESP.Enabled then for i,v in pairs(SpawnParts) do pcall(function() v.Color = Color3.fromHSV(SpawnPartColor.Hue, SpawnPartColor.Sat, SpawnPartColor.Value) end) end end end
+	})
+end)
 
 		runFunction(function()
-			pcall(GuiLibrary.RemoveObject, "HealthNotificationsOptionsButton")
+			if not pcall(GuiLibrary.RemoveObject, "HealthNotificationsOptionsButton") then 
+				return
+			end
 			local HealthNotifications = {Enabled = false}
 			local HealthSlider = {Value = 65}
 			local HealthSound = {Enabled = false}
@@ -8552,11 +8733,10 @@ end)
 								end
 								if FindTarget(25.50, nil, true).RootPart or killauraNearPlayer then return end
 								for i,v in pairs(projectiles) do
-									local cooldown = VoidwareStore.FrameRate > 35 and VoidwareStore.FrameRate < 80 and VoidwareStore.FrameRate / 45 or VoidwareStore.FrameRate > 80 and 0.30 or 2
+									local cooldown = VoidwareStore.FrameRate > 35 and VoidwareStore.FrameRate < 80 and VoidwareStore.FrameRate / 45 or VoidwareStore.FrameRate > 80 and 0.15 or 2
 									lastswitch = tick() + cooldown
 									if not getItem(v.ammo) or VoidwareStore.Tweening then continue end
 									if not ent.Human and table.find(mobprotectedprojectiles, i) or VoidwareStore.switchItemTick > tick() then continue end
-									task.wait(0.10)
 									switchItem(getItem(i).tool)
 									if ProjectileAuraAnimation.Enabled then
 									   bedwars.ViewmodelController:playAnimation(15)
@@ -8569,7 +8749,7 @@ end)
 							end))
 						end)
 					else
-						lastswitch = tick() - 0.1
+						lastswitch = tick()
 					end
 				end
 			})
@@ -8700,135 +8880,22 @@ end)
 			    end
 			})
 		end)
-
-		runFunction(function()
-			pcall(GuiLibrary.RemoveObject, "FirewallBypassOptionsButton")
-			local Disabler = {Enabled = false}
-			local DisablerExtra = {Enabled = false}
-			local scytheSlowdown = tick()
-			local daoDash = tick()
-			Disabler = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-				Name = "FirewallBypass",
-				Function = function(callback)
-					if callback then 
-						task.spawn(function()
-							table.insert(Disabler.Connections, lplr:GetAttributeChangedSignal("LastTeleported"):Connect(function()
-								if VoidwareStore.Tweening then 
-									return 
-								end
-								local disableritem = bedwars.CombatController and getItemNear("_scythe") or DisablerExtra.Enabled and (getItem("jade_hammer") or getItem("void_axe") or getItemNear("_dao"))
-								if isAlive(lplr, true) and (tick() - VoidwareStore.AliveTick) > 3 and disableritem and (bedwarsStore.scythe >= tick() or bedwarsStore.daoboost >= tick()) and tick() >= scytheSlowdown and isnetworkowner(lplr.Character.HumanoidRootPart) then 
-									warningNotification("FirewallBypass", "Teleport Detected. Suspending speed for 0.45 seconds.", 1)
-									bedwarsStore.scythe = tick() - 0.1
-									bedwarsStore.daoboost = tick() - 0.1
-									daoDash = tick() + 0.10
-									scytheSlowdown = tick() + 0.45
-								end
-							end))
-							repeat task.wait()
-								local item = isAlive(lplr, true) and getItemNear("_scythe")
-								if item and bedwars.CombatController then
-									switchItem(item.tool)
-									VoidwareStore.scytheMoveVec = true
-									if lplr.Character.Humanoid.MoveDirection == Vector3.zero then
-										VoidwareStore.scytheMoveVec = false
-									end
-									local bypassnumbers = (lplr.Character.Humanoid.MoveDirection ~= Vector3.zero and lplr.Character.Humanoid.MoveDirection or lplr.Character.HumanoidRootPart.CFrame.LookVector) 
-									bedwars.ClientHandler:Get("ScytheDash"):SendToServer({direction = bypassnumbers * 9999999})
-									if lplr.Character.Head.Transparency ~= 0 and tick() >= scytheSlowdown then
-										bedwarsStore.scythe = tick() + 1
-									end 
-								end
-								local dao = DisablerExtra.Enabled and isAlive(lplr, true) and bedwars.CombatController and tick() > bedwarsStore.scythe and getItemNear("_dao")
-								if dao and tick() > daoDash and lplr.Character:GetAttribute("CanDashNext") and lplr.Character:GetAttribute("CanDashNext") < workspace:GetServerTimeNow() then 
-									if not killauraNearPlayer then
-									   switchItem(dao.tool)
-									end
-									replicatedStorageService["events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"].useAbility:FireServer("dash", {
-										direction = lplr.Character.HumanoidRootPart.CFrame.LookVector,
-										origin = lplr.Character.HumanoidRootPart.CFrame.p,
-										weapon = dao.itemType
-									})
-									daoDash = tick() + 2.1
-									bedwarsStore.daoboost = tick() + 1.5
-								end
-								local jadehammer = DisablerExtra.Enabled and isAlive(lplr, true) and tick() > bedwarsStore.scythe and getItem("jade_hammer")
-								if jadehammer and tick() > daoDash and bedwars.AbilityController:canUseAbility("jade_hammer_jump") then
-									if pcall(function() bedwars.AbilityController:useAbility("jade_hammer_jump") end) then 
-										daoDash = tick() + 2.1
-									    bedwarsStore.daoboost = tick() + 1.5
-									end
-								end
-								local voidaxe = DisablerExtra.Enabled and isAlive(lplr, true) and tick() > bedwarsStore.scythe and getItem("void_axe")
-								if voidaxe and tick() > daoDash and bedwars.AbilityController:canUseAbility("void_axe_jump") then 
-									if pcall(function() bedwars.AbilityController:useAbility("void_axe_jump") end) then 
-										daoDash = tick() + 2.1
-									    bedwarsStore.daoboost = tick() + 1.5
-									end
-								end
-							until (not Disabler.Enabled)
-						end)
-					end
-				end,
-				HoverText = "Bypasses some speed checks (float checks with scythe)."
-			})
-			DisablerExtra = Disabler.CreateToggle({
-				Name = "Extra",
-				HoverText = "Also uses abilities for yuzi/jade/void regent.",
-				Function = function() end
-			})
-		end)
-
-
-	--[[runFunction(function()
-		local AntiBow = {Enabled = false}
-		local AntiBowRange = {Value = 150}
-		local antibowhooked = false
-		AntiBow = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-			Name = "AntiBow",
-			HoverText = "Dodge incomming arrows.\nkinda bad but whatever.",
-			Function = function(callback)
-				if callback then
-					task.spawn(function()
-						if not antibowhooked then
-							table.insert(AntiBow.Connections, bedwars.ClientHandler:OnEvent("ProjectileLaunch", function(tab)
-								if not AntiBow.Enabled or not isAlive() then return end
-								local plr = tab.shootingPlayer
-								if plr and tab.position and plr.Team ~= lplr.Team and ({VoidwareFunctions:GetPlayerType(plr)})[2] then
-									local raycast = workspace:Raycast(lplr.Character.HumanoidRootPart.Position, Vector3.new(0, -2000, 0), bedwarsStore.blockRaycast)
-									if raycast and GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart, raycast) >= 15 or not raycast then return end
-									if tostring(tab.projectile) == "arrow" and GetMagnitudeOf2Objects(lplr.Character.HumanoidRootPart.Position, tab.position, true) <= AntiBowRange.Value then
-										local verticalpos = lplr.Character.HumanoidRootPart.CFrame.Y / tab.position.Y
-										lplr.Character.HumanoidRootPart.CFrame = lplr.Character.HumanoidRootPart.CFrame + Vector3.new(0, verticalpos * 25, 0)
-									end
-								end
-							end))
-							antibowhooked = true
-						end
-					end)
-				end
-			end
-		})
-		AntiBowRange = AntiBow.CreateSlider({
-			Name = "Range",
-			Min = 30,
-			Max = 300,
-			Default = 150,
-			Function = function() end
-		})
-	end)]]
-
-
+		
 	runFunction(function()
-		pcall(GuiLibrary.RemoveObject, "AntiLoggerOptionsButton")
-		local AntiLogger = {Enabled = false}
-		AntiLogger = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-			Name = "AntiLogger",
-			HoverText = "Stops most: IP loggers, and Discord webhooks.",
+		local AutoEmber = {Enabled = false}
+		AutoEmber = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+			Name = "4BigGuysExploit",
+			HoverText = "Automatically uses the ember ability.",
 			Function = function(callback)
-				if callback then
+				if callback then 
 					task.spawn(function()
-						loadstring(VoidwareFunctions:GetFile("data/antilogger.lua"))()
+						repeat 
+							local saber = getItem("infernal_saber")
+							if killauraNearPlayer and saber and not VoidwareFunctions:SpecialNearPosition(30) then 
+								bedwars.ClientHandler:Get("HellBladeRelease"):SendToServer({chargeTime = 0.5, player = lplr, weapon = saber.tool})
+							end
+							task.wait()
+						until not AutoEmber.Enabled
 					end)
 				end
 			end
@@ -8874,7 +8941,7 @@ end)
 						end))
 						table.insert(EventNotifications.Connections, VoidwareStore.BedShieldEnd.Event:Connect(function()
 							if EventNotificationBedShield.Enabled then
-							InfoNotification("EventNotifications", "Bed Shields have expired, Beds are now breakable.", 10)
+							   InfoNotification("EventNotifications", "Bed Shields have expired, Beds are now breakable.", 10)
 							end
 						end))
 						table.insert(EventNotifications.Connections, playersService.PlayerRemoving:Connect(function(player)
@@ -8935,22 +9002,6 @@ end)
 	end)
 
 	runFunction(function()
-		pcall(GuiLibrary.RemoveObject, "InfiniteYieldOptionsButton")
-		local InfiniteYield = {Enabled = false}
-		InfiniteYield = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-			Name = "InfiniteYield",
-			HoverText = "Loads the Infinite Yield script.",
-			Function = function(callback)
-				if callback then 
-					task.spawn(function()
-						loadstring(VoidwareFunctions:GetFile("data/BetterIY.lua"))()
-					end)
-				end
-			end
-		})
-	end)
-
-	runFunction(function()
 		local HostPanelExploit = {Enabled = false}
 		local oldhostattribute = nil
 		HostPanelExploit = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
@@ -8971,22 +9022,200 @@ end)
 	end)
 
 	runFunction(function()
-		local AutoEmber = {Enabled = false}
-		AutoEmber = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-			Name = "4BigGuysExploit",
-			HoverText = "Automatically uses the ember ability.",
-			Function = function(callback)
-				if callback then 
-					task.spawn(function()
-						repeat 
-							local saber = getItem("infernal_saber")
-							if killauraNearPlayer and saber and not VoidwareFunctions:SpecialNearPosition(30) then 
-								bedwars.ClientHandler:Get("HellBladeRelease"):SendToServer({chargeTime = 0.5, player = lplr, weapon = saber.tool})
-							end
-							task.wait()
-						until not AutoEmber.Enabled
-					end)
-				end
+		if not pcall(GuiLibrary.RemoveObject, "BoostHighJumpOptionsButton") then 
+			return 
+		end
+		local lastToggled = tick()
+		local SmoothHighJump = {Enabled = false}
+		local SmoothJumpTick = {Value = 5}
+		local SmoothJumpTime = {Value = 1.2}
+		local boostTick = 5
+		SmoothHighJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+		Name = "BoostHighJump",
+		NoSave = true,
+		Function = function(callback)
+			if callback then
+				task.spawn(function()
+					if tick() >= lastToggled then 
+						lastToggled = tick() + SmoothJumpTime.Value
+					end
+					if isAlive() and lplr.Character.Humanoid.FloorMaterial == Enum.Material.Air and tick() > bedwarsStore.scythe then 
+						SmoothHighJump.ToggleButton(false)
+						return 
+					end
+					repeat
+					if not isAlive() or not isnetworkowner(lplr.Character.HumanoidRootPart) or VoidwareFunctions:LoadTime() < 0.1 then
+						SmoothHighJump.ToggleButton(false) 
+						return 
+					end
+					if isEnabled("Fly") or isEnabled("InfiniteFly") or tick() > lastToggled then
+						SmoothHighJump.ToggleButton(false) 
+						return 
+				    end
+					lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, boostTick, 0)
+					boostTick = boostTick + SmoothJumpTick.Value
+					if VoidwareStore.jumpTick <= tick() then
+					   VoidwareStore.jumpTick = tick() + 3
+					end
+					task.wait()
+					until not SmoothHighJump.Enabled
+				end)
+			else
+				lastToggled = tick()
+				VoidwareStore.jumpTick = tick() + (boostTick / 30)
+				boostTick = 5
 			end
-		})
-	end)
+		end
+	})
+	SmoothJumpTick = SmoothHighJump.CreateSlider({
+		Name = "Power",
+		Min = 2,
+		Max = 10,
+		Default = 3,
+		Function = function() end
+	})
+	SmoothJumpTime = SmoothHighJump.CreateSlider({
+		Name = "Time",
+		Min = 0.2,
+		Max = 2,
+		Default = 1.2,
+		Function = function() end
+	})
+end)
+
+runFunction(function()
+	if not pcall(GuiLibrary.RemoveObject, "FlyTPOptionsButton") then 
+		return 
+	end
+	local FlyTP = {Enabled = false}
+	local FlyTPSurfaceCheck = {Enabled = true}
+	local FlyTPVertical = {Value = 15}
+	FlyTP = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+		Name = "FlyTP",
+		Function = function(callback)
+			if callback then 
+				task.spawn(function()
+					repeat 
+					   if not isAlive() or not isnetworkowner(lplr.Character.HumanoidRootPart) then
+						   FlyTP.ToggleButton(false) 
+						   return 
+					   end
+					   if isEnabled("InfiniteFly") then 
+						   FlyTP.ToggleButton(false)
+						   return 
+					   end
+					   lplr.Character.HumanoidRootPart.CFrame = lplr.Character.HumanoidRootPart.CFrame + Vector3.new(0, FlyTPVertical.Value <= 0 and 0.01 or FlyTPVertical.Value, 0)
+					   lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, 1, 0)
+					   task.wait(0.1)
+					until not FlyTP.Enabled
+				end)
+			end
+		end
+	})
+	FlyTPVertical = FlyTP.CreateSlider({
+		Name = "Vertical",
+		Min = 15,
+		Max = 60,
+		Default = 25,
+		Function = function() end
+	})
+end)
+
+runFunction(function()
+	local DoubleHighJump = {Enabled = false}
+	local DoubleHighJumpHeight = {Value = 500}
+	local DoubleHighJumpHeight2 = {Value = 500}
+	local jumps = 0
+	DoubleHighJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+		Name = "DoubleHighJump",
+		NoSave = true,
+		HoverText = "A very interesting high jump.",
+		Function = function(callback)
+			if callback then 
+				task.spawn(function()
+					if isAlive() and lplr.Character.Humanoid.FloorMaterial == Enum.Material.Air or jumps > 0 then 
+						DoubleHighJump.ToggleButton(false) 
+						return
+					end
+					for i = 1, 2 do 
+						if not isAlive() then
+							DoubleHighJump.ToggleButton(false) 
+							return  
+						end
+						if i == 2 and lplr.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then 
+							continue
+						end
+						lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, i == 1 and DoubleHighJumpHeight.Value or DoubleHighJumpHeight2.Value, 0)
+						jumps = i
+						task.wait(i == 1 and 1 or 0.30)
+					end
+					task.spawn(function()
+						for i = 1, 20 do 
+							if isAlive() then 
+								lplr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Landed)
+							end
+						end
+					end)
+					task.delay(1.6, function() jumps = 0 end)
+					if DoubleHighJump.Enabled then
+					   DoubleHighJump.ToggleButton(false)
+					end
+				end)
+			else
+				VoidwareStore.jumpTick = tick() + 5
+			end
+		end
+	})
+	DoubleHighJumpHeight = DoubleHighJump.CreateSlider({
+		Name = "First Jump",
+		Min = 50,
+		Max = 500,
+		Default = 500,
+		Function = function() end
+	})
+	DoubleHighJumpHeight2 = DoubleHighJump.CreateSlider({
+		Name = "Second Jump",
+		Min = 50,
+		Max = 450,
+		Default = 450,
+		Function = function() end
+	})
+end)
+
+runFunction(function()
+	pcall(GuiLibrary.RemoveObject, "FirewallBypassOptionsButton")
+	local FirewallBypass = {Enabled = false}
+	local bypassdirection = Vector3.new(9e9, 9e9, 9e9)
+	FirewallBypass = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+		Name = "FirewallBypass",
+		HoverText = "Bypass speed and float check with scythe.",
+		Function = function(callback)
+			if callback then 
+				task.spawn(function()
+					repeat
+						local scythe = getItemNear("_scythe")
+						if scythe and isAlive(lplr, true) then
+							local movevec, lookvec = lplr.Character.Humanoid.MoveDirection, lplr.Character.HumanoidRootPart.CFrame.LookVector
+							bypassdirection = (movevec ~= Vector3.zero and movevec or lookvec) * 9e9
+							local oldtool = GetHandItem()
+							switchItem(scythe.tool)
+							bedwars.ClientHandler:Get("ScytheDash"):SendToServer({direction = bypassdirection})
+							if lplr:GetAttribute("ScytheSpinning") then 
+								bedwarsStore.scythespeed = GuiLibrary.ObjectsThatCanBeSaved["SpeedScythe SpeedSlider"].Api.Value 
+								if isEnabled("Killaura") and FindTarget(25, nil, true).RootPart or killauraNearPlayer then
+									bedwarsStore.scythespeed = bedwarsStore.scythespeed / 3
+								end
+								bedwarsStore.scythe = tick() + 1.1
+								oldtool = getItem(oldtool)
+								if oldtool then 
+									switchItem(oldtool.tool)
+								end
+							end
+						end
+					    task.wait()
+					until not FirewallBypass.Enabled
+				end)
+			end
+		end
+	})
+end)
