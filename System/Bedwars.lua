@@ -831,7 +831,7 @@ repeat
 end)
 
 function VoidwareFunctions:RefreshLocalFiles()
-	local success, updateIndex = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/fileindex.vw", true)) end)
+	local success, updateIndex = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("System/fileindex.vw")) end)
 	if not success or type(updateIndex) ~= "table" then 
 		updateIndex = {
 			["6872274481"] = "System/Bedwars.lua",
@@ -7239,9 +7239,6 @@ end)
 			end)
 		
 			runFunction(function()
-				if not pcall(GuiLibrary.RemoveObject, "DoubleHighJumpOptionsButton") then
-					return 
-				end
 				local jump1height = {Value = 550}
 				local jump1height2 = {Value = 550}
 				local riskjump = {Enabled = false}
