@@ -847,10 +847,6 @@ function VoidwareFunctions:RefreshLocalFiles()
 	end
 	for i,v in pairs(VoidwareStore.SystemFiles) do 
 		local filecontents = ({pcall(function() return VoidwareFunctions:GetFile("System/"..v:gsub("vape/", ""), true) end)})
-		if i == "Universal" then 
-			pcall(writefile, "vape/Universal.lua", filecontents[2])
-			continue
-		end
 		if filecontents[1] and filecontents[2] then 
 			pcall(writefile, v, filecontents[2])
 		end
