@@ -194,6 +194,12 @@ task.spawn(function()
     loadtime = tick()
 end)
 
+pcall(function()
+    GuiLibrary.SelfDestructEvent.Event:Connect(function()
+        getgenv().VoidwareFunctions = nil
+    end)
+end)
+
 function VoidwareFunctions:LoadTime()
     return loadtime ~= 0 and (tick() - loadtime) or 0
 end
