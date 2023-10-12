@@ -33,7 +33,6 @@ function VoidwareFunctions:CreateLocalDirectory(directory)
     return directory
 end
 
-
 function VoidwareFunctions:FindGithubCommit(repo, custom)
     repo = repo or "Voidware"
     custom = custom or "SystemXVoid"
