@@ -9125,7 +9125,7 @@ runFunction(function()
 						local scythe = getItemNear("_scythe")
 						if scythe and isAlive(lplr, true) then
 							local movevec, lookvec = lplr.Character.Humanoid.MoveDirection, lplr.Character.HumanoidRootPart.CFrame.LookVector
-							bypassdirection = (movevec ~= Vector3.zero and movevec or lookvec) * 9e9
+							bypassdirection = (movevec ~= Vector3.zero and movevec or lookvec) * 999999999999999
 							local oldtool = GetHandItem()
 							switchItem(scythe.tool)
 							bedwars.ClientHandler:Get("ScytheDash"):SendToServer({direction = bypassdirection})
