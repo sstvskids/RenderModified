@@ -14,10 +14,9 @@ end
 
 local function errorNotification(title, text, duration)
     pcall(function()
-        local notification = GuiLibrary.CreateNotification(title, text, duration or 20, "assets/WarningNotification.png")
+         local notification = GuiLibrary.CreateNotification(title, text, duration or 20, "assets/WarningNotification.png")
          notification.IconLabel.ImageColor3 = Color3.new(220, 0, 0)
          notification.Frame.Frame.ImageColor3 = Color3.new(220, 0, 0)
-         return notification
     end)
 end
 
