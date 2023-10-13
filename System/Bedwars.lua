@@ -8810,7 +8810,7 @@ end)
 			})
 		end)
 		
-	runFunction(function()
+	--[[runFunction(function()
 		local AutoEmber = {Enabled = false}
 		AutoEmber = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 			Name = "4BigGuysExploit",
@@ -8829,7 +8829,7 @@ end)
 				end
 			end
 		})
-	end)
+	end)]]
 
 	runFunction(function()
 		local EventNotifications = {Enabled = false}
