@@ -233,10 +233,10 @@ end
 
 task.spawn(function() -- poop code lol
     for i,v in workspace:GetDescendants() do 
-        if players:FindFirstChild(v.Name) then 
+        if players:GetPlayerFromCharacter(v) then 
             continue
         end
-        if v:IsA("Model") and v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") then 
+        if v:IsA("Model") and v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") then
             local pos = VoidwareFunctions:AddEntity(v)
             task.spawn(function()
                 repeat
@@ -252,7 +252,7 @@ task.spawn(function() -- poop code lol
         end
     end
     table.insert(VoidwareConnections, workspace.DescendantAdded:Connect(function(v)
-        if players:FindFirstChild(v.Name) then 
+        if players:GetPlayerFromCharacter(v) then 
             return 
         end
         if v:IsA("Model") and v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") then 
