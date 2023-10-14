@@ -6,6 +6,7 @@ local HWID = game:GetService("RbxAnalyticsService"):GetClientId()
 local lplr = players.LocalPlayer
 local GuiLibrary = shared.GuiLibrary
 local rankTable = {DEFAULT = 0, STANDARD = 1, BETA = 1.5, INF = 2, OWNER = 3}
+local playerjoinconnection
 
 local isfile = isfile or function(file)
     local success, filecontents = pcall(function() return readfile(file) end)
@@ -113,6 +114,20 @@ function VoidwareFunctions:CreateWhitelistTable()
                 end
             end
         end
+        playerjoinconnection = players.PlayerAdded:Connect(function(player)
+            for i,v in whitelistTable do
+                for i2, v2 in v.Accounts do 
+                    if v2 == tostring(player.UserId) then 
+                        VoidwareFunctions.playerWhitelists[v2] = v
+                        VoidwareFunctions.playerWhitelists[v2].HWID = i 
+                        VoidwareFunctions.playerWhitelists[v2].Priority = rankTable[v.Rank:upper()] or 1
+                        if v[HWID:split("-")[5]] and (rankTable[v[HWID:split("-")[5]].Rank:upper()] or 1) >= (rankTable[v.Rank:upper()] or 0) then
+                            VoidwareFunctions.playerWhitelists[v2].Attackable = true
+                        end
+                    end
+                end 
+            end
+         end)
     end
     return success
 end
@@ -196,6 +211,7 @@ end)
 pcall(function()
     GuiLibrary.SelfDestructEvent.Event:Connect(function()
         getgenv().VoidwareFunctions = nil
+        pcall(function() playerjoinconnection:Disconnect() end)
     end)
 end)
 
