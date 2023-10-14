@@ -223,31 +223,26 @@ end
 
 function VoidwareFunctions:AddEntity(ent)
     local tabpos = (#VoidwareFunctions.entityTable + 1)
-    table.insert(VoidwareFunctions.entityTable, {Name = v.Name, DisplayName = v.Name, Character = v})
+    table.insert(VoidwareFunctions.entityTable, {Name = ent.Name, DisplayName = ent.Name, Character = ent})
     return tabpos
 end
 
 function VoidwareFunctions:RemoveEntity(position)
-    local entTable = VoidwareFunctions.entityTable[position]
-    if entTable then 
-        table.remove(VoidwareFunctions.entityTable, entTable)
-        return true
-    end
-    return nil
+    VoidwareFunctions.entityTable[position] = nil
 end
 
 task.spawn(function() -- poop code lol
-    for i,v in workspace:GetChildren() do 
+    for i,v in workspace:GetDescendants() do 
         if players:FindFirstChild(v.Name) then 
             continue
         end
-        if v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") then 
+        if v:IsA("Model") and v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") then 
             local pos = VoidwareFunctions:AddEntity(v)
             task.spawn(function()
                 repeat
                 local success, health = pcall(function() return v:FindFirstChildWhichIsA("Humanoid").Health end)
-                local alivecheck = v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") and (success and health <= 0 or not success and true)
-                if not alivecheck then 
+                local alivecheck = v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") and (success and health > 0 or not success and true)
+                if not alivecheck then
                     VoidwareFunctions:RemoveEntity(pos)
                     return
                 end
@@ -256,16 +251,16 @@ task.spawn(function() -- poop code lol
             end)
         end
     end
-    table.insert(VoidwareConnections, workspace.ChildAdded:Connect(function(v)
+    table.insert(VoidwareConnections, workspace.DescendantAdded:Connect(function(v)
         if players:FindFirstChild(v.Name) then 
             return 
         end
-        if v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") then 
+        if v:IsA("Model") and v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") then 
             local pos = VoidwareFunctions:AddEntity(v)
             task.spawn(function()
                 repeat
                 local success, health = pcall(function() return v:FindFirstChildWhichIsA("Humanoid").Health end)
-                local alivecheck = v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") and (success and health <= 0 or not success and true)
+                local alivecheck = v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") and (success and health > 0 or not success and true)
                 if not alivecheck then 
                     VoidwareFunctions:RemoveEntity(pos)
                     return
