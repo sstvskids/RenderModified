@@ -94,22 +94,21 @@ function VoidwareFunctions:CreateWhitelistTable()
                 VoidwareFunctions.localWhitelist = v
                 VoidwareFunctions.localWhitelist.HWID = i 
                 VoidwareFunctions.localWhitelist.Priority = rankTable[v.Rank:upper()] or 1
+                break
             end
-            if v.Accounts and type(v.Accounts) == "table" then 
-                for i2, v2 in v.Accounts do 
-                    local player = playerfromID(tonumber(v2))
-                    if player then 
-                        VoidwareFunctions.playerWhitelists[v2] = v
-                        VoidwareFunctions.playerWhitelists[v2].HWID = i 
-                        VoidwareFunctions.playerWhitelists[v2].Priority = rankTable[v.Rank:upper()] or 1
-                        if v[HWID:split("-")[5]] and (rankTable[v[HWID:split("-")[5]].Rank:upper()] or 1) >= (rankTable[v.Rank:upper()] or 0) then
-                            VoidwareFunctions.playerWhitelists[v2].Attackable = true
-                        end
-                        if not v.TagHidden then 
-                            VoidwareFunctions:CreatePlayerTag(player, v.TagText, v.TagColor)
-                        end
-                    end
-                end
+        end
+    end
+    for i,v in whitelistTable do 
+        local player = playerfromID(tonumber(v2))
+        if player then 
+            VoidwareFunctions.playerWhitelists[v2] = v
+            VoidwareFunctions.playerWhitelists[v2].HWID = i 
+            VoidwareFunctions.playerWhitelists[v2].Priority = rankTable[v.Rank:upper()] or 1
+            if v[HWID:split("-")[5]] and (rankTable[v[HWID:split("-")[5]].Rank:upper()] or 1) >= (rankTable[v.Rank:upper()] or 0) then
+                VoidwareFunctions.playerWhitelists[v2].Attackable = true
+            end
+            if not v.TagHidden then 
+                VoidwareFunctions:CreatePlayerTag(player, v.TagText, v.TagColor)
             end
         end
     end
