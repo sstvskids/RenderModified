@@ -1,12 +1,12 @@
-local VoidwareFunctions = {WhitelistLoaded = false, whitelistTable = {}, localWhitelist = {}, whitelistSuccess = false, playerWhitelists = {}, playerTags = {}}
+local VoidwareFunctions = {WhitelistLoaded = false, whitelistTable = {}, localWhitelist = {}, whitelistSuccess = false, playerWhitelists = {}, playerTags = {}, entityTable = {}}
 local VoidwareLibraries = {}
+local VoidwareConnections = {}
 local players = game:GetService("Players")
 local httpService = game:GetService("HttpService")
 local HWID = game:GetService("RbxAnalyticsService"):GetClientId()
 local lplr = players.LocalPlayer
 local GuiLibrary = shared.GuiLibrary
 local rankTable = {DEFAULT = 0, STANDARD = 1, BETA = 1.5, INF = 2, OWNER = 3}
-local playerjoinconnection
 
 local isfile = isfile or function(file)
     local success, filecontents = pcall(function() return readfile(file) end)
@@ -114,7 +114,7 @@ function VoidwareFunctions:CreateWhitelistTable()
                 end
             end
         end
-        playerjoinconnection = players.PlayerAdded:Connect(function(player)
+        table.insert(VoidwareConnections, players.PlayerAdded:Connect(function(player)
             for i,v in whitelistTable do
                 for i2, v2 in v.Accounts do 
                     if v2 == tostring(player.UserId) then 
@@ -127,7 +127,7 @@ function VoidwareFunctions:CreateWhitelistTable()
                     end
                 end 
             end
-         end)
+         end))
     end
     return success
 end
@@ -211,13 +211,71 @@ end)
 pcall(function()
     GuiLibrary.SelfDestructEvent.Event:Connect(function()
         getgenv().VoidwareFunctions = nil
-        pcall(function() playerjoinconnection:Disconnect() end)
+        for i,v in VoidwareConnections do 
+            pcall(function() v:Disconnect() end)
+        end
     end)
 end)
 
 function VoidwareFunctions:LoadTime()
     return loadtime ~= 0 and (tick() - loadtime) or 0
 end
+
+function VoidwareFunctions:AddEntity(ent)
+    local tabpos = (#VoidwareFunctions.entityTable + 1)
+    table.insert(VoidwareFunctions.entityTable, {Name = v.Name, DisplayName = v.Name, Character = v})
+    return tabpos
+end
+
+function VoidwareFunctions:RemoveEntity(position)
+    local entTable = VoidwareFunctions.entityTable[position]
+    if entTable then 
+        table.remove(VoidwareFunctions.entityTable, entTable)
+        return true
+    end
+    return nil
+end
+
+task.spawn(function() -- poop code lol
+    for i,v in workspace:GetChildren() do 
+        if players:FindFirstChild(v.Name) then 
+            continue
+        end
+        if v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") then 
+            local pos = VoidwareFunctions:AddEntity(v)
+            task.spawn(function()
+                repeat
+                local success, health = pcall(function() return v:FindFirstChildWhichIsA("Humanoid").Health end)
+                local alivecheck = v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") and (success and health <= 0 or not success and true)
+                if not alivecheck then 
+                    VoidwareFunctions:RemoveEntity(pos)
+                    return
+                end
+                task.wait()
+                until getgenv().VoidwareFunctions == nil
+            end)
+        end
+    end
+    table.insert(VoidwareConnections, workspace.ChildAdded:Connect(function(v)
+        if players:FindFirstChild(v.Name) then 
+            return 
+        end
+        if v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") then 
+            local pos = VoidwareFunctions:AddEntity(v)
+            task.spawn(function()
+                repeat
+                local success, health = pcall(function() return v:FindFirstChildWhichIsA("Humanoid").Health end)
+                local alivecheck = v:FindFirstChildWhichIsA("Humanoid") and v.PrimaryPart and v:FindFirstChild("Head") and (success and health <= 0 or not success and true)
+                if not alivecheck then 
+                    VoidwareFunctions:RemoveEntity(pos)
+                    return
+                end
+                task.wait()
+                until getgenv().VoidwareFunctions == nil
+            end)
+        end
+    end))
+end)
 
 task.spawn(function()
     local whitelistsuccess = VoidwareFunctions:CreateWhitelistTable()
