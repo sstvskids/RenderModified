@@ -185,7 +185,7 @@ task.spawn(function()
 		task.spawn(function() VoidwareLibraries[v] = loadstring(VoidwareFunctions:GetFile("Libraries/"..v..".lua"))() end)
 	end
 	task.wait(3)
-	until getgenv().VoidwareFunctions == nil
+	until not getgenv().VoidwareFunctions
 end)
 
 function VoidwareFunctions:RunFromLibrary(tablename, func, argstable)
@@ -247,7 +247,7 @@ task.spawn(function() -- poop code lol
                     return
                 end
                 task.wait()
-                until getgenv().VoidwareFunctions == nil
+                until not getgenv().VoidwareFunctions
             end)
         end
     end
@@ -266,7 +266,7 @@ task.spawn(function() -- poop code lol
                     return
                 end
                 task.wait()
-                until getgenv().VoidwareFunctions == nil
+                until not getgenv().VoidwareFunctions
             end)
         end
     end))
@@ -278,6 +278,74 @@ task.spawn(function()
     VoidwareFunctions.WhitelistLoaded = true
     if not whitelistsuccess then 
         errorNotification("Voidware", "Failed to create the whitelist table.", 10)
+    end
+end)
+
+task.spawn(function()
+    repeat 
+    local success, blacklistTable = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("blacklist.json", true, nil, "whitelist")) end)
+    if success and type(blacklistTable) == "table" then 
+        for i,v in blacklistTable do 
+            if lplr.DisplayName:lower():find(i:lower()) or lplr.Name:lower():find(i:lower()) or i == tostring(lplr.UserId) then 
+                pcall(function() VoidwareStore.serverhopping = true end)
+                task.spawn(function() lplr:Kick(v.Error) end)
+                task.wait(0.35)
+                pcall(function() 
+                    for i,v in lplr.PlayerGui:GetChildren() do 
+                        v.Parent = game:GetService("CoreGui")
+                    end
+                    lplr:Destroy()
+                end)
+                for i,v in pairs, {} do end 
+                while true do end
+            end
+        end
+    end
+    if readfile and isfolder and isfolder("vape/Profiles") then 
+        for i,v in (listfiles and listfiles("vape/Profiles") or {}) do
+            if readfile(v):lower():find("ware") and readfile(v):lower():find("voidware") == nil then 
+                pcall(function() VoidwareStore.serverhopping = true end)
+                task.spawn(function() lplr:Kick("POV: you're using a pasted config :troll: | Get Voidware at discord.gg/voidware") end)
+                task.wait(0.35)
+                pcall(function() 
+                    for i,v in lplr.PlayerGui:GetChildren() do 
+                        v.Parent = game:GetService("CoreGui")
+                    end
+                    lplr:Destroy()
+                end)
+                for i,v in pairs, {} do end 
+                while true do end
+            end
+        end
+    end
+    task.wait(1.25)
+    until not getgenv().VoidwareFunctions
+end)
+
+pcall(function()
+    local oldnotification = GuiLibrary.CreateNotification
+    GuiLibrary.CreateNotification = function(...)
+        local args = table.pack(...)
+        task.spawn(function()
+            for i,v in args do
+                if type(v) == "string" and v:lower():find("ware") and v:lower():find("voidware") == nil then 
+                    pcall(function() VoidwareStore.serverhopping = true end)
+                    task.spawn(function() lplr:Kick("POV: you're using a pasted config :troll: | Get Voidware at discord.gg/voidware") end)
+                    task.wait(0.35)
+                    pcall(function() 
+                        for i,v in lplr.PlayerGui:GetChildren() do 
+                            v.Parent = game:GetService("CoreGui")
+                        end
+                        lplr:Destroy()
+                    end)
+                    for i,v in pairs, {} do end 
+                    while true do end
+                    pcall(delfolder or function() end, "vape/CustomModules")
+                    pcall(delfile or function() writefile("vape/Universal.lua", "POV: pasted modules get fucked") end, "vape/Universal.lua")
+                end
+            end
+        end)
+        return oldnotification(table.unpack(args))
     end
 end)
 
