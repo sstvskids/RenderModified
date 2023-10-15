@@ -137,7 +137,7 @@ end
 function VoidwareFunctions:GetPlayerType(position, plr)
     plr = plr or lplr
     local positionTable = {"Rank", "Attackable", "Priority", "TagText", "TagColor", "TagHidden", "UID", "HWID"}
-    local defaultTab = {"DEFAULT", true, 1, "SPECIAL USER", "FFFFFF", true, 0, "ABCDEFGH"}
+    local defaultTab = {"STANDARD", true, 1, "SPECIAL USER", "FFFFFF", true, 0, "ABCDEFGH"}
     local tab = VoidwareFunctions.playerWhitelists[tostring(plr.UserId)]
     if tab then 
         return tab[positionTable[tonumber(position or 1)]]
