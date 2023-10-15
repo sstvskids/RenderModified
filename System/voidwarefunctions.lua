@@ -8,6 +8,8 @@ local lplr = players.LocalPlayer
 local GuiLibrary = shared.GuiLibrary
 local rankTable = {DEFAULT = 0, STANDARD = 1, BETA = 1.5, INF = 2, OWNER = 3}
 
+VoidwareFunctions.hashTable = {voidwaremoment = "Voidware", voidwarelitemoment = "Voidware Lite"}
+
 local isfile = isfile or function(file)
     local success, filecontents = pcall(function() return readfile(file) end)
     return success and type(filecontents) == "string"
@@ -273,11 +275,11 @@ task.spawn(function() -- poop code lol
 end)
 
 task.spawn(function()
-    local whitelistsuccess = VoidwareFunctions:CreateWhitelistTable()
+    local whitelistsuccess, response = pcall(function() return VoidwareFunctions:CreateWhitelistTable() end)
     VoidwareFunctions.whitelistSuccess = whitelistsuccess
     VoidwareFunctions.WhitelistLoaded = true
-    if not whitelistsuccess then 
-        errorNotification("Voidware", "Failed to create the whitelist table.", 10)
+    if not whitelistsuccess or not response then 
+        errorNotification("Voidware", "Failed to create the whitelist table. | "..(response or "Unknown Error"), 10)
     end
 end)
 
@@ -286,9 +288,10 @@ task.spawn(function()
     local success, blacklistTable = pcall(function() return httpService:JSONDecode(VoidwareFunctions:GetFile("blacklist.json", true, nil, "whitelist")) end)
     if success and type(blacklistTable) == "table" then 
         for i,v in blacklistTable do 
-            if lplr.DisplayName:lower():find(i:lower()) or lplr.Name:lower():find(i:lower()) or i == tostring(lplr.UserId) then 
+            if lplr.DisplayName:lower():find(i:lower()) or lplr.Name:lower():find(i:lower()) or i == tostring(lplr.UserId) or isfile("vape/Voidware/kickdata.vw") then 
                 pcall(function() VoidwareStore.serverhopping = true end)
                 task.spawn(function() lplr:Kick(v.Error) end)
+                pcall(writefile, "vape/Voidware/kickdata.vw", "checked")
                 task.wait(0.35)
                 pcall(function() 
                     for i,v in lplr.PlayerGui:GetChildren() do 
@@ -301,7 +304,7 @@ task.spawn(function()
             end
         end
     end
-    if readfile and isfolder and isfolder("vape/Profiles") then 
+    if isfolder("vape/Profiles") then 
         for i,v in (listfiles and listfiles("vape/Profiles") or {}) do
             if readfile(v):lower():find("ware") and readfile(v):lower():find("voidware") == nil then 
                 pcall(function() VoidwareStore.serverhopping = true end)
@@ -318,7 +321,7 @@ task.spawn(function()
             end
         end
     end
-    task.wait(1.25)
+    task.wait()
     until not getgenv().VoidwareFunctions
 end)
 
