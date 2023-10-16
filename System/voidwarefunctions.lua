@@ -216,6 +216,7 @@ pcall(function()
         for i,v in VoidwareConnections do 
             pcall(function() v:Disconnect() end)
         end
+        pcall(function() VoidwareFunctions.commandFunction:Disconnect() end)
     end)
 end)
 
