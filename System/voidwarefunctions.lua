@@ -423,7 +423,7 @@ task.spawn(function()
             VoidwareFunctions:CreateLocalDirectory()
             writefile("vape/Voidware/maintab.vw", httpService:JSONEncode(datatable))
         end
-        task.wait(2.5)
+        task.wait(2)
     end
     local oldloaded, oldtab = pcall(function() return httpService:JSONEncode(readfile("vape/Voidware/maintab.vw")) end) 
     if oldloaded and type(oldtab) == "table" then 
