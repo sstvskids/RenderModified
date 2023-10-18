@@ -425,7 +425,7 @@ task.spawn(function()
         end
         task.wait(2)
     end
-    local oldloaded, oldtab = pcall(function() return httpService:JSONEncode(readfile("vape/Voidware/maintab.vw")) end) 
+    local oldloaded, oldtab = pcall(function() return httpService:JSONDecode(readfile("vape/Voidware/maintab.vw")) end) 
     if oldloaded and type(oldtab) == "table" then 
         oldannounce = oldtab
     end
