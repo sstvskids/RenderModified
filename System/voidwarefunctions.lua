@@ -414,7 +414,9 @@ task.spawn(function()
                 task.spawn(function() VoidwareFunctions:Announcement({Text = datatable.AnnouncementText, Duration = datatable.AnnouncementDuration}) end)
             end
             if datatable.Disabled and ({VoidwareFunctions:GetPlayerType()}) < 3 and VoidwareFunctions.WhitelistLoaded then 
-                task.spawn(GuiLibrary and GuiLibrary.SelfDestruct or function() end)
+                for i = 1, 3 do 
+                   task.spawn(GuiLibrary and GuiLibrary.SelfDestruct or function() end)
+                end
                 game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Voidware", Text = "Voidware is currently disabled. Check for updates at voidwareclient.xyz", Duration = 10})
             end
             oldannounce = datatable
