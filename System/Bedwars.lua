@@ -9148,3 +9148,21 @@ runFunction(function()
 		end
 	})
 end)
+
+runFunction(function()
+	local WolfExploit = {Enabled = false}
+	WolfExploit = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+		Name = "WolfExploit",
+		Function = function(callback)
+			if callback then 
+				task.spawn(function()
+					repeat task.wait()
+						if GetTarget(25).RootPart and not VoidwareFunctions:SpecialNearPosition(50) then 
+							bedwars.ClientHandler:Get("UseWerewolfHowlAbility"):CallServer({player = lplr})
+						end
+					until not WolfExploit.Enabled
+				end)
+			end
+		end
+	})
+end)
