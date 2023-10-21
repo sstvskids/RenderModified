@@ -9157,7 +9157,7 @@ runFunction(function()
 			if callback then 
 				task.spawn(function()
 					repeat task.wait()
-						if GetTarget(25).RootPart and not VoidwareFunctions:SpecialNearPosition(50) then 
+						if FindTarget(25).RootPart and not VoidwareFunctions:SpecialNearPosition(50) then 
 							bedwars.ClientHandler:Get("UseWerewolfHowlAbility"):CallServer({player = lplr})
 						end
 					until not WolfExploit.Enabled
