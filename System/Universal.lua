@@ -114,7 +114,7 @@ local VoidwareStore = {
 	objectraycast = RaycastParams.new()
 }
 VoidwareStore.FolderTable = {"vape/Voidware", VoidwareStore.maindirectory, VoidwareStore.maindirectory.."/".."data"}
-local VoidwareGlobe = {ConfigUsers = {}, BlatantModules = {}, Messages = {}, GameFinished = false, WhitelistChatSent = {}, HookedFunctions = {}, UpdateTargetInfo = function() end, targetInfo = {Target = {}}, entityIDs = {fakeIDs = {}}}
+local VoidwareGlobe = {ConfigUsers = {}, BlatantModules = {}, Messages = {}, GameFinished = false, WhitelistChatSent = {}, HookedFunctions = {}, UpdateTargetInfo = function() end, targetInfo = {Target = {}}, clones = {}}
 local VoidwareQueueStore = shared.VoidwareQueueStore and type(shared.VoidwareQueueStore) == "string" and httpService:JSONDecode(shared.VoidwareQueueStore) or {lastServers = {}}
 VoidwareStore.objectraycast.FilterType = Enum.RaycastFilterType.Include
 shared.VoidwareQueueStore = nil

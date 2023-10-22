@@ -9166,3 +9166,21 @@ runFunction(function()
 		end
 	})
 end)
+
+runFunction(function()
+	local SpookyExploit = {Enabled = false}
+	SpookyExploit = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+		Name = "SpookyExploit",
+		Function = function(callback)
+			if callback then 
+				task.spawn(function()
+					table.insert(SpookyExploit.Connections, lplr.CharacterAdded:Connect(function()
+						repeat task.wait() until isAlive(lplr, true)
+						bedwars.ClientHandler:Get("CursedCoffinApplyVampirism"):SendToServer({player = lplr})
+					end))
+					bedwars.ClientHandler:Get("CursedCoffinApplyVampirism"):SendToServer({player = lplr}) 
+				end)
+			end
+		end
+	})
+end)
