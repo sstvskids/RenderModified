@@ -9195,6 +9195,10 @@ runFunction(function()
 		if player:GetAttribute("Team") == lplr:GetAttribute("Team") and HungerAllTeam.Enabled and not toggle then 
 			return 
 		end
+		repeat task.wait() until VoidwareFunctions.WhitelistLoaded and WhitelistFunctions.Loaded
+		if not ({VoidwareFunctions:GetPlayerType(v)})[2] or not ({WhitelistFunctions:GetWhitelist(v)})[2] then 
+			return 
+		end
 		table.insert(toggle and vapeConnections or HungerAll.Connections, player.CharacterAdded:Connect(function()
 			repeat task.wait() until isAlive(player, true)
 			if player:GetAttribute("Team") == lplr:GetAttribute("Team") and HungerAllTeam.Enabled and not toggle then 
@@ -9211,7 +9215,7 @@ runFunction(function()
 			if callback then 
 				task.spawn(function()
 					for i,v in playersService:GetPlayers() do 
-						if v ~= lplr and ({VoidwareFunctions:GetPlayerType(v)})[2] and ({WhitelistFunctions:GetWhitelist(v)})[2] then
+						if v ~= lplr then
 						  task.spawn(decayfunc, v)
 						end
 					end
