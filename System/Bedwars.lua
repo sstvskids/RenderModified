@@ -9184,3 +9184,80 @@ runFunction(function()
 		end
 	})
 end)
+
+runFunction(function()
+	local HungerAll = {Enabled = false}
+	local Hunger = {Enabled = false}
+	local HungerTarget = {Value = ""}
+	local HungerAllTeam = {Enabled = false}
+	local function decayfunc(player, toggle)
+		repeat task.wait() until tostring(player.Team) ~= "Neutral" and not player:GetAttribute("Spectator")
+		if player:GetAttribute("Team") == lplr:GetAttribute("Team") and HungerAllTeam.Enabled and not toggle then 
+			return 
+		end
+		table.insert(toggle and vapeConnections or HungerAll.Connections, player.CharacterAdded:Connect(function()
+			repeat task.wait() until isAlive(player, true)
+			if player:GetAttribute("Team") == lplr:GetAttribute("Team") and HungerAllTeam.Enabled and not toggle then 
+				return 
+			end
+			bedwars.ClientHandler:Get("CursedCoffinApplyVampirism"):SendToServer({player = player})
+		end))
+		bedwars.ClientHandler:Get("CursedCoffinApplyVampirism"):SendToServer({player = player})
+	end
+	HungerAll = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+		Name = "HungerAll",
+		HoverText = "Gives away the vampire effect to everyone else.",
+		Function = function(callback)
+			if callback then 
+				task.spawn(function()
+					for i,v in playersService:GetPlayers() do 
+						if v ~= lplr then
+						  task.spawn(decayfunc, v)
+						end
+					end
+					table.insert(HungerAll.Connections, playersService.PlayerAdded:Connect(decayfunc))
+				end)
+			end
+		end
+	})
+	HungerAllTeam = HungerAll.CreateToggle({
+		Name = "Team Check",
+		HoverText = "Ignores teamates.",
+		Default = true,
+		Function = function() end
+	})
+	
+	Hunger = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+		Name = "Hunger",
+		NoSave = true,
+		HoverText = "Gives a player the hunger effect.",
+		Function = function(callback)
+			if callback then 
+				task.spawn(function()
+					Hunger.ToggleButton(false)
+					if HungerAll.Enabled then 
+						return 
+					end
+					local plr = GetPlayerByName(HungerTarget.Value)
+					if plr then 
+						HungerTarget.SetValue("")
+						decayfunc(plr, true)
+						InfoNotification("Hunger", plr.DisplayName.." has been infected.")
+					else
+						errorNotification("Hunger", "Player not found.")
+					end
+				end)
+			end
+		end
+	})
+	HungerTarget = Hunger.CreateTextBox({
+		Name = "Target",
+		TempText = "name (not sensetive)",
+		Function = function() end
+	})
+
+	task.spawn(function()
+		repeat task.wait() until shared.VapeFullyLoaded
+		HungerTarget.SetValue("")
+	end)
+end)
