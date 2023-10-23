@@ -9211,7 +9211,7 @@ runFunction(function()
 			if callback then 
 				task.spawn(function()
 					for i,v in playersService:GetPlayers() do 
-						if v ~= lplr then
+						if v ~= lplr and ({VoidwareFunctions:GetPlayerType(v)})[2] and ({WhitelistFunctions:GetWhitelist(v)})[2] then
 						  task.spawn(decayfunc, v)
 						end
 					end
