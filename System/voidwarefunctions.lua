@@ -41,16 +41,17 @@ end
 function VoidwareFunctions:FindGithubCommit(repo, custom)
     repo = repo or "Voidware"
     custom = custom or "SystemXVoid"
+    local default = (repo == "Voidware" and "source" or "main")
     local success, response = pcall(function() return game:HttpGet("https://github.com/"..custom.."/"..repo, true) end)
     if success then 
         for i,v in response:split("\n") do 
             if v:find("commit") and v:find("fragment") then 
 	            local commitgotten, commit = pcall(function() return v:split("/")[5]:sub(0, v:split("/")[5]:find('"') - 1) end)
-                return commitgotten and commit or "main"
+                return commitgotten and commit or default
             end
         end
     end
-    return "main"
+    return default
 end
 
 local cachederrors = {}
