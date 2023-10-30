@@ -1,7 +1,7 @@
 local GuiLibrary = shared.GuiLibrary
 local vapeonlineresponse = false
-task.spawn(function()
-	task.wait(10)
+
+task.delay(10, function()
 	if not vapeonlineresponse and not isfile("vape/Voidware/oldvape/Universal.lua") then 
 		GuiLibrary.CreateNotification("Voidware", "The Connection to Github is taking a while. If vape doesn't load within 15 seconds, please reinject.", 10)
 	end
@@ -88,7 +88,7 @@ local VoidwareStore = {
 		BuildType = "Stable",
 		VersionID = "3.3"
     },
-	FolderTable = {"vape/Voidware", "vape/Voidware/data"},
+	FolderTable = {"vape/Voidware", "vape/Voidware/scripts"},
 	SystemFiles = {"vape/NewMainScript.lua", "vape/MainScript.lua", "vape/GuiLibrary.lua", "vape/Universal.lua"},
 	watermark = function(text) return ("[Voidware] "..text) end,
 	Tweening = false,
@@ -1190,7 +1190,7 @@ function VoidwareFunctions:RefreshLocalFiles()
 		end
 	end
 	local maindirectory = VoidwareFunctions:GetMainDirectory()
-	pcall(delfolder, maindirectory.."/data")
+	pcall(delfolder, maindirectory.."/scripts")
 	pcall(delfolder, maindirectory.."/Libraries")
 end
 
