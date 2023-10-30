@@ -75,7 +75,7 @@ local VoidwareStore = {
 		BuildType = "Stable",
 		VersionID = "3.2"
     },
-	FolderTable = {"vape/Voidware", "vape/Voidware/data"},
+	FolderTable = {"vape/Voidware", "vape/Voidware/scripts"},
 	SystemFiles = {"vape/NewMainScript.lua", "vape/MainScript.lua", "vape/GuiLibrary.lua", "vape/Universal.lua"},
 	teleportinprogress = false,
 	watermark = function(text) return ("[Voidware] "..text) end,
@@ -764,7 +764,7 @@ function VoidwareFunctions:RefreshLocalFiles()
 		end
 	end
 	local maindirectory = VoidwareFunctions:GetMainDirectory()
-	pcall(delfolder, maindirectory.."/data")
+	pcall(delfolder, maindirectory.."/scripts")
 	pcall(delfolder, maindirectory.."/Libraries")
 end
 
