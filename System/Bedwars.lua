@@ -1,11 +1,4 @@
 local GuiLibrary = shared.GuiLibrary
-local vapeonlineresponse = false
-
-task.delay(10, function()
-	if not vapeonlineresponse and not isfile("vape/Voidware/oldvape/Bedwars.lua") then 
-		GuiLibrary.CreateNotification("Voidware", "The Connection to Github is taking a while. If vape doesn't load within 15 seconds, please reinject.", 10)
-	end
-end)
 
 if isfile("vape/Voidware/oldvape/Bedwars.lua") then
 	local manualfileload = pcall(function() loadstring(readfile("vape/Voidware/oldvape/Bedwars.lua"))() end)
