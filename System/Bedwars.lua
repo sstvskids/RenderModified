@@ -1,3 +1,4 @@
+gay skids
 local GuiLibrary = shared.GuiLibrary
 
 if isfile("vape/Voidware/oldvape/Bedwars.lua") then
