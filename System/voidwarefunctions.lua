@@ -87,8 +87,10 @@ function VoidwareFunctions:Announcement(tab)
 	tab = tab or {}
 	tab.Text = tab.Text or ""
 	tab.Duration = tab.Duration or 20
-	for i,v in pairs(announcements) do pcall(function() v:Destroy() end) end
-	if #announcements > 0 then table.clear(announcements) end
+	for i,v in announcements do 
+        pcall(function() v:Destroy() end) 
+    end
+	table.clear(announcements)
 	local announcemainframe = Instance.new("Frame")
 	announcemainframe.Position = UDim2.new(0.2, 0, -5, 0.1)
 	announcemainframe.Size = UDim2.new(0, 1227, 0, 62)
