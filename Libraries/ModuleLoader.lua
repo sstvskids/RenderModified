@@ -1,5 +1,5 @@
 local isfile = isfile or function(file)
-    return pcall(function() return readfile(file) end)
+    return pcall(function() return readfile(file) end) and true
 end
 
 local function errorNotification(title, text, duration) 
