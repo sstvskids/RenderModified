@@ -1,4 +1,3 @@
--- is anyone going to see this lol?
 local isfile = isfile or function(file)
     return pcall(function() return readfile(file) end) and true or false
 end
