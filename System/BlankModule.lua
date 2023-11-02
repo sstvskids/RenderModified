@@ -16,6 +16,7 @@ local collectionService = game:GetService("CollectionService")
 local replicatedStorageService = game:GetService("ReplicatedStorage")
 local gameCamera = workspace.CurrentCamera
 local lplr = playersService.LocalPlayer
+local VoidwareFunctions = VoidwareFunctions
 local vapeConnections = {}
 local vapeCachedAssets = {}
 local vapeEvents = setmetatable({}, {
@@ -27,10 +28,13 @@ local vapeEvents = setmetatable({}, {
 local vapeTargetInfo = shared.VapeTargetInfo
 local vapeInjected = true
 
-table.insert(vapeConnections, GuiLibrary.SelfDestructEvent.Event:Connect(function()
+GuiLibrary.SelfDestructEvent.Event:Connect(function()
     vapeInjected = false
-    for i,v in pairs(vapeConnections) do pcall(function() v:Disconnect() end) end
-end))
+    for i,v in vapeConnections do 
+		pcall(function() v:Disconnect() end) 
+		pcall(function() v:disconnect() end)
+	end
+end)
 
 local function runFunction(func) func() end
 local function runcode(func) func() end
