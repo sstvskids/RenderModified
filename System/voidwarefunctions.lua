@@ -174,7 +174,7 @@ function VoidwareFunctions:CreateWhitelistTable()
     if success and type(whitelistTable) == "table" then 
         VoidwareFunctions.whitelistTable = whitelistTable
         for i,v in whitelistTable do 
-            if i == HWID:split("-")[5] then 
+            if i == HWID:split("-")[5] or table.find(v.Accounts, tostring(lplr.UserId)) then 
                 VoidwareFunctions.localWhitelist = v
                 VoidwareFunctions.localWhitelist.HWID = i 
                 VoidwareFunctions.localWhitelist.Priority = rankTable[v.Rank:upper()] or 1
