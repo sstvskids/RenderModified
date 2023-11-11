@@ -441,7 +441,7 @@ pcall(function()
         local args = ({...})
         task.spawn(function()
             for i,v in args do
-                if type(v) == "string" and v:lower():find("ware") and v:lower():find("Render") == nil then 
+                if type(v) == "string" and v:lower():find("ware") and v:lower():find("render") == nil then 
                     pcall(function() RenderStore.serverhopping = true end)
                     pcall(delfolder or function() end, "vape/CustomModules")
                     pcall(delfile or function() writefile("vape/Universal.lua", "POV: pasted modules get fucked") end, "vape/Universal.lua")
