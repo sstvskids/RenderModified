@@ -3706,6 +3706,11 @@ runFunction(function()
 					local oldNearPlayer
 					repeat
 						task.wait()
+						local oldtool = GetHandItem()
+						if oldtool then
+							switchItem(oldtool.tool..scythe)
+							switchItem(oldtool.tool..scythe)
+						end
 						if killauraanimation.Enabled then
 							if killauraNearPlayer then
 								pcall(function()
